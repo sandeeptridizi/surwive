@@ -1,3 +1,15 @@
+## Signup popup → Google Sheets
+
+The "Sign up" / "I'm a Candidate" / "I'm an Employer" buttons open a popup form. Submissions are posted to a Google Apps Script web app, which appends a row to a Google Sheet.
+
+1. Create (or open) a Google Sheet.
+2. Extensions > Apps Script, delete the placeholder code, and paste in [google-apps-script.js](google-apps-script.js).
+3. Deploy > New deployment > type **Web app** > execute as **Me** > who has access **Anyone**. Deploy and copy the resulting URL.
+4. Copy `.env.example` to `.env` and set `VITE_GOOGLE_SCRIPT_URL` to that URL.
+5. Restart `npm run dev` (Vite only reads `.env` on startup).
+
+Without this configured, the popup still works but shows an inline message telling you the endpoint isn't set up yet.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.

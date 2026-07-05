@@ -1,8 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import './App.css'
 import logo from "./assets/Group 2.png";
 import controlHub from "./assets/Control Hub.png";
 import dashboardImg from "./assets/Dashboard.png";
+
+const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL
+
+async function submitToGoogleSheet(data: Record<string, string>) {
+  if (!GOOGLE_SCRIPT_URL) throw new Error('missing-endpoint')
+  await fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: new URLSearchParams(data),
+  })
+}
 
 function IconRobot() {
   return (
@@ -63,6 +74,22 @@ function IconArrowUpRight() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M7 17 17 7" />
       <path d="M8 7h9v9" />
+    </svg>
+  )
+}
+
+function IconMenu() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  )
+}
+
+function IconClose() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 6l12 12M18 6 6 18" />
     </svg>
   )
 }
@@ -210,24 +237,331 @@ function TagRow({ items }: { items: string[] }) {
 }
 
 
+function AuroraBackground() {
+  return (
+    <div className="aurora" aria-hidden="true">
+      <span className="aurora__blob aurora__blob--1" />
+      <span className="aurora__blob aurora__blob--2" />
+      <span className="aurora__blob aurora__blob--3" />
+    </div>
+  )
+}
+
+type SignupRole = 'candidate' | 'employer'
+type ExperienceLevel = 'fresher' | 'experienced'
+
+function SignupModal({
+  role,
+  onRoleChange,
+  onClose,
+}: {
+  role: SignupRole
+  onRoleChange: (role: SignupRole) => void
+  onClose: () => void
+}) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [jobTitle, setJobTitle] = useState('')
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>('fresher')
+  const [yearsOfExperience, setYearsOfExperience] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [jobPosition, setJobPosition] = useState('')
+  const [openPositions, setOpenPositions] = useState('')
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [errorText, setErrorText] = useState('')
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  function resetFields() {
+    setName('')
+    setEmail('')
+    setPhone('')
+    setJobTitle('')
+    setExperienceLevel('fresher')
+    setYearsOfExperience('')
+    setCompanyName('')
+    setJobPosition('')
+    setOpenPositions('')
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    setStatus('submitting')
+    try {
+      const data: Record<string, string> =
+        role === 'candidate'
+          ? {
+              role,
+              name,
+              email,
+              phone,
+              jobTitle,
+              experienceLevel,
+              yearsOfExperience: experienceLevel === 'experienced' ? yearsOfExperience : '',
+            }
+          : {
+              role,
+              companyName,
+              name,
+              email,
+              phone,
+              jobPosition,
+              openPositions,
+            }
+      await submitToGoogleSheet({ ...data, submittedAt: new Date().toISOString() })
+      setStatus('success')
+      resetFields()
+    } catch {
+      setStatus('error')
+      setErrorText(
+        GOOGLE_SCRIPT_URL
+          ? "Something went wrong sending that — please try again."
+          : "Signups aren't connected yet. Set VITE_GOOGLE_SCRIPT_URL to your Google Apps Script endpoint."
+      )
+    }
+  }
+
+  return (
+    <div
+      className="modal-overlay"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="signup-modal-title">
+        <button type="button" className="modal__close" onClick={onClose} aria-label="Close">
+          <IconClose />
+        </button>
+
+        <span className="eyebrow eyebrow--left">Get started</span>
+        <h2 id="signup-modal-title">Join Surwive</h2>
+        <p>Tell us a little about you and we'll be in touch with matches worth your time.</p>
+
+        <div className="modal__role-toggle" role="radiogroup" aria-label="I am">
+          <label className={`modal__role-btn ${role === 'candidate' ? 'is-active' : ''}`}>
+            <input
+              type="radio"
+              name="signup-audience"
+              value="candidate"
+              checked={role === 'candidate'}
+              onChange={() => onRoleChange('candidate')}
+            />
+            Looking for a job
+          </label>
+          <label className={`modal__role-btn ${role === 'employer' ? 'is-active' : ''}`}>
+            <input
+              type="radio"
+              name="signup-audience"
+              value="employer"
+              checked={role === 'employer'}
+              onChange={() => onRoleChange('employer')}
+            />
+            Looking to hire
+          </label>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          {role === 'employer' && (
+            <div className="modal__field">
+              <label htmlFor="signup-company">Company name</label>
+              <input
+                id="signup-company"
+                type="text"
+                required
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Acme Inc."
+              />
+            </div>
+          )}
+
+          <div className="modal__field">
+            <label htmlFor="signup-name">Full name</label>
+            <input
+              id="signup-name"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Jane Doe"
+            />
+          </div>
+
+          <div className="modal__field">
+            <label htmlFor="signup-email">Email</label>
+            <input
+              id="signup-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="jane@email.com"
+            />
+          </div>
+
+          <div className="modal__field">
+            <label htmlFor="signup-phone">Phone number</label>
+            <input
+              id="signup-phone"
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+1 555 000 0000"
+            />
+          </div>
+
+          {role === 'candidate' ? (
+            <>
+              <div className="modal__field">
+                <label htmlFor="signup-job-title">Job title</label>
+                <input
+                  id="signup-job-title"
+                  type="text"
+                  required
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  placeholder="e.g. Frontend engineer"
+                />
+              </div>
+
+              <div className="modal__field">
+                <label>Experience level</label>
+                <div className="modal__role-toggle modal__role-toggle--sub" role="radiogroup" aria-label="Experience level">
+                  <label className={`modal__role-btn ${experienceLevel === 'fresher' ? 'is-active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="signup-experience-level"
+                      value="fresher"
+                      checked={experienceLevel === 'fresher'}
+                      onChange={() => setExperienceLevel('fresher')}
+                    />
+                    Fresher
+                  </label>
+                  <label className={`modal__role-btn ${experienceLevel === 'experienced' ? 'is-active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="signup-experience-level"
+                      value="experienced"
+                      checked={experienceLevel === 'experienced'}
+                      onChange={() => setExperienceLevel('experienced')}
+                    />
+                    Experienced
+                  </label>
+                </div>
+              </div>
+
+              {experienceLevel === 'experienced' && (
+                <div className="modal__field">
+                  <label htmlFor="signup-years">Years of experience</label>
+                  <input
+                    id="signup-years"
+                    type="number"
+                    min={0}
+                    step="0.5"
+                    required
+                    value={yearsOfExperience}
+                    onChange={(e) => setYearsOfExperience(e.target.value)}
+                    placeholder="e.g. 3"
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="modal__field">
+                <label htmlFor="signup-job-position">Job position</label>
+                <input
+                  id="signup-job-position"
+                  type="text"
+                  required
+                  value={jobPosition}
+                  onChange={(e) => setJobPosition(e.target.value)}
+                  placeholder="e.g. Backend engineer"
+                />
+              </div>
+
+              <div className="modal__field">
+                <label htmlFor="signup-open-positions">Number of open positions</label>
+                <input
+                  id="signup-open-positions"
+                  type="number"
+                  min={1}
+                  step="1"
+                  required
+                  value={openPositions}
+                  onChange={(e) => setOpenPositions(e.target.value)}
+                  placeholder="e.g. 2"
+                />
+              </div>
+            </>
+          )}
+
+          <button type="submit" className="btn btn--solid modal__submit" disabled={status === 'submitting'}>
+            {status === 'submitting' ? 'Sending…' : 'Submit'} <IconArrowUpRight />
+          </button>
+
+          {status === 'success' && (
+            <p className="modal__status modal__status--success">Thanks — we'll be in touch soon.</p>
+          )}
+          {status === 'error' && <p className="modal__status modal__status--error">{errorText}</p>}
+        </form>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   useScrollReveal()
   const navScrolled = useNavScrollState()
+  const [signupModal, setSignupModal] = useState<{ open: boolean; role: SignupRole }>({
+    open: true,
+    role: 'candidate',
+  })
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
+  const openSignup = (role: SignupRole) => {
+    setMobileNavOpen(false)
+    setSignupModal({ open: true, role })
+  }
+  const closeSignup = () => setSignupModal((s) => ({ ...s, open: false }))
 
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
+      <AuroraBackground />
 
       <header className={`nav ${navScrolled ? 'nav--scrolled' : ''}`}>
         <a href="/" className="nav__logo">
           <img src={logo} alt="Surwive Logo" className="nav__logo-img" />
         </a>
-        <nav className="nav__links" aria-label="Primary">
-          <a href="#jobs">Jobs</a>
-          <a href="#internships">Internships</a>
-          <a href="#companies">Companies</a>
+        <nav className={`nav__links ${mobileNavOpen ? 'nav__links--open' : ''}`} aria-label="Primary">
+          <a href="#jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
+          <a href="#internships" onClick={() => setMobileNavOpen(false)}>Internships</a>
+          <a href="#companies" onClick={() => setMobileNavOpen(false)}>Companies</a>
+          <button type="button" className="btn btn--ghost nav__links-signup" onClick={() => openSignup('candidate')}>
+            Sign up
+          </button>
         </nav>
-        <a className="btn btn--ghost" href="#signup">Sign up</a>
+        <button type="button" className="btn btn--ghost nav__signup-desktop" onClick={() => openSignup('candidate')}>
+          Sign up
+        </button>
+        <button
+          type="button"
+          className="nav__toggle"
+          aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileNavOpen}
+          onClick={() => setMobileNavOpen((v) => !v)}
+        >
+          {mobileNavOpen ? <IconClose /> : <IconMenu />}
+        </button>
       </header>
 
       <main id="main">
@@ -236,19 +570,23 @@ function App() {
             className="hero-search reveal"
             style={{ transitionDelay: "0ms" }}
           >
-            <svg
-              className="hero-search__icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="M20 20L17 17" />
-            </svg>
+            <span className="hero-search__icon-wrap">
+              <svg
+                className="hero-search__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="10.5" cy="10.5" r="6.5" />
+                <path d="M20 20l-4.85-4.85" />
+              </svg>
+            </span>
 
             <span className="hero-search__placeholder">
-              Search&nbsp;
+              <span className="hero-search__static">Search</span>
               <span className="typewriter">
                 <span>Jobs</span>
                 <span>Internships</span>
@@ -272,12 +610,12 @@ function App() {
           </div>
 
           <div className="hero__ctas reveal" style={{ transitionDelay: '320ms' }}>
-            <a className="btn btn--solid" href="#candidate">
+            <button type="button" className="btn btn--solid" onClick={() => openSignup('candidate')}>
               I'm a Candidate <IconArrowUpRight />
-            </a>
-            <a className="btn btn--outline" href="#employer">
+            </button>
+            <button type="button" className="btn btn--outline" onClick={() => openSignup('employer')}>
               I'm an Employer
-            </a>
+            </button>
           </div>
 
           <SignalHero />
@@ -303,7 +641,13 @@ function App() {
         <section className="feature" id="candidate">
           <div className="feature__panel reveal reveal--panel" aria-hidden="true">
             <div className="mock mock--candidate">
-              <img src={controlHub} alt="Control Hub" className="mock__image" />
+              <img
+                src={controlHub}
+                alt="Control Hub"
+                className="mock__image"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
           <div className="feature__copy reveal" style={{ transitionDelay: '120ms' }}>
@@ -318,9 +662,9 @@ function App() {
               <li>See exactly why a role was recommended to you</li>
               <li>Keep one profile that speaks for you everywhere</li>
             </ul>
-            <a className="btn btn--solid" href="#candidate-signup">
+            <button type="button" className="btn btn--solid" onClick={() => openSignup('candidate')}>
               Explore as candidate <IconArrowUpRight />
-            </a>
+            </button>
           </div>
         </section>
 
@@ -337,13 +681,19 @@ function App() {
               <li>Screen by verified skills instead of résumé formatting</li>
               <li>Fill roles in days, not job‑board months</li>
             </ul>
-            <a className="btn btn--solid" href="#employer-signup">
+            <button type="button" className="btn btn--solid" onClick={() => openSignup('employer')}>
               Explore as company <IconArrowUpRight />
-            </a>
+            </button>
           </div>
           <div className="feature__panel reveal reveal--panel" style={{ transitionDelay: '120ms' }} aria-hidden="true">
             <div className="mock mock--company">
-              <img src={dashboardImg} alt="Dashboard" className="mock__image" />
+              <img
+                src={dashboardImg}
+                alt="Dashboard"
+                className="mock__image"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
         </section>
@@ -376,8 +726,12 @@ function App() {
           <h2>Ready to start your journey?</h2>
           <p>Join thousands of professionals who found their next role through Surwive.</p>
           <div className="cta__actions">
-            <a className="btn btn--dark" href="#candidate-signup">Sign up as candidate</a>
-            <a className="btn btn--outline-dark" href="#employer-signup">Post opportunities</a>
+            <button type="button" className="btn btn--dark" onClick={() => openSignup('candidate')}>
+              Sign up as candidate
+            </button>
+            <button type="button" className="btn btn--outline-dark" onClick={() => openSignup('employer')}>
+              Post opportunities
+            </button>
           </div>
         </section>
       </main>
@@ -422,6 +776,14 @@ function App() {
           © {new Date().getFullYear()} Surwive. All rights reserved.
         </div>
       </footer>
+
+      {signupModal.open && (
+        <SignupModal
+          role={signupModal.role}
+          onRoleChange={(role) => setSignupModal((s) => ({ ...s, role }))}
+          onClose={closeSignup}
+        />
+      )}
     </>
   )
 }
