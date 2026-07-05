@@ -4,7 +4,7 @@ import logo from "./assets/Group 2.png";
 import controlHub from "./assets/Control Hub.png";
 import dashboardImg from "./assets/Dashboard.png";
 
-const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXl3P8SeRYzVGO4mSF9pU3_7n6gI_5PrkpSdfN7VfR6MYZaPG28G_xsIcl_gN2cV3F/exec";
 
 async function submitToGoogleSheet(data: Record<string, string>) {
   if (!GOOGLE_SCRIPT_URL) throw new Error('missing-endpoint')
