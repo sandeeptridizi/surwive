@@ -1244,7 +1244,7 @@ function App() {
   useScrollReveal(route)
   const navScrolled = useNavScrollState()
   const [signupModal, setSignupModal] = useState<{ open: boolean; role: SignupRole }>({
-    open: true,
+    open: false,
     role: 'candidate',
   })
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
@@ -1614,7 +1614,6 @@ function App() {
           </div>
           <div className="appsection__phone reveal reveal--panel" style={{ transitionDelay: '120ms' }} aria-hidden="true">
             <div className="phone">
-              <div className="phone__notch" />
               <div className="phone__screen phone__screen--shot">
                 <img src={appPic} alt="" className="phone__shot" />
                 <span className="phone__pill"><IconSpark /> Match alert</span>
