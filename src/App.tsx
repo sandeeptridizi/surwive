@@ -140,16 +140,6 @@ function IconCrown() {
   )
 }
 
-function IconBriefcase() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="7.5" width="18" height="12.5" rx="2.5" />
-      <path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5" />
-      <path d="M3 12.5c3 1.4 6 2.1 9 2.1s6-.7 9-2.1" />
-    </svg>
-  )
-}
-
 function IconTrophy() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -293,6 +283,7 @@ const eventsHackathons: DriveEvent[] = [
   { host: 'Nova', title: 'Resume Roast — Live Teardown', type: 'Webinar', day: '24', month: 'Jul', time: '7:00 PM – 8:30 PM', location: 'Streamed live', mode: 'Online', tags: ['Free entry', 'Live Q&A'], perk: 'Recruiter panel' },
   { host: 'Quanta', title: 'AI Builders Summit 2026', type: 'Conference', day: '02', month: 'Aug', time: '9:00 AM – 6:00 PM', location: 'Bengaluru', mode: 'Hybrid', tags: ['Keynotes', 'Live demos'], perk: '2,000+ builders' },
   { host: 'Atlas', title: 'CloudCraft Hackathon', type: 'Hackathon', day: '08', month: 'Aug', time: '48 hours non-stop', location: 'Pune', mode: 'Hybrid', tags: ['Cloud-native', 'Open theme'], perk: 'PPIs for top 3' },
+  { host: 'Vertex', title: 'FinTech Sprint Hackathon', type: 'Hackathon', day: '30', month: 'Aug', time: '24 hours flat', location: 'Bengaluru', mode: 'On-site', tags: ['Payments', 'APIs'], perk: '₹2L + fast-track interviews' },
   { host: 'Orbit', title: 'Women in Tech Meetup', type: 'Meetup', day: '14', month: 'Aug', time: '5:00 PM – 8:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['Networking', 'Mentorship'], perk: 'Free passes' },
   { host: 'Surwive', title: 'Campus Job Fair 2026', type: 'Job Fair', day: '22', month: 'Aug', time: '10:00 AM – 5:00 PM', location: 'Mumbai', mode: 'On-site', tags: ['80+ companies', 'All streams'], perk: '5,000+ roles' },
 ]
@@ -423,7 +414,7 @@ function initials(name: string) {
   return name.split(' ').map((part) => part[0]).slice(0, 2).join('')
 }
 
-function useScrollReveal() {
+function useScrollReveal(routeKey?: string) {
   useEffect(() => {
     const targets = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
     if (!targets.length) return
@@ -448,7 +439,17 @@ function useScrollReveal() {
 
     targets.forEach((el) => io.observe(el))
     return () => io.disconnect()
+  }, [routeKey])
+}
+
+function useHashRoute() {
+  const [hash, setHash] = useState(() => window.location.hash)
+  useEffect(() => {
+    const onHashChange = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
+  return hash.startsWith('#/pricing') ? 'pricing' : 'home'
 }
 
 function useNavScrollState() {
@@ -729,38 +730,76 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
   )
 }
 
-function DrivesAndEvents({ onApply }: { onApply: () => void }) {
-  const [tab, setTab] = useState<'drives' | 'events'>('drives')
-  const items = tab === 'drives' ? walkInDrives : eventsHackathons
+function DriveCard({ item, index, onApply }: { item: DriveEvent; index: number; onApply: () => void }) {
+  return (
+    <article className="drive-card" style={{ animationDelay: `${index * 70}ms` }}>
+      <div className="drive-card__head">
+        <span className="drive-card__date" aria-hidden="true">
+          <strong>{item.day}</strong>
+          <span>{item.month}</span>
+        </span>
+        <div className="drive-card__host">
+          <strong>{item.host}</strong>
+          <span><IconPin /> {item.location}</span>
+        </div>
+        <span className="drive-card__type">{item.type}</span>
+      </div>
+      <h3 className="drive-card__title">{item.title}</h3>
+      <span className="drive-card__time"><IconClock /> {item.time} · {item.day} {item.month}</span>
+      <div className="drive-card__tags">
+        <span className="job-tag job-tag--mode">{item.mode}</span>
+        {item.tags.map((tag) => (
+          <span className="job-tag" key={tag}>{tag}</span>
+        ))}
+      </div>
+      <div className="drive-card__foot">
+        <span className="drive-card__perk"><IconSpark /> {item.perk}</span>
+        <button type="button" className="btn btn--solid btn--sm drive-card__cta" onClick={onApply}>
+          Register <IconArrowUpRight />
+        </button>
+      </div>
+    </article>
+  )
+}
 
+function WalkInDrives({ onApply }: { onApply: () => void }) {
   return (
     <section className="drives-section" id="drives">
       <SectionHead
         eyebrow="Happening now"
-        title={tab === 'drives' ? 'Walk-in drives near you' : 'Events & hackathons worth your weekend'}
-        sub={
-          tab === 'drives'
-            ? 'Show up with your resume, walk out with an offer. Verified companies, real openings, zero cover letters.'
-            : 'Build, compete, and get noticed — every event puts you in the room with the people who hire.'
-        }
+        title="Walk-in drives near you"
+        sub="Show up with your resume, walk out with an offer. Verified companies, real openings, zero cover letters."
+      />
+      <div className="drives-grid">
+        {walkInDrives.map((item, i) => (
+          <DriveCard item={item} index={i} onApply={onApply} key={item.title} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function EventsAndHackathons({ onApply }: { onApply: () => void }) {
+  const [tab, setTab] = useState<'events' | 'hackathons'>('events')
+  const items = eventsHackathons.filter((item) =>
+    tab === 'hackathons' ? item.type === 'Hackathon' : item.type !== 'Hackathon'
+  )
+
+  return (
+    <section className="drives-section" id="events">
+      <SectionHead
+        eyebrow="Beyond the drives"
+        title="Events & hackathons worth your weekend"
+        sub="Build, compete, and get noticed — every event puts you in the room with the people who hire."
       />
 
       <div className="drives-toggle-wrap reveal">
         <div
-          className={`drives-toggle ${tab === 'events' ? 'drives-toggle--events' : ''}`}
+          className={`drives-toggle ${tab === 'hackathons' ? 'drives-toggle--second' : ''}`}
           role="tablist"
-          aria-label="Walk-in drives and events"
+          aria-label="Events and hackathons"
         >
           <span className="drives-toggle__thumb" aria-hidden="true" />
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === 'drives'}
-            className={`drives-toggle__btn ${tab === 'drives' ? 'is-active' : ''}`}
-            onClick={() => setTab('drives')}
-          >
-            <IconBriefcase /> Walk-in Drives
-          </button>
           <button
             type="button"
             role="tab"
@@ -768,40 +807,23 @@ function DrivesAndEvents({ onApply }: { onApply: () => void }) {
             className={`drives-toggle__btn ${tab === 'events' ? 'is-active' : ''}`}
             onClick={() => setTab('events')}
           >
-            <IconTrophy /> Events & Hackathons
+            <IconSpark /> Events
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'hackathons'}
+            className={`drives-toggle__btn ${tab === 'hackathons' ? 'is-active' : ''}`}
+            onClick={() => setTab('hackathons')}
+          >
+            <IconTrophy /> Hackathons
           </button>
         </div>
       </div>
 
       <div className="drives-grid" key={tab}>
         {items.map((item, i) => (
-          <article className="drive-card" key={item.title} style={{ animationDelay: `${i * 70}ms` }}>
-            <div className="drive-card__head">
-              <span className="drive-card__date" aria-hidden="true">
-                <strong>{item.day}</strong>
-                <span>{item.month}</span>
-              </span>
-              <div className="drive-card__host">
-                <strong>{item.host}</strong>
-                <span><IconPin /> {item.location}</span>
-              </div>
-              <span className="drive-card__type">{item.type}</span>
-            </div>
-            <h3 className="drive-card__title">{item.title}</h3>
-            <span className="drive-card__time"><IconClock /> {item.time} · {item.day} {item.month}</span>
-            <div className="drive-card__tags">
-              <span className="job-tag job-tag--mode">{item.mode}</span>
-              {item.tags.map((tag) => (
-                <span className="job-tag" key={tag}>{tag}</span>
-              ))}
-            </div>
-            <div className="drive-card__foot">
-              <span className="drive-card__perk"><IconSpark /> {item.perk}</span>
-              <button type="button" className="btn btn--solid btn--sm drive-card__cta" onClick={onApply}>
-                Register <IconArrowUpRight />
-              </button>
-            </div>
-          </article>
+          <DriveCard item={item} index={i} onApply={onApply} key={item.title} />
         ))}
       </div>
     </section>
@@ -1218,7 +1240,8 @@ function SignupModal({
 }
 
 function App() {
-  useScrollReveal()
+  const route = useHashRoute()
+  useScrollReveal(route)
   const navScrolled = useNavScrollState()
   const [signupModal, setSignupModal] = useState<{ open: boolean; role: SignupRole }>({
     open: true,
@@ -1232,6 +1255,15 @@ function App() {
     setSignupModal({ open: true, role })
   }
   const closeSignup = () => setSignupModal((s) => ({ ...s, open: false }))
+
+  useEffect(() => {
+    if (route === 'pricing') {
+      window.scrollTo({ top: 0 })
+    } else {
+      const id = window.location.hash.slice(1)
+      if (id && !id.startsWith('/')) document.getElementById(id)?.scrollIntoView()
+    }
+  }, [route])
 
   return (
     <>
@@ -1253,7 +1285,7 @@ function App() {
             <a href="#drives" onClick={() => setMobileNavOpen(false)}>Walk-in Drives</a>
             <a href="#how" onClick={() => setMobileNavOpen(false)}>How it works</a>
             <a href="#recruiters" onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
-            <a href="#pricing" onClick={() => setMobileNavOpen(false)}>Pricing</a>
+            <a href="#/pricing" onClick={() => setMobileNavOpen(false)}>Pricing</a>
             <button type="button" className="btn btn--outline nav__links-login" onClick={() => openSignup('candidate')}>
               Login
             </button>
@@ -1282,6 +1314,14 @@ function App() {
       </header>
 
       <main id="main">
+        {route === 'pricing' ? (
+          <PricingSection
+            audience={pricingAudience}
+            onAudienceChange={setPricingAudience}
+            onSelectPlan={(audience) => openSignup(audience === 'company' ? 'employer' : 'candidate')}
+          />
+        ) : (
+        <>
         <section className="hero">
           <div className="hero__copy">
             <a href="#copilot" className="hero__badge reveal">
@@ -1367,7 +1407,8 @@ function App() {
 
         <FeaturedRoles onApply={() => openSignup('candidate')} />
 
-        <DrivesAndEvents onApply={() => openSignup('candidate')} />
+        <WalkInDrives onApply={() => openSignup('candidate')} />
+        <EventsAndHackathons onApply={() => openSignup('candidate')} />
 
         <section className="why-section">
           <SectionHead
@@ -1531,7 +1572,7 @@ function App() {
                 <button type="button" className="btn btn--ink" onClick={() => openSignup('employer')}>
                   Post a job <IconArrowUpRight />
                 </button>
-                <a className="btn btn--outline-ink" href="#pricing" onClick={() => setPricingAudience('company')}>
+                <a className="btn btn--outline-ink" href="#/pricing" onClick={() => setPricingAudience('company')}>
                   See pricing
                 </a>
               </div>
@@ -1546,12 +1587,6 @@ function App() {
             </div>
           </div>
         </section>
-
-        <PricingSection
-          audience={pricingAudience}
-          onAudienceChange={setPricingAudience}
-          onSelectPlan={(audience) => openSignup(audience === 'company' ? 'employer' : 'candidate')}
-        />
 
         <section className="appsection">
           <div className="appsection__copy reveal">
@@ -1594,6 +1629,8 @@ function App() {
           <NewsletterForm />
           <span className="newsletter__note">Join 120,000+ professionals. Unsubscribe anytime.</span>
         </section>
+        </>
+        )}
       </main>
 
       <footer className="footer">
@@ -1617,7 +1654,7 @@ function App() {
           <h4>For employers</h4>
           <a href="#recruiters">Post a job</a>
           <a href="#companies">Browse companies</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#/pricing">Pricing</a>
           <a href="#drives">Hiring events</a>
           <a href="#recruiters">Employer solutions</a>
         </nav>

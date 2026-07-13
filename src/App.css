@@ -1512,7 +1512,7 @@ section[id] { scroll-margin-top: 84px; }
   box-shadow: 0 8px 22px rgba(255, 197, 61, 0.35);
   transition: transform 0.35s var(--ease-out);
 }
-.drives-toggle--events .drives-toggle__thumb { transform: translateX(100%); }
+.drives-toggle--second .drives-toggle__thumb { transform: translateX(100%); }
 
 .drives-toggle__btn {
   position: relative;
@@ -2423,7 +2423,7 @@ section[id] { scroll-margin-top: 84px; }
 
 /* ---------------------------------- pricing ---------------------------------- */
 
-.pricing { padding-block: 48px; }
+.pricing { padding-block: 72px 96px; min-height: calc(100vh - 480px); }
 
 .pricing__toggle-wrap {
   display: flex;
