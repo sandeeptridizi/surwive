@@ -99,11 +99,14 @@ function IconShieldCheck() {
   )
 }
 
-function IconDollar() {
+function IconRupee() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v20" />
-      <path d="M17 6.5c0-1.9-2.2-3-5-3s-5 1.1-5 3c0 1.9 2.2 2.7 5 3.3 2.8.6 5 1.4 5 3.4 0 1.9-2.2 3-5 3s-5-1.1-5-3" />
+      <path d="M6 3h12" />
+      <path d="M6 8h12" />
+      <path d="M6 13h3" />
+      <path d="M9 13c6.7 0 6.7-10 0-10" />
+      <path d="m6 13 8.5 8" />
     </svg>
   )
 }
@@ -131,6 +134,15 @@ function IconStar() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
       <path d="M12 2.5l2.9 6 6.6.7-4.9 4.6 1.3 6.5L12 16.9l-5.9 3.4 1.3-6.5-4.9-4.6 6.6-.7L12 2.5Z" />
+    </svg>
+  )
+}
+
+function IconCrown() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3.5 8.5 7 12l5-6.5L17 12l3.5-3.5L19 18.5H5L3.5 8.5Z" />
+      <path d="M5 21h14" />
     </svg>
   )
 }
@@ -254,12 +266,12 @@ const trendingChips = ['Remote roles', 'AI Engineer', 'Product Manager', 'UX Des
 const trustedCompanies = ['Cobalt', 'Lumen', 'Quanta', 'Vertex', 'Beacon', 'Helios', 'Nova', 'Delta', 'Atlas', 'Orbit']
 
 const featuredJobs = [
-  { company: 'Cobalt', initial: 'C', featured: true, title: 'Senior Frontend Engineer', location: 'San Francisco', exp: '5+ yrs', remote: true, salary: '$140k – $180k' },
-  { company: 'Lumen', initial: 'L', featured: false, title: 'Product Designer', location: 'Remote', exp: '3+ yrs', remote: true, salary: '$110k – $150k' },
-  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Engineer', location: 'New York', exp: '4+ yrs', remote: false, salary: '$160k – $210k' },
-  { company: 'Vertex', initial: 'V', featured: false, title: 'DevOps Engineer', location: 'Austin, TX', exp: '4+ yrs', remote: true, salary: '$130k – $170k' },
-  { company: 'Beacon', initial: 'B', featured: false, title: 'Data Scientist', location: 'Remote', exp: '3+ yrs', remote: true, salary: '$135k – $175k' },
-  { company: 'Helios', initial: 'H', featured: true, title: 'Engineering Manager', location: 'Seattle, WA', exp: '8+ yrs', remote: false, salary: '$190k – $240k' },
+  { company: 'Cobalt', initial: 'C', featured: true, title: 'Senior Frontend Engineer', location: 'San Francisco', exp: '5+ yrs', remote: true, salary: '₹140k – ₹180k' },
+  { company: 'Lumen', initial: 'L', featured: false, title: 'Product Designer', location: 'Remote', exp: '3+ yrs', remote: true, salary: '₹110k – ₹150k' },
+  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Engineer', location: 'New York', exp: '4+ yrs', remote: false, salary: '₹160k – ₹210k' },
+  { company: 'Vertex', initial: 'V', featured: false, title: 'DevOps Engineer', location: 'Austin, TX', exp: '4+ yrs', remote: true, salary: '₹130k – ₹170k' },
+  { company: 'Beacon', initial: 'B', featured: false, title: 'Data Scientist', location: 'Remote', exp: '3+ yrs', remote: true, salary: '₹135k – ₹175k' },
+  { company: 'Helios', initial: 'H', featured: true, title: 'Engineering Manager', location: 'Seattle, WA', exp: '8+ yrs', remote: false, salary: '₹190k – ₹240k' },
 ]
 
 const categories = [
@@ -270,7 +282,7 @@ const categories = [
   { name: 'Cloud & Infra', count: '1,680 open roles', icon: <IconCloud /> },
   { name: 'Cyber Security', count: '980 open roles', icon: <IconLock /> },
   { name: 'Marketing', count: '2,410 open roles', icon: <IconMegaphone /> },
-  { name: 'Finance', count: '1,530 open roles', icon: <IconDollar /> },
+  { name: 'Finance', count: '1,530 open roles', icon: <IconRupee /> },
   { name: 'Human Resources', count: '870 open roles', icon: <IconUsers /> },
   { name: 'Healthcare', count: '1,260 open roles', icon: <IconHeart /> },
 ]
@@ -281,7 +293,7 @@ const whyFeatures = [
   { icon: <IconArrowUpRight />, title: 'One-click Apply', body: 'Tailored applications submitted on your behalf the moment a fitting role opens up.' },
   { icon: <IconDoc />, title: 'Resume Builder', body: 'Build one profile that speaks for you everywhere — polished, parsable, always up to date.' },
   { icon: <IconGrad />, title: 'Career Coaching', body: 'On-demand guidance from people who have sat on both sides of the interview table.' },
-  { icon: <IconDollar />, title: 'Salary Insights', body: 'Know your worth before the offer. Real compensation data across roles and regions.' },
+  { icon: <IconRupee />, title: 'Salary Insights', body: 'Know your worth before the offer. Real compensation data across roles and regions.' },
 ]
 
 const matchSignals = [
@@ -316,9 +328,90 @@ const recruiterStats = [
   { value: '4,800', label: 'companies hiring' },
 ]
 
+type PricingAudience = 'student' | 'company'
+
+type PricingPlan = {
+  name: string
+  tagline: string
+  price: string
+  period: string
+  featured?: boolean
+  badge?: string
+  cta: string
+  features: { title: string; sub: string }[]
+}
+
+const pricingPlans: Record<PricingAudience, PricingPlan[]> = {
+  student: [
+    {
+      name: 'Elite Plan',
+      tagline: 'Perfect for job seekers',
+      price: '99',
+      period: '60 days',
+      cta: 'Choose Elite Plan',
+      features: [
+        { title: 'Verified Badge', sub: 'Stand out with a verified profile' },
+        { title: 'Background Verification', sub: 'Complete profile verification' },
+        { title: 'Auto Applications', sub: 'AI applies to matched jobs' },
+        { title: 'Resume Builder', sub: 'Professional AI-powered resumes' },
+        { title: '60 Days Access', sub: '2 months of premium access' },
+      ],
+    },
+    {
+      name: 'Pro Plan',
+      tagline: 'Best for career growth',
+      price: '199',
+      period: '100 days',
+      featured: true,
+      badge: 'Popular',
+      cta: 'Choose Pro Plan',
+      features: [
+        { title: 'Verified Badge', sub: 'Premium verified profile' },
+        { title: 'Background Verification', sub: 'Complete profile verification' },
+        { title: 'Auto Applications', sub: 'AI applies to matched jobs' },
+        { title: 'Resume Builder', sub: 'Professional AI-powered resumes' },
+        { title: '100 Days Access', sub: '3+ months of premium access' },
+        { title: 'Job Assistant', sub: 'Personal AI career assistant' },
+      ],
+    },
+  ],
+  company: [
+    {
+      name: 'Free Plan',
+      tagline: 'Start hiring at zero cost',
+      price: '0',
+      period: 'always free',
+      cta: 'Select Free Plan',
+      features: [
+        { title: '15 Days Validity', sub: 'Job listing active for 15 days' },
+        { title: '20 Applicants', sub: 'Receive up to 20 applications' },
+        { title: 'AI Matching', sub: 'Smart candidate matching algorithm' },
+        { title: 'Chat System', sub: 'Direct messaging with candidates' },
+      ],
+    },
+    {
+      name: 'Premium Plan',
+      tagline: 'Hire faster, hire better',
+      price: '249',
+      period: 'per posting',
+      featured: true,
+      badge: 'Recommended',
+      cta: 'Select Premium Plan',
+      features: [
+        { title: '60 Days Validity', sub: 'Job listing active for 60 days' },
+        { title: '50 Applicants', sub: 'Receive up to 50 applications' },
+        { title: 'Featured Job', sub: 'Showcase your job to top applicants' },
+        { title: 'Verified Candidates Priority', sub: 'See verified profiles first' },
+        { title: 'AI Matching', sub: 'Smart candidate matching algorithm' },
+        { title: 'Chat System', sub: 'Direct messaging with candidates' },
+      ],
+    },
+  ],
+}
+
 const articles = [
   { tag: 'Interviews', tone: 'indigo', icon: <IconUsers />, title: 'How to answer "tell me about yourself" — without rambling', date: 'Jul 2, 2026', read: '6 min read' },
-  { tag: 'Salary', tone: 'gold', icon: <IconDollar />, title: 'The negotiation script that added $22k to one offer', date: 'Jun 28, 2026', read: '8 min read' },
+  { tag: 'Salary', tone: 'gold', icon: <IconRupee />, title: 'The negotiation script that added ₹22k to one offer', date: 'Jun 28, 2026', read: '8 min read' },
   { tag: 'Remote', tone: 'teal', icon: <IconCloud />, title: 'Building a portfolio that gets you remote-first roles', date: 'Jun 20, 2026', read: '5 min read' },
 ]
 
@@ -415,7 +508,7 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
 
       <div className="chatcard__body">
         <div className="chatmsg chatmsg--user">
-          Remote senior frontend roles, $140k+ — ideally a product-led team.
+          Remote senior frontend roles, ₹140k+ — ideally a product-led team.
         </div>
         <div className="chatmsg chatmsg--ai">
           Scanned every open role. <strong>12 strong fits</strong> — here's your top match:
@@ -426,7 +519,7 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
             <span className="chatmatch__logo">C</span>
             <div>
               <strong>Senior Frontend Engineer</strong>
-              <span>Cobalt · Remote · $140k–$180k</span>
+              <span>Cobalt · Remote · ₹140k–₹180k</span>
             </div>
             <span className="chatmatch__score">96% fit</span>
           </div>
@@ -489,6 +582,100 @@ function NewsletterForm() {
       {status === 'success' && <span className="newsletter__status newsletter__status--success">You're on the list!</span>}
       {status === 'error' && <span className="newsletter__status newsletter__status--error">Something went wrong.</span>}
     </form>
+  )
+}
+
+function PricingSection({
+  audience,
+  onAudienceChange,
+  onSelectPlan,
+}: {
+  audience: PricingAudience
+  onAudienceChange: (audience: PricingAudience) => void
+  onSelectPlan: (audience: PricingAudience) => void
+}) {
+  return (
+    <section className="pricing" id="pricing">
+      <SectionHead
+        eyebrow="Pricing"
+        title="Simple plans for every side of the table"
+        sub="Whether you're landing a role or filling one — pick a plan, and only pay for what moves you forward."
+      />
+
+      <div className="pricing__toggle-wrap reveal">
+        <div
+          className={`pricing-toggle ${audience === 'company' ? 'pricing-toggle--company' : ''}`}
+          role="tablist"
+          aria-label="Pricing for"
+        >
+          <span className="pricing-toggle__thumb" aria-hidden="true" />
+          <button
+            type="button"
+            role="tab"
+            aria-selected={audience === 'student'}
+            className={`pricing-toggle__btn ${audience === 'student' ? 'is-active' : ''}`}
+            onClick={() => onAudienceChange('student')}
+          >
+            <IconGrad /> For Students
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={audience === 'company'}
+            className={`pricing-toggle__btn ${audience === 'company' ? 'is-active' : ''}`}
+            onClick={() => onAudienceChange('company')}
+          >
+            <IconUsers /> For Companies
+          </button>
+        </div>
+      </div>
+
+      <div className="pricing__grid" key={audience}>
+        {pricingPlans[audience].map((plan, i) => (
+          <article
+            className={`plan-card ${plan.featured ? 'plan-card--featured' : ''}`}
+            key={plan.name}
+            style={{ animationDelay: `${i * 110}ms` }}
+          >
+            {plan.badge && <span className="plan-card__badge">{plan.badge}</span>}
+
+            <div className="plan-card__head">
+              <span className="plan-card__icon">{plan.featured ? <IconCrown /> : <IconShieldCheck />}</span>
+              <div className="plan-card__id">
+                <h3>{plan.name}</h3>
+                <span>{plan.tagline}</span>
+              </div>
+            </div>
+
+            <div className="plan-card__price">
+              <span className="plan-card__currency">₹</span>
+              <span className="plan-card__amount">{plan.price}</span>
+              <span className="plan-card__period">/ {plan.period}</span>
+            </div>
+
+            <ul className="plan-card__features">
+              {plan.features.map((f) => (
+                <li key={f.title}>
+                  <span className="plan-card__check"><IconCheck /></span>
+                  <span className="plan-card__feature">
+                    <strong>{f.title}</strong>
+                    <span>{f.sub}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              type="button"
+              className={`btn ${plan.featured ? 'btn--solid' : 'btn--outline'} plan-card__cta`}
+              onClick={() => onSelectPlan(audience)}
+            >
+              {plan.cta} <IconArrowUpRight />
+            </button>
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -771,6 +958,7 @@ function App() {
     role: 'candidate',
   })
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [pricingAudience, setPricingAudience] = useState<PricingAudience>('student')
 
   const openSignup = (role: SignupRole) => {
     setMobileNavOpen(false)
@@ -796,6 +984,7 @@ function App() {
             <a href="#jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
             <a href="#companies" onClick={() => setMobileNavOpen(false)}>Companies</a>
             <a href="#how" onClick={() => setMobileNavOpen(false)}>How it works</a>
+            <a href="#pricing" onClick={() => setMobileNavOpen(false)}>Pricing</a>
             <a href="#resources" onClick={() => setMobileNavOpen(false)}>Career Resources</a>
             <a href="#recruiters" onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
             <button type="button" className="btn btn--outline nav__links-login" onClick={() => openSignup('candidate')}>
@@ -852,7 +1041,7 @@ function App() {
               <span className="hero-prompt__icon"><IconSpark /></span>
               <input
                 type="text"
-                placeholder='Try "remote senior frontend, $140k+"'
+                placeholder='Try "remote senior frontend, ₹140k+"'
                 aria-label="Describe your ideal role"
               />
               <button type="submit" className="btn btn--solid hero-prompt__btn">
@@ -881,7 +1070,7 @@ function App() {
             <div className="hero-float hero-float--salary" aria-hidden="true">
               <span className="hero-float__icon"><IconSpark /></span>
               <div>
-                <span className="hero-float__value">$150k+</span>
+                <span className="hero-float__value">₹150k+</span>
                 <span className="hero-float__label">senior roles this week</span>
               </div>
             </div>
@@ -1006,13 +1195,13 @@ function App() {
           <div className="copilot__panel reveal reveal--panel" style={{ transitionDelay: '120ms' }} aria-hidden="true">
             <span className="copilot__panel-live">Live</span>
             <div className="copilot__panel-bar"><span /><span /><span /></div>
-            <div className="copilot__panel-query">"Find me senior frontend roles, remote, $140k+"</div>
+            <div className="copilot__panel-query">"Find me senior frontend roles, remote, ₹140k+"</div>
             <div className="copilot__panel-match">
               <div className="copilot__panel-match-head">
                 <span className="copilot__panel-avatar">C</span>
                 <div>
                   <strong>Senior Frontend Engineer</strong>
-                  <span>Cobalt · Remote · $140k–$180k</span>
+                  <span>Cobalt · Remote · ₹140k–₹180k</span>
                 </div>
                 <span className="copilot__panel-score">96% match</span>
               </div>
@@ -1102,9 +1291,9 @@ function App() {
                 <button type="button" className="btn btn--ink" onClick={() => openSignup('employer')}>
                   Post a job <IconArrowUpRight />
                 </button>
-                <button type="button" className="btn btn--outline-ink" onClick={() => openSignup('employer')}>
+                <a className="btn btn--outline-ink" href="#pricing" onClick={() => setPricingAudience('company')}>
                   See pricing
-                </button>
+                </a>
               </div>
             </div>
             <div className="recruiter__stats">
@@ -1117,6 +1306,12 @@ function App() {
             </div>
           </div>
         </section>
+
+        <PricingSection
+          audience={pricingAudience}
+          onAudienceChange={setPricingAudience}
+          onSelectPlan={(audience) => openSignup(audience === 'company' ? 'employer' : 'candidate')}
+        />
 
         <section className="articles-section" id="resources">
           <SectionHead
@@ -1237,7 +1432,7 @@ function App() {
           <h4>For employers</h4>
           <a href="#recruiters">Post a job</a>
           <a href="#companies">Browse companies</a>
-          <a href="#recruiters">Pricing</a>
+          <a href="#pricing">Pricing</a>
           <a href="#resources">Resources</a>
           <a href="#recruiters">Employer solutions</a>
         </nav>
