@@ -1,6 +1,14 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import './App.css'
 import logo from "./assets/Group 2.png";
+import appPic from "./assets/apppic.png";
+import logo1 from "./assets/logo1.png";
+import logo2 from "./assets/logo2.png";
+import logo3 from "./assets/logo3.png";
+import logo4 from "./assets/logo4.png";
+import logo5 from "./assets/logo5.png";
+import logo6 from "./assets/logo6.png";
+import logo7 from "./assets/logo7.png";
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXl3P8SeRYzVGO4mSF9pU3_7n6gI_5PrkpSdfN7VfR6MYZaPG28G_xsIcl_gN2cV3F/exec";
 
@@ -11,21 +19,6 @@ async function submitToGoogleSheet(data: Record<string, string>) {
     mode: 'no-cors',
     body: new URLSearchParams(data),
   })
-}
-
-function IconRobot() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="8" width="16" height="11" rx="3" />
-      <path d="M12 8V4" />
-      <circle cx="12" cy="3" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="8.5" cy="13.5" r="1.2" fill="currentColor" stroke="none" />
-      <circle cx="15.5" cy="13.5" r="1.2" fill="currentColor" stroke="none" />
-      <path d="M9 17h6" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-    </svg>
-  )
 }
 
 function IconUsers() {
@@ -147,64 +140,33 @@ function IconCrown() {
   )
 }
 
-function IconCode() {
+function IconBriefcase() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" />
+      <rect x="3" y="7.5" width="18" height="12.5" rx="2.5" />
+      <path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5" />
+      <path d="M3 12.5c3 1.4 6 2.1 9 2.1s6-.7 9-2.1" />
     </svg>
   )
 }
 
-function IconPalette() {
+function IconTrophy() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3a9 8 0 1 0 0 16c1.2 0 2-1 2-2 0-.6-.3-1-.6-1.4-.3-.4-.5-.7-.5-1.2 0-.9.7-1.4 1.6-1.4H16a4 4 0 0 0 4-4c0-3.3-3.6-6-8-6Z" />
-      <circle cx="7.5" cy="11" r="1" fill="currentColor" stroke="none" />
-      <circle cx="9.5" cy="7.5" r="1" fill="currentColor" stroke="none" />
-      <circle cx="14.5" cy="7.5" r="1" fill="currentColor" stroke="none" />
+      <path d="M8 4h8v6a4 4 0 0 1-8 0V4Z" />
+      <path d="M8 5H4.5c.2 3 1.6 4.6 4 4.9" />
+      <path d="M16 5h3.5c-.2 3-1.6 4.6-4 4.9" />
+      <path d="M12 14v3.5" />
+      <path d="M8.5 20.5c.4-2 1.7-3 3.5-3s3.1 1 3.5 3h-7Z" />
     </svg>
   )
 }
 
-function IconChartBar() {
+function IconClock() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 20V10M12 20V4M20 20v-7" />
-      <path d="M2 20h20" />
-    </svg>
-  )
-}
-
-function IconCloud() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 18h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.4-1.5A4.5 4.5 0 0 0 7 18Z" />
-    </svg>
-  )
-}
-
-function IconLock() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="5" y="11" width="14" height="9" rx="2" />
-      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-    </svg>
-  )
-}
-
-function IconMegaphone() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 10v4a1 1 0 0 0 1 1h2l7 4V5L6 9H4a1 1 0 0 0-1 1Z" />
-      <path d="M17 9a4 4 0 0 1 0 6" />
-    </svg>
-  )
-}
-
-function IconHeart() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 20s-7-4.4-9.3-9A5 5 0 0 1 12 6a5 5 0 0 1 9.3 5c-2.3 4.6-9.3 9-9.3 9Z" />
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
     </svg>
   )
 }
@@ -263,37 +225,85 @@ function IconGlobe() {
 
 const trendingChips = ['Remote roles', 'AI Engineer', 'Product Manager', 'UX Designer']
 
-const trustedCompanies = ['Cobalt', 'Lumen', 'Quanta', 'Vertex', 'Beacon', 'Helios', 'Nova', 'Delta', 'Atlas', 'Orbit']
-
-const featuredJobs = [
-  { company: 'Cobalt', initial: 'C', featured: true, title: 'Senior Frontend Engineer', location: 'San Francisco', exp: '5+ yrs', remote: true, salary: '₹140k – ₹180k' },
-  { company: 'Lumen', initial: 'L', featured: false, title: 'Product Designer', location: 'Remote', exp: '3+ yrs', remote: true, salary: '₹110k – ₹150k' },
-  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Engineer', location: 'New York', exp: '4+ yrs', remote: false, salary: '₹160k – ₹210k' },
-  { company: 'Vertex', initial: 'V', featured: false, title: 'DevOps Engineer', location: 'Austin, TX', exp: '4+ yrs', remote: true, salary: '₹130k – ₹170k' },
-  { company: 'Beacon', initial: 'B', featured: false, title: 'Data Scientist', location: 'Remote', exp: '3+ yrs', remote: true, salary: '₹135k – ₹175k' },
-  { company: 'Helios', initial: 'H', featured: true, title: 'Engineering Manager', location: 'Seattle, WA', exp: '8+ yrs', remote: false, salary: '₹190k – ₹240k' },
+const trustedLogos: { src: string; invert?: boolean }[] = [
+  { src: logo1, invert: true },
+  { src: logo2 },
+  { src: logo3 },
+  { src: logo4 },
+  { src: logo5, invert: true },
+  { src: logo6 },
+  { src: logo7 },
 ]
 
-const categories = [
-  { name: 'Software Development', count: '4,280 open roles', icon: <IconCode /> },
-  { name: 'AI & Machine Learning', count: '1,940 open roles', icon: <IconRobot /> },
-  { name: 'UI / UX Design', count: '1,120 open roles', icon: <IconPalette /> },
-  { name: 'Data Science', count: '2,050 open roles', icon: <IconChartBar /> },
-  { name: 'Cloud & Infra', count: '1,680 open roles', icon: <IconCloud /> },
-  { name: 'Cyber Security', count: '980 open roles', icon: <IconLock /> },
-  { name: 'Marketing', count: '2,410 open roles', icon: <IconMegaphone /> },
-  { name: 'Finance', count: '1,530 open roles', icon: <IconRupee /> },
-  { name: 'Human Resources', count: '870 open roles', icon: <IconUsers /> },
-  { name: 'Healthcare', count: '1,260 open roles', icon: <IconHeart /> },
+type FeaturedRole = {
+  company: string
+  initial: string
+  featured: boolean
+  title: string
+  location: string
+  mode: 'Remote' | 'Hybrid' | 'On-site'
+  detail: string
+  skills: string[]
+  pay: string
+  per: string
+}
+
+const featuredJobs: FeaturedRole[] = [
+  { company: 'Cobalt', initial: 'C', featured: true, title: 'Senior Frontend Engineer', location: 'Bengaluru', mode: 'Remote', detail: '5+ yrs', skills: ['React', 'TypeScript'], pay: '₹24L – ₹32L', per: 'per year' },
+  { company: 'Lumen', initial: 'L', featured: false, title: 'Product Designer', location: 'Mumbai', mode: 'Hybrid', detail: '3+ yrs', skills: ['Figma', 'Design systems'], pay: '₹16L – ₹22L', per: 'per year' },
+  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Engineer', location: 'Hyderabad', mode: 'On-site', detail: '4+ yrs', skills: ['Python', 'PyTorch'], pay: '₹28L – ₹38L', per: 'per year' },
+  { company: 'Vertex', initial: 'V', featured: false, title: 'DevOps Engineer', location: 'Pune', mode: 'Remote', detail: '4+ yrs', skills: ['AWS', 'Kubernetes'], pay: '₹20L – ₹28L', per: 'per year' },
+  { company: 'Beacon', initial: 'B', featured: false, title: 'Data Scientist', location: 'Gurugram', mode: 'Remote', detail: '3+ yrs', skills: ['SQL', 'Python'], pay: '₹18L – ₹26L', per: 'per year' },
+  { company: 'Helios', initial: 'H', featured: true, title: 'Engineering Manager', location: 'Chennai', mode: 'Hybrid', detail: '8+ yrs', skills: ['Platform', 'Team of 12'], pay: '₹40L – ₹55L', per: 'per year' },
 ]
 
-const whyFeatures = [
+const featuredInternships: FeaturedRole[] = [
+  { company: 'Cobalt', initial: 'C', featured: true, title: 'Frontend Developer Intern', location: 'Bengaluru', mode: 'Remote', detail: '6 months', skills: ['React', 'Tailwind'], pay: '₹40k', per: 'stipend / month' },
+  { company: 'Nova', initial: 'N', featured: false, title: 'UI/UX Design Intern', location: 'Mumbai', mode: 'Hybrid', detail: '3 months', skills: ['Figma', 'Prototyping'], pay: '₹25k', per: 'stipend / month' },
+  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Intern', location: 'Hyderabad', mode: 'On-site', detail: '6 months', skills: ['Python', 'NumPy'], pay: '₹50k', per: 'stipend / month' },
+  { company: 'Atlas', initial: 'A', featured: false, title: 'Backend Developer Intern', location: 'Pune', mode: 'Remote', detail: '6 months', skills: ['Node.js', 'MongoDB'], pay: '₹35k', per: 'stipend / month' },
+  { company: 'Delta', initial: 'D', featured: false, title: 'Data Analyst Intern', location: 'Gurugram', mode: 'Hybrid', detail: '3 months', skills: ['SQL', 'Excel'], pay: '₹30k', per: 'stipend / month' },
+  { company: 'Orbit', initial: 'O', featured: true, title: 'Digital Marketing Intern', location: 'Chennai', mode: 'Remote', detail: '3 months', skills: ['SEO', 'Content'], pay: '₹20k', per: 'stipend / month' },
+]
+
+type DriveEvent = {
+  host: string
+  title: string
+  type: string
+  day: string
+  month: string
+  time: string
+  location: string
+  mode: 'On-site' | 'Online' | 'Hybrid'
+  tags: string[]
+  perk: string
+}
+
+const walkInDrives: DriveEvent[] = [
+  { host: 'Cobalt', title: 'Frontend & Backend Mega Drive', type: 'Walk-in', day: '16', month: 'Jul', time: '9:00 AM – 4:00 PM', location: 'Bengaluru', mode: 'On-site', tags: ['0–4 yrs', 'React', 'Node.js'], perk: 'On-the-spot offers' },
+  { host: 'Quanta', title: 'ML & Data Science Open Drive', type: 'Walk-in', day: '18', month: 'Jul', time: '10:00 AM – 5:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['2+ yrs', 'Python', 'SQL'], perk: '80+ openings' },
+  { host: 'Vertex', title: 'DevOps Walk-in Wednesday', type: 'Walk-in', day: '22', month: 'Jul', time: '9:30 AM – 3:30 PM', location: 'Pune', mode: 'On-site', tags: ['3+ yrs', 'AWS', 'Kubernetes'], perk: 'Same-day results' },
+  { host: 'Lumen', title: 'Design Portfolio Day', type: 'Walk-in', day: '25', month: 'Jul', time: '11:00 AM – 4:00 PM', location: 'Mumbai', mode: 'On-site', tags: ['Freshers welcome', 'Figma'], perk: 'Live portfolio reviews' },
+  { host: 'Beacon', title: 'Analytics Hiring Blitz', type: 'Walk-in', day: '28', month: 'Jul', time: '9:00 AM – 2:00 PM', location: 'Gurugram', mode: 'On-site', tags: ['1–3 yrs', 'SQL', 'Power BI'], perk: '40 openings' },
+  { host: 'Helios', title: 'Engineering Open House', type: 'Walk-in', day: '01', month: 'Aug', time: '10:00 AM – 6:00 PM', location: 'Chennai', mode: 'On-site', tags: ['Senior roles', 'Platform'], perk: 'Meet the CTO' },
+]
+
+const eventsHackathons: DriveEvent[] = [
+  { host: 'Surwive', title: 'CodeStorm 48-Hour Hackathon', type: 'Hackathon', day: '19', month: 'Jul', time: 'Kicks off 6:00 PM', location: 'India-wide', mode: 'Online', tags: ['Teams of 2–4', 'Any stack'], perk: '₹5L prize pool' },
+  { host: 'Nova', title: 'Resume Roast — Live Teardown', type: 'Webinar', day: '24', month: 'Jul', time: '7:00 PM – 8:30 PM', location: 'Streamed live', mode: 'Online', tags: ['Free entry', 'Live Q&A'], perk: 'Recruiter panel' },
+  { host: 'Quanta', title: 'AI Builders Summit 2026', type: 'Conference', day: '02', month: 'Aug', time: '9:00 AM – 6:00 PM', location: 'Bengaluru', mode: 'Hybrid', tags: ['Keynotes', 'Live demos'], perk: '2,000+ builders' },
+  { host: 'Atlas', title: 'CloudCraft Hackathon', type: 'Hackathon', day: '08', month: 'Aug', time: '48 hours non-stop', location: 'Pune', mode: 'Hybrid', tags: ['Cloud-native', 'Open theme'], perk: 'PPIs for top 3' },
+  { host: 'Orbit', title: 'Women in Tech Meetup', type: 'Meetup', day: '14', month: 'Aug', time: '5:00 PM – 8:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['Networking', 'Mentorship'], perk: 'Free passes' },
+  { host: 'Surwive', title: 'Campus Job Fair 2026', type: 'Job Fair', day: '22', month: 'Aug', time: '10:00 AM – 5:00 PM', location: 'Mumbai', mode: 'On-site', tags: ['80+ companies', 'All streams'], perk: '5,000+ roles' },
+]
+
+const whyFeatures: { icon: ReactNode; title: string; body: string; size?: 'hero' | 'wide' }[] = [
+  { icon: <IconGear />, title: 'AI Job Matching', body: 'Our model reads roles the way a hiring manager does — scoring every opening against your skills, salary target, and seniority before it ever reaches you.', size: 'hero' },
   { icon: <IconShieldCheck />, title: 'Verified Employers', body: 'Every company is vetted before a single role goes live. No ghost listings, no scams.' },
-  { icon: <IconGear />, title: 'AI Job Matching', body: 'Our model reads roles the way a hiring manager does — surfacing only fits worth your time.' },
   { icon: <IconArrowUpRight />, title: 'One-click Apply', body: 'Tailored applications submitted on your behalf the moment a fitting role opens up.' },
   { icon: <IconDoc />, title: 'Resume Builder', body: 'Build one profile that speaks for you everywhere — polished, parsable, always up to date.' },
   { icon: <IconGrad />, title: 'Career Coaching', body: 'On-demand guidance from people who have sat on both sides of the interview table.' },
-  { icon: <IconRupee />, title: 'Salary Insights', body: 'Know your worth before the offer. Real compensation data across roles and regions.' },
+  { icon: <IconRupee />, title: 'Salary Insights', body: 'Know your worth before the offer. Real compensation data across roles and regions.', size: 'wide' },
 ]
 
 const matchSignals = [
@@ -409,12 +419,6 @@ const pricingPlans: Record<PricingAudience, PricingPlan[]> = {
   ],
 }
 
-const articles = [
-  { tag: 'Interviews', tone: 'indigo', icon: <IconUsers />, title: 'How to answer "tell me about yourself" — without rambling', date: 'Jul 2, 2026', read: '6 min read' },
-  { tag: 'Salary', tone: 'gold', icon: <IconRupee />, title: 'The negotiation script that added ₹22k to one offer', date: 'Jun 28, 2026', read: '8 min read' },
-  { tag: 'Remote', tone: 'teal', icon: <IconCloud />, title: 'Building a portfolio that gets you remote-first roles', date: 'Jun 20, 2026', read: '5 min read' },
-]
-
 function initials(name: string) {
   return name.split(' ').map((part) => part[0]).slice(0, 2).join('')
 }
@@ -494,39 +498,142 @@ function SectionHead({
   )
 }
 
+const CHAT_SCENARIOS = [
+  {
+    user: 'Remote senior frontend roles, ₹140k+ — ideally a product-led team.',
+    fits: '12 strong fits',
+    match: {
+      logo: 'C',
+      title: 'Senior Frontend Engineer',
+      meta: 'Cobalt · Remote · ₹140k–₹180k',
+      score: '96% fit',
+      reasons: [
+        'React + TypeScript depth matches your 5 yrs',
+        'Salary sits inside your target range',
+        'Remote-first, async-friendly team',
+      ],
+    },
+    typing: 'ranking 11 more matches…',
+  },
+  {
+    user: 'Product manager roles in fintech — hybrid in Bengaluru works.',
+    fits: '8 strong fits',
+    match: {
+      logo: 'Z',
+      title: 'Product Manager, Payments',
+      meta: 'Zephyr · Hybrid, Bengaluru · ₹160k–₹200k',
+      score: '94% fit',
+      reasons: [
+        'Fintech domain matches your last 3 yrs',
+        'Hybrid schedule fits your preference',
+        'Owns roadmap end to end, no layers',
+      ],
+    },
+    typing: 'ranking 7 more matches…',
+  },
+  {
+    user: 'AI engineer openings, remote-first — startups are fine.',
+    fits: '15 strong fits',
+    match: {
+      logo: 'N',
+      title: 'AI Engineer, LLM Platform',
+      meta: 'Nimbus Labs · Remote · ₹170k–₹220k',
+      score: '97% fit',
+      reasons: [
+        'Python + LLM stack mirrors your projects',
+        'Seed-stage startup, high ownership',
+        'Fully remote, flexible hours',
+      ],
+    },
+    typing: 'ranking 14 more matches…',
+  },
+  {
+    user: 'Senior UX designer with a product-led team, ₹120k+.',
+    fits: '9 strong fits',
+    match: {
+      logo: 'M',
+      title: 'Senior UX Designer',
+      meta: 'Mosaic · Remote · ₹120k–₹150k',
+      score: '95% fit',
+      reasons: [
+        'Design-system work matches your portfolio',
+        'Salary clears your ₹120k floor',
+        'Product-led org, design has a seat',
+      ],
+    },
+    typing: 'ranking 8 more matches…',
+  },
+  {
+    user: 'Data analyst roles on growth teams — remote or Pune.',
+    fits: '11 strong fits',
+    match: {
+      logo: 'A',
+      title: 'Senior Data Analyst, Growth',
+      meta: 'Arcadia · Remote · ₹110k–₹140k',
+      score: '93% fit',
+      reasons: [
+        'SQL + experimentation depth is a direct hit',
+        'Growth pod, ships weekly',
+        'Remote with quarterly Pune meetups',
+      ],
+    },
+    typing: 'ranking 10 more matches…',
+  },
+]
+
 function CopilotChatCard({ onApply }: { onApply: () => void }) {
+  const [scene, setScene] = useState(0)
+  const [leaving, setLeaving] = useState(false)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = window.setInterval(() => setLeaving(true), 5600)
+    return () => window.clearInterval(id)
+  }, [])
+
+  useEffect(() => {
+    if (!leaving) return
+    const id = window.setTimeout(() => {
+      setScene((s) => (s + 1) % CHAT_SCENARIOS.length)
+      setLeaving(false)
+    }, 450)
+    return () => window.clearTimeout(id)
+  }, [leaving])
+
+  const s = CHAT_SCENARIOS[scene]
+
   return (
     <div className="chatcard" aria-hidden="true">
       <div className="chatcard__head">
         <span className="chatcard__bot"><IconSpark /></span>
         <div className="chatcard__id">
           <strong>Surwive Copilot</strong>
-          <span><i className="chatcard__dot" /> Online — reading 25,000+ live roles</span>
+          <span><i className="chatcard__dot" /> <span className="chatcard__status-text">Online — reading 25,000+ live roles</span></span>
         </div>
         <span className="chatcard__live">Live</span>
       </div>
 
-      <div className="chatcard__body">
+      <div className={`chatcard__body ${leaving ? 'chatcard__body--leaving' : ''}`} key={scene}>
         <div className="chatmsg chatmsg--user">
-          Remote senior frontend roles, ₹140k+ — ideally a product-led team.
+          {s.user}
         </div>
         <div className="chatmsg chatmsg--ai">
-          Scanned every open role. <strong>12 strong fits</strong> — here's your top match:
+          Scanned every open role. <strong>{s.fits}</strong> — here's your top match:
         </div>
 
         <div className="chatmatch">
           <div className="chatmatch__head">
-            <span className="chatmatch__logo">C</span>
+            <span className="chatmatch__logo">{s.match.logo}</span>
             <div>
-              <strong>Senior Frontend Engineer</strong>
-              <span>Cobalt · Remote · ₹140k–₹180k</span>
+              <strong>{s.match.title}</strong>
+              <span>{s.match.meta}</span>
             </div>
-            <span className="chatmatch__score">96% fit</span>
+            <span className="chatmatch__score">{s.match.score}</span>
           </div>
           <ul className="chatmatch__reasons">
-            <li><IconCheck /> React + TypeScript depth matches your 5 yrs</li>
-            <li><IconCheck /> Salary sits inside your target range</li>
-            <li><IconCheck /> Remote-first, async-friendly team</li>
+            {s.match.reasons.map((reason) => (
+              <li key={reason}><IconCheck /> {reason}</li>
+            ))}
           </ul>
           <div className="chatmatch__actions">
             <button type="button" className="btn btn--solid btn--sm" onClick={onApply} tabIndex={-1}>Apply now</button>
@@ -536,7 +643,7 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
 
         <div className="chatcard__typing">
           <span /><span /><span />
-          ranking 11 more matches…
+          {s.typing}
         </div>
       </div>
 
@@ -546,6 +653,158 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
         <span className="chatcard__send"><IconSend /></span>
       </div>
     </div>
+  )
+}
+
+function FeaturedRoles({ onApply }: { onApply: () => void }) {
+  const [tab, setTab] = useState<'jobs' | 'internships'>('jobs')
+  const roles = tab === 'jobs' ? featuredJobs : featuredInternships
+
+  return (
+    <section className="jobs-section" id="jobs">
+      <SectionHead
+        align="split"
+        eyebrow="Featured roles"
+        title={tab === 'jobs' ? 'Jobs chosen for you, not the crowd' : 'Internships that kick-start careers'}
+        sub="Skip the endless scroll. Every opening is verified, matched to your skills, and ranked so the best fit always lands on top."
+        action={
+          <div className="jobs-head-controls">
+            <div className="jobs-toggle" role="tablist" aria-label="Role type">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === 'jobs'}
+                className={tab === 'jobs' ? 'is-active' : ''}
+                onClick={() => setTab('jobs')}
+              >
+                Jobs
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={tab === 'internships'}
+                className={tab === 'internships' ? 'is-active' : ''}
+                onClick={() => setTab('internships')}
+              >
+                Internships
+              </button>
+            </div>
+            <button type="button" className="link-arrow" onClick={onApply}>
+              View all {tab} <IconArrowUpRight />
+            </button>
+          </div>
+        }
+      />
+      <div className="jobs-grid">
+        {roles.map((job, i) => (
+          <article className="job-card" key={`${tab}-${job.title}`} style={{ animationDelay: `${i * 70}ms` }}>
+            <div className="job-card__head">
+              <span className="job-card__logo">{job.initial}</span>
+              <div className="job-card__co">
+                <strong>{job.company}</strong>
+                <span><IconPin /> {job.location}</span>
+              </div>
+              {job.featured && (
+                <span className="job-card__badge"><IconStar /> Featured</span>
+              )}
+            </div>
+            <h3 className="job-card__title">{job.title}</h3>
+            <div className="job-card__tags">
+              <span className="job-tag job-tag--mode">{job.mode}</span>
+              <span className="job-tag">{job.detail}</span>
+              {job.skills.map((skill) => (
+                <span className="job-tag" key={skill}>{skill}</span>
+              ))}
+            </div>
+            <div className="job-card__foot">
+              <span className="job-card__salary">{job.pay}<small>{job.per}</small></span>
+              <button type="button" className="btn btn--solid btn--sm job-card__apply" onClick={onApply}>
+                Apply <IconArrowUpRight />
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function DrivesAndEvents({ onApply }: { onApply: () => void }) {
+  const [tab, setTab] = useState<'drives' | 'events'>('drives')
+  const items = tab === 'drives' ? walkInDrives : eventsHackathons
+
+  return (
+    <section className="drives-section" id="drives">
+      <SectionHead
+        eyebrow="Happening now"
+        title={tab === 'drives' ? 'Walk-in drives near you' : 'Events & hackathons worth your weekend'}
+        sub={
+          tab === 'drives'
+            ? 'Show up with your resume, walk out with an offer. Verified companies, real openings, zero cover letters.'
+            : 'Build, compete, and get noticed — every event puts you in the room with the people who hire.'
+        }
+      />
+
+      <div className="drives-toggle-wrap reveal">
+        <div
+          className={`drives-toggle ${tab === 'events' ? 'drives-toggle--events' : ''}`}
+          role="tablist"
+          aria-label="Walk-in drives and events"
+        >
+          <span className="drives-toggle__thumb" aria-hidden="true" />
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'drives'}
+            className={`drives-toggle__btn ${tab === 'drives' ? 'is-active' : ''}`}
+            onClick={() => setTab('drives')}
+          >
+            <IconBriefcase /> Walk-in Drives
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'events'}
+            className={`drives-toggle__btn ${tab === 'events' ? 'is-active' : ''}`}
+            onClick={() => setTab('events')}
+          >
+            <IconTrophy /> Events & Hackathons
+          </button>
+        </div>
+      </div>
+
+      <div className="drives-grid" key={tab}>
+        {items.map((item, i) => (
+          <article className="drive-card" key={item.title} style={{ animationDelay: `${i * 70}ms` }}>
+            <div className="drive-card__head">
+              <span className="drive-card__date" aria-hidden="true">
+                <strong>{item.day}</strong>
+                <span>{item.month}</span>
+              </span>
+              <div className="drive-card__host">
+                <strong>{item.host}</strong>
+                <span><IconPin /> {item.location}</span>
+              </div>
+              <span className="drive-card__type">{item.type}</span>
+            </div>
+            <h3 className="drive-card__title">{item.title}</h3>
+            <span className="drive-card__time"><IconClock /> {item.time} · {item.day} {item.month}</span>
+            <div className="drive-card__tags">
+              <span className="job-tag job-tag--mode">{item.mode}</span>
+              {item.tags.map((tag) => (
+                <span className="job-tag" key={tag}>{tag}</span>
+              ))}
+            </div>
+            <div className="drive-card__foot">
+              <span className="drive-card__perk"><IconSpark /> {item.perk}</span>
+              <button type="button" className="btn btn--solid btn--sm drive-card__cta" onClick={onApply}>
+                Register <IconArrowUpRight />
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -725,6 +984,12 @@ function SignupModal({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    const phoneDigits = phone.replace(/\D/g, '')
+    if (phoneDigits.length < 10 || phoneDigits.length > 13) {
+      setStatus('error')
+      setErrorText('Please enter a valid phone number with 10 to 13 digits.')
+      return
+    }
     setStatus('submitting')
     try {
       const data: Record<string, string> =
@@ -844,9 +1109,11 @@ function SignupModal({
               id="signup-phone"
               type="tel"
               required
+              inputMode="tel"
+              maxLength={18}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="+1 555 000 0000"
+              placeholder="+91 98765 43210"
             />
           </div>
 
@@ -981,12 +1248,12 @@ function App() {
             <img src={logo} alt="Surwive Logo" className="nav__logo-img" />
           </a>
           <nav className={`nav__links ${mobileNavOpen ? 'nav__links--open' : ''}`} aria-label="Primary">
-            <a href="#jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
             <a href="#companies" onClick={() => setMobileNavOpen(false)}>Companies</a>
+            <a href="#jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
+            <a href="#drives" onClick={() => setMobileNavOpen(false)}>Walk-in Drives</a>
             <a href="#how" onClick={() => setMobileNavOpen(false)}>How it works</a>
-            <a href="#pricing" onClick={() => setMobileNavOpen(false)}>Pricing</a>
-            <a href="#resources" onClick={() => setMobileNavOpen(false)}>Career Resources</a>
             <a href="#recruiters" onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
+            <a href="#pricing" onClick={() => setMobileNavOpen(false)}>Pricing</a>
             <button type="button" className="btn btn--outline nav__links-login" onClick={() => openSignup('candidate')}>
               Login
             </button>
@@ -1087,70 +1354,20 @@ function App() {
 
         <section className="trusted" id="companies">
           <span className="trusted__label reveal">Trusted by teams hiring at 4,800+ companies</span>
-          <div className="marquee reveal">
+          <div className="marquee reveal" aria-hidden="true">
             <div className="marquee__track">
-              {[...trustedCompanies, ...trustedCompanies].map((name, i) => (
-                <span className="marquee__item" key={`${name}-${i}`}><i />{name}</span>
+              {[...trustedLogos, ...trustedLogos].map((item, i) => (
+                <span className={`marquee__item ${item.invert ? 'marquee__item--invert' : ''}`} key={i}>
+                  <img src={item.src} alt="" loading="lazy" />
+                </span>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="jobs-section" id="jobs">
-          <SectionHead
-            align="split"
-            eyebrow="Featured roles"
-            title="Hand-picked jobs, ranked by fit"
-            sub="Every role verified and scored against your profile — so the first ones you see are the ones worth your morning coffee."
-            action={
-              <button type="button" className="link-arrow" onClick={() => openSignup('candidate')}>
-                View all jobs <IconArrowUpRight />
-              </button>
-            }
-          />
-          <div className="jobs-grid">
-            {featuredJobs.map((job, i) => (
-              <article className="job-card reveal" key={job.title} style={{ transitionDelay: `${i * 60}ms` }}>
-                <div className="job-card__top">
-                  <span className="job-card__logo">{job.initial}</span>
-                  {job.featured && (
-                    <span className="job-card__badge"><IconStar /> Featured</span>
-                  )}
-                </div>
-                <span className="job-card__company">{job.company}</span>
-                <h3 className="job-card__title">{job.title}</h3>
-                <div className="job-card__meta">
-                  <span><IconPin /> {job.location}</span>
-                  <span>{job.exp}</span>
-                  {job.remote && <span className="job-card__remote">Remote</span>}
-                </div>
-                <div className="job-card__foot">
-                  <span className="job-card__salary">{job.salary}<small>per year</small></span>
-                  <button type="button" className="btn btn--outline job-card__apply" onClick={() => openSignup('candidate')}>
-                    Apply
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        <FeaturedRoles onApply={() => openSignup('candidate')} />
 
-        <section className="cat-section">
-          <SectionHead
-            eyebrow="Explore"
-            title="Browse by category"
-            sub="Find your field. New roles land in every category every day."
-          />
-          <div className="cat-grid">
-            {categories.map((cat, i) => (
-              <a href="#jobs" className="cat-card reveal" key={cat.name} style={{ transitionDelay: `${(i % 5) * 60}ms` }}>
-                <span className="cat-card__icon">{cat.icon}</span>
-                <span className="cat-card__name">{cat.name}</span>
-                <span className="cat-card__count">{cat.count}</span>
-              </a>
-            ))}
-          </div>
-        </section>
+        <DrivesAndEvents onApply={() => openSignup('candidate')} />
 
         <section className="why-section">
           <SectionHead
@@ -1158,12 +1375,35 @@ function App() {
             title="Everything you need to get hired"
             sub="A complete toolkit built around your skills — not your keywords."
           />
-          <div className="why-grid">
+          <div className="why-bento">
             {whyFeatures.map((f, i) => (
-              <div className="why-card reveal" key={f.title} style={{ transitionDelay: `${(i % 3) * 80}ms` }}>
-                <span className="why-card__icon">{f.icon}</span>
-                <h3 className="why-card__title">{f.title}</h3>
-                <p className="why-card__body">{f.body}</p>
+              <div className={`why-tile ${f.size ? `why-tile--${f.size}` : ''} reveal`} key={f.title} style={{ transitionDelay: `${(i % 3) * 80}ms` }}>
+                <span className="why-tile__watermark" aria-hidden="true">{f.icon}</span>
+                <span className="why-tile__icon">{f.icon}</span>
+                <h3 className="why-tile__title">{f.title}</h3>
+                <p className="why-tile__body">{f.body}</p>
+                {f.size === 'hero' && (
+                  <div className="why-tile__meters" aria-hidden="true">
+                    {matchSignals.map((s) => (
+                      <div className="why-meter" key={s.label}>
+                        <span className="why-meter__label">{s.label}</span>
+                        <span className="why-meter__track"><i style={{ width: `${s.value}%` }} /></span>
+                        <span className="why-meter__value">{s.value}%</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {f.size === 'wide' && (
+                  <div className="why-tile__salary" aria-hidden="true">
+                    <div className="why-tile__salary-bar">
+                      <span className="why-tile__salary-median" style={{ left: '54%' }}>₹26L median</span>
+                    </div>
+                    <div className="why-tile__salary-ends">
+                      <span>₹12L</span>
+                      <span>₹45L</span>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -1313,34 +1553,6 @@ function App() {
           onSelectPlan={(audience) => openSignup(audience === 'company' ? 'employer' : 'candidate')}
         />
 
-        <section className="articles-section" id="resources">
-          <SectionHead
-            align="split"
-            eyebrow="Career resources"
-            title="Guides to move your career forward"
-            action={
-              <a className="link-arrow" href="#resources">
-                All articles <IconArrowUpRight />
-              </a>
-            }
-          />
-          <div className="articles-grid">
-            {articles.map((a, i) => (
-              <article className="article-card reveal" key={a.title} style={{ transitionDelay: `${i * 90}ms` }}>
-                <div className={`article-card__cover article-card__cover--${a.tone}`}>
-                  <span className="article-card__cover-icon">{a.icon}</span>
-                  <span className="article-card__tag">{a.tag}</span>
-                </div>
-                <div className="article-card__body">
-                  <h3>{a.title}</h3>
-                  <span className="article-card__meta">{a.date} · {a.read}</span>
-                  <span className="article-card__link">Read guide <IconArrowUpRight /></span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
         <section className="appsection">
           <div className="appsection__copy reveal">
             <span className="eyebrow eyebrow--left">Mobile app</span>
@@ -1368,35 +1580,8 @@ function App() {
           <div className="appsection__phone reveal reveal--panel" style={{ transitionDelay: '120ms' }} aria-hidden="true">
             <div className="phone">
               <div className="phone__notch" />
-              <div className="phone__screen">
-                <div className="phone__head">
-                  <span className="phone__logo"><IconSpark /></span>
-                  <span className="phone__bar phone__bar--head" />
-                </div>
-                <div className="phone__card">
-                  <div className="phone__card-top">
-                    <span className="phone__avatar" />
-                    <span className="phone__fit">96% fit</span>
-                  </div>
-                  <span className="phone__bar phone__bar--sm" />
-                  <span className="phone__bar phone__bar--xs" />
-                </div>
-                <div className="phone__card">
-                  <div className="phone__card-top">
-                    <span className="phone__avatar phone__avatar--alt" />
-                    <span className="phone__fit phone__fit--alt">91% fit</span>
-                  </div>
-                  <span className="phone__bar phone__bar--sm" />
-                  <span className="phone__bar phone__bar--xs" />
-                </div>
-                <div className="phone__card">
-                  <div className="phone__card-top">
-                    <span className="phone__avatar phone__avatar--warm" />
-                    <span className="phone__fit">89% fit</span>
-                  </div>
-                  <span className="phone__bar phone__bar--sm" />
-                  <span className="phone__bar phone__bar--xs" />
-                </div>
+              <div className="phone__screen phone__screen--shot">
+                <img src={appPic} alt="" className="phone__shot" />
                 <span className="phone__pill"><IconSpark /> Match alert</span>
               </div>
             </div>
@@ -1424,7 +1609,7 @@ function App() {
           <a href="#jobs">Browse jobs</a>
           <a href="#jobs">Internships</a>
           <a href="#jobs">Freelance gigs</a>
-          <a href="#resources">Courses</a>
+          <a href="#drives">Walk-in drives</a>
           <a href="#main">My dashboard</a>
         </nav>
 
@@ -1433,7 +1618,7 @@ function App() {
           <a href="#recruiters">Post a job</a>
           <a href="#companies">Browse companies</a>
           <a href="#pricing">Pricing</a>
-          <a href="#resources">Resources</a>
+          <a href="#drives">Hiring events</a>
           <a href="#recruiters">Employer solutions</a>
         </nav>
 
