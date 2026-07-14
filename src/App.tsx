@@ -239,21 +239,21 @@ type FeaturedRole = {
 }
 
 const featuredJobs: FeaturedRole[] = [
-  { company: 'Cobalt', initial: 'C', featured: true, title: 'Senior Frontend Engineer', location: 'Bengaluru', mode: 'Remote', detail: '5+ yrs', skills: ['React', 'TypeScript'], pay: '₹24L – ₹32L', per: 'per year' },
-  { company: 'Lumen', initial: 'L', featured: false, title: 'Product Designer', location: 'Mumbai', mode: 'Hybrid', detail: '3+ yrs', skills: ['Figma', 'Design systems'], pay: '₹16L – ₹22L', per: 'per year' },
-  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Engineer', location: 'Hyderabad', mode: 'On-site', detail: '4+ yrs', skills: ['Python', 'PyTorch'], pay: '₹28L – ₹38L', per: 'per year' },
-  { company: 'Vertex', initial: 'V', featured: false, title: 'DevOps Engineer', location: 'Pune', mode: 'Remote', detail: '4+ yrs', skills: ['AWS', 'Kubernetes'], pay: '₹20L – ₹28L', per: 'per year' },
-  { company: 'Beacon', initial: 'B', featured: false, title: 'Data Scientist', location: 'Gurugram', mode: 'Remote', detail: '3+ yrs', skills: ['SQL', 'Python'], pay: '₹18L – ₹26L', per: 'per year' },
-  { company: 'Helios', initial: 'H', featured: true, title: 'Engineering Manager', location: 'Chennai', mode: 'Hybrid', detail: '8+ yrs', skills: ['Platform', 'Team of 12'], pay: '₹40L – ₹55L', per: 'per year' },
+  { company: 'TriDizi Digital Innovations', initial: 'T', featured: true, title: 'Senior Frontend Engineer', location: 'Hyderabad', mode: 'Remote', detail: '5+ yrs', skills: ['React', 'TypeScript'], pay: '₹24L – ₹32L', per: 'per year' },
+  { company: 'Incrediquo', initial: 'I', featured: false, title: 'Transcript Designer', location: 'Hyderabad', mode: 'Hybrid', detail: '3+ yrs', skills: ['Transcription', 'Design systems'], pay: '₹16L – ₹22L', per: 'per year' },
+  { company: 'Navyoga Wellness', initial: 'NW', featured: true, title: 'Social Media Specialist', location: 'Hyderabad', mode: 'On-site', detail: '4+ yrs', skills: ['Social Media', 'Performance Marketing'], pay: '₹8L – ₹10L', per: 'per year' },
+  { company: 'Sapience Minds', initial: 'SM', featured: false, title: 'HR Specialist', location: 'Bengaluru', mode: 'Remote', detail: '4+ yrs', skills: ['Team Management', 'Recruitment'], pay: '₹20L – ₹28L', per: 'per year' },
+  { company: 'Dresma', initial: 'D', featured: false, title: 'Data Scientist', location: 'Gurugram', mode: 'Remote', detail: '3+ yrs', skills: ['SQL', 'Python'], pay: '₹18L – ₹26L', per: 'per year' },
+  { company: 'Yularatech', initial: 'Y', featured: true, title: 'Engineering Manager', location: 'Chennai', mode: 'Hybrid', detail: '8+ yrs', skills: ['Platform', 'Team of 12'], pay: '₹40L – ₹55L', per: 'per year' },
 ]
 
 const featuredInternships: FeaturedRole[] = [
-  { company: 'Cobalt', initial: 'C', featured: true, title: 'Frontend Developer Intern', location: 'Bengaluru', mode: 'Remote', detail: '6 months', skills: ['React', 'Tailwind'], pay: '₹40k', per: 'stipend / month' },
-  { company: 'Nova', initial: 'N', featured: false, title: 'UI/UX Design Intern', location: 'Mumbai', mode: 'Hybrid', detail: '3 months', skills: ['Figma', 'Prototyping'], pay: '₹25k', per: 'stipend / month' },
-  { company: 'Quanta', initial: 'Q', featured: true, title: 'Machine Learning Intern', location: 'Hyderabad', mode: 'On-site', detail: '6 months', skills: ['Python', 'NumPy'], pay: '₹50k', per: 'stipend / month' },
-  { company: 'Atlas', initial: 'A', featured: false, title: 'Backend Developer Intern', location: 'Pune', mode: 'Remote', detail: '6 months', skills: ['Node.js', 'MongoDB'], pay: '₹35k', per: 'stipend / month' },
-  { company: 'Delta', initial: 'D', featured: false, title: 'Data Analyst Intern', location: 'Gurugram', mode: 'Hybrid', detail: '3 months', skills: ['SQL', 'Excel'], pay: '₹30k', per: 'stipend / month' },
-  { company: 'Orbit', initial: 'O', featured: true, title: 'Digital Marketing Intern', location: 'Chennai', mode: 'Remote', detail: '3 months', skills: ['SEO', 'Content'], pay: '₹20k', per: 'stipend / month' },
+  { company: 'TriDizi Digital Innovations', initial: 'T', featured: true, title: 'Frontend Developer Intern', location: 'Bengaluru', mode: 'Remote', detail: '6 months', skills: ['React', 'Tailwind'], pay: '₹40k', per: 'stipend / month' },
+  { company: 'Oraddo', initial: 'O', featured: false, title: 'UI/UX Design Intern', location: 'Mumbai', mode: 'Hybrid', detail: '3 months', skills: ['Figma', 'Prototyping'], pay: '₹25k', per: 'stipend / month' },
+  { company: 'Incrediquo', initial: 'I', featured: true, title: 'Machine Learning Intern', location: 'Hyderabad', mode: 'On-site', detail: '6 months', skills: ['Python', 'NumPy'], pay: '₹50k', per: 'stipend / month' },
+  { company: 'Yularatech', initial: 'Y', featured: false, title: 'Backend Developer Intern', location: 'Pune', mode: 'Remote', detail: '6 months', skills: ['Node.js', 'MongoDB'], pay: '₹35k', per: 'stipend / month' },
+  { company: 'Dresma', initial: 'D', featured: false, title: 'Data Analyst Intern', location: 'Gurugram', mode: 'Hybrid', detail: '3 months', skills: ['SQL', 'Excel'], pay: '₹30k', per: 'stipend / month' },
+  { company: 'Surwive', initial: 'S', featured: true, title: 'Digital Marketing Intern', location: 'Chennai', mode: 'Remote', detail: '3 months', skills: ['SEO', 'Content'], pay: '₹20k', per: 'stipend / month' },
 ]
 
 type DriveEvent = {
@@ -270,22 +270,21 @@ type DriveEvent = {
 }
 
 const walkInDrives: DriveEvent[] = [
-  { host: 'Cobalt', title: 'Frontend & Backend Mega Drive', type: 'Walk-in', day: '16', month: 'Jul', time: '9:00 AM – 4:00 PM', location: 'Bengaluru', mode: 'On-site', tags: ['0–4 yrs', 'React', 'Node.js'], perk: 'On-the-spot offers' },
-  { host: 'Quanta', title: 'ML & Data Science Open Drive', type: 'Walk-in', day: '18', month: 'Jul', time: '10:00 AM – 5:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['2+ yrs', 'Python', 'SQL'], perk: '80+ openings' },
-  { host: 'Vertex', title: 'DevOps Walk-in Wednesday', type: 'Walk-in', day: '22', month: 'Jul', time: '9:30 AM – 3:30 PM', location: 'Pune', mode: 'On-site', tags: ['3+ yrs', 'AWS', 'Kubernetes'], perk: 'Same-day results' },
-  { host: 'Lumen', title: 'Design Portfolio Day', type: 'Walk-in', day: '25', month: 'Jul', time: '11:00 AM – 4:00 PM', location: 'Mumbai', mode: 'On-site', tags: ['Freshers welcome', 'Figma'], perk: 'Live portfolio reviews' },
-  { host: 'Beacon', title: 'Analytics Hiring Blitz', type: 'Walk-in', day: '28', month: 'Jul', time: '9:00 AM – 2:00 PM', location: 'Gurugram', mode: 'On-site', tags: ['1–3 yrs', 'SQL', 'Power BI'], perk: '40 openings' },
-  { host: 'Helios', title: 'Engineering Open House', type: 'Walk-in', day: '01', month: 'Aug', time: '10:00 AM – 6:00 PM', location: 'Chennai', mode: 'On-site', tags: ['Senior roles', 'Platform'], perk: 'Meet the CTO' },
+  { host: 'TriDizi Digital Innovations', title: 'Frontend & Backend Mega Drive', type: 'Walk-in', day: '16', month: 'Jul', time: '9:00 AM – 4:00 PM', location: 'Bengaluru', mode: 'On-site', tags: ['0–4 yrs', 'React', 'Node.js'], perk: 'On-the-spot offers' },
+  { host: 'Oraddo', title: 'ML & Data Science Open Drive', type: 'Walk-in', day: '18', month: 'Jul', time: '10:00 AM – 5:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['2+ yrs', 'Python', 'SQL'], perk: '80+ openings' },
+  { host: 'Surwive', title: 'DevOps Walk-in Wednesday', type: 'Walk-in', day: '22', month: 'Jul', time: '9:30 AM – 3:30 PM', location: 'Pune', mode: 'On-site', tags: ['3+ yrs', 'AWS', 'Kubernetes'], perk: 'Same-day results' },
+  { host: 'Incrediquo', title: 'Design Portfolio Day', type: 'Walk-in', day: '25', month: 'Jul', time: '11:00 AM – 4:00 PM', location: 'Mumbai', mode: 'On-site', tags: ['Freshers welcome', 'Figma'], perk: 'Live portfolio reviews' },
+  { host: 'Google', title: 'Analytics Hiring Blitz', type: 'Walk-in', day: '28', month: 'Jul', time: '9:00 AM – 2:00 PM', location: 'Gurugram', mode: 'On-site', tags: ['1–3 yrs', 'SQL', 'Power BI'], perk: '40 openings' },
+  { host: 'Aquire Lead', title: 'Engineering Open House', type: 'Walk-in', day: '01', month: 'Aug', time: '10:00 AM – 6:00 PM', location: 'Chennai', mode: 'On-site', tags: ['Senior roles', 'Platform'], perk: 'Meet the CTO' },
 ]
 
 const eventsHackathons: DriveEvent[] = [
   { host: 'Surwive', title: 'CodeStorm 48-Hour Hackathon', type: 'Hackathon', day: '19', month: 'Jul', time: 'Kicks off 6:00 PM', location: 'India-wide', mode: 'Online', tags: ['Teams of 2–4', 'Any stack'], perk: '₹5L prize pool' },
-  { host: 'Nova', title: 'Resume Roast — Live Teardown', type: 'Webinar', day: '24', month: 'Jul', time: '7:00 PM – 8:30 PM', location: 'Streamed live', mode: 'Online', tags: ['Free entry', 'Live Q&A'], perk: 'Recruiter panel' },
-  { host: 'Quanta', title: 'AI Builders Summit 2026', type: 'Conference', day: '02', month: 'Aug', time: '9:00 AM – 6:00 PM', location: 'Bengaluru', mode: 'Hybrid', tags: ['Keynotes', 'Live demos'], perk: '2,000+ builders' },
-  { host: 'Atlas', title: 'CloudCraft Hackathon', type: 'Hackathon', day: '08', month: 'Aug', time: '48 hours non-stop', location: 'Pune', mode: 'Hybrid', tags: ['Cloud-native', 'Open theme'], perk: 'PPIs for top 3' },
-  { host: 'Vertex', title: 'FinTech Sprint Hackathon', type: 'Hackathon', day: '30', month: 'Aug', time: '24 hours flat', location: 'Bengaluru', mode: 'On-site', tags: ['Payments', 'APIs'], perk: '₹2L + fast-track interviews' },
-  { host: 'Orbit', title: 'Women in Tech Meetup', type: 'Meetup', day: '14', month: 'Aug', time: '5:00 PM – 8:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['Networking', 'Mentorship'], perk: 'Free passes' },
-  { host: 'Surwive', title: 'Campus Job Fair 2026', type: 'Job Fair', day: '22', month: 'Aug', time: '10:00 AM – 5:00 PM', location: 'Mumbai', mode: 'On-site', tags: ['80+ companies', 'All streams'], perk: '5,000+ roles' },
+  { host: 'TriDizi', title: 'Resume Roast — Live Teardown', type: 'Webinar', day: '24', month: 'Jul', time: '7:00 PM – 8:30 PM', location: 'Streamed live', mode: 'Online', tags: ['Free entry', 'Live Q&A'], perk: 'Recruiter panel' },
+  { host: 'Oraddo', title: 'AI Builders Summit 2026', type: 'Conference', day: '02', month: 'Aug', time: '9:00 AM – 6:00 PM', location: 'Bengaluru', mode: 'Hybrid', tags: ['Keynotes', 'Live demos'], perk: '2,000+ builders' },
+  { host: 'Tech Mahendra', title: 'CloudCraft Hackathon', type: 'Hackathon', day: '08', month: 'Aug', time: '48 hours non-stop', location: 'Pune', mode: 'Hybrid', tags: ['Cloud-native', 'Open theme'], perk: 'PPIs for top 3' },
+  { host: 'Cognizant', title: 'FinTech Sprint Hackathon', type: 'Hackathon', day: '30', month: 'Aug', time: '24 hours flat', location: 'Bengaluru', mode: 'On-site', tags: ['Payments', 'APIs'], perk: '₹2L + fast-track interviews' },
+  { host: 'T Hub', title: 'Women in Tech Meetup', type: 'Meetup', day: '14', month: 'Aug', time: '5:00 PM – 8:00 PM', location: 'Hyderabad', mode: 'On-site', tags: ['Networking', 'Mentorship'], perk: 'Free passes' },
 ]
 
 const whyFeatures: { icon: ReactNode; title: string; body: string; size?: 'hero' | 'wide' }[] = [
@@ -317,9 +316,9 @@ const journeySteps = [
 ]
 
 const testimonials = [
-  { quote: 'Surwive surfaced a role I would never have found on my own — and I had an offer within two weeks.', name: 'Aria Reyes', role: 'Product Designer at Lumen' },
-  { quote: 'The matching is uncanny. Every role it showed me actually made sense for where my career is going.', name: 'Marcus Chen', role: 'ML Engineer at Quanta' },
-  { quote: 'As a recruiter, the shortlist quality changed everything. My first interview is now my best one.', name: 'Priya Nair', role: 'Head of Talent at Cobalt' },
+  { quote: 'Surwive surfaced a role I would never have found on my own — and I had an offer within two weeks.', name: 'Mamata Sri', role: 'Product Designer at Oraddo' },
+  { quote: 'The matching is uncanny. Every role it showed me actually made sense for where my career is going.', name: 'Ramya Ravali', role: 'ML Engineer at 24/7 Intouch' },
+  { quote: 'As a recruiter, the shortlist quality changed everything. My first interview is now my best one.', name: 'Hari Sai', role: 'Head of Talent at TriDizi' },
 ]
 
 const recruiterStats = [
@@ -1337,7 +1336,7 @@ function App() {
 
             <p className="hero__sub reveal" style={{ transitionDelay: '140ms' }}>
               Describe the role you want in plain words. Our copilot reads every listing,
-              reasons about fit, and hands you a ranked shortlist — not a keyword dump.
+              reasons about fit, and hands you a ranked shortlist, not a keyword dump.
             </p>
 
             <form
