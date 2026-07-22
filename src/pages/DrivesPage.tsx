@@ -12,6 +12,8 @@ import {
   IconUsers,
 } from '../components/icons'
 import { driveAccent, driveCatalog, type DriveInfo } from '../data/drives'
+import { LocationLink } from '../components/LocationLink'
+import { useStickySide } from '../hooks/useStickySide'
 import { initials } from '../lib/utils'
 
 function DriveRow({ drive, index }: { drive: DriveInfo; index: number }) {
@@ -103,6 +105,7 @@ function DrivesList() {
 
 function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () => void }) {
   const others = driveCatalog.filter((d) => d.slug !== drive.slug).slice(0, 3)
+  const sideRef = useStickySide<HTMLElement>()
 
   return (
     <section
@@ -121,7 +124,7 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
           </div>
           <h1>{drive.title}</h1>
           <p className="event-hero__org">
-            Hosted by <strong>{drive.host}</strong> · {drive.location}
+            Hosted by <strong>{drive.host}</strong> · <LocationLink location={drive.location} online={drive.mode === 'Online'} />
           </p>
         </div>
         <div className="drive-hero__facts">
@@ -135,7 +138,7 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
           </div>
           <div className="drive-fact">
             <span className="drive-fact__label">Location</span>
-            <strong>{drive.location} · {drive.mode}</strong>
+            <strong><LocationLink location={drive.location} online={drive.mode === 'Online'} /> · {drive.mode}</strong>
           </div>
           <div className="drive-fact">
             <span className="drive-fact__label">Salary range</span>
@@ -241,7 +244,7 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
           </div>
         </div>
 
-        <aside className="article-side">
+        <aside className="article-side" ref={sideRef}>
           <div className="article-side__card event-register">
             <span className="event-register__price">Free entry</span>
             <span className="event-register__note">{drive.deadline}</span>
@@ -254,7 +257,7 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
             <h3>Drive details</h3>
             <ul className="event-facts">
               <li><span className="event-facts__icon"><IconClock /></span><span><strong>{drive.day} {drive.month}</strong><span>{drive.time}</span></span></li>
-              <li><span className="event-facts__icon"><IconPin /></span><span><strong>{drive.location}</strong><span>{drive.mode}</span></span></li>
+              <li><span className="event-facts__icon"><IconPin /></span><span><strong><LocationLink location={drive.location} online={drive.mode === 'Online'} /></strong><span>{drive.mode}</span></span></li>
               <li><span className="event-facts__icon"><IconRupee /></span><span><strong>Salary range</strong><span>{drive.salary}</span></span></li>
               <li><span className="event-facts__icon"><IconUsers /></span><span><strong>Openings</strong><span>{drive.openings}</span></span></li>
             </ul>

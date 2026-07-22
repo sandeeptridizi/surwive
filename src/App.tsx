@@ -14,6 +14,7 @@ import { EventsPage } from './pages/EventsPage'
 import { FaqPage } from './pages/FaqPage'
 import { HomePage } from './pages/HomePage'
 import { JobsPage } from './pages/JobsPage'
+import { PolicyPage } from './pages/PolicyPage'
 import { PricingPage } from './pages/PricingPage'
 import type { PricingAudience } from './data/pricing'
 
@@ -32,7 +33,7 @@ function App() {
   const closeSignup = () => setSignupModal((s) => ({ ...s, open: false }))
 
   useEffect(() => {
-    if (route === 'jobs' || route === 'pricing' || route === 'blog' || route === 'events' || route === 'drives' || route === 'faqs') {
+    if (route === 'jobs' || route === 'pricing' || route === 'blog' || route === 'events' || route === 'drives' || route === 'faqs' || route === 'legal') {
       window.scrollTo({ top: 0 })
     } else {
       const id = window.location.hash.slice(1)
@@ -73,6 +74,8 @@ function App() {
           />
         ) : route === 'faqs' ? (
           <FaqPage onSignup={() => openSignup('candidate')} />
+        ) : route === 'legal' ? (
+          <PolicyPage slug={hash.startsWith('#/legal/') ? decodeURIComponent(hash.slice('#/legal/'.length)) : null} />
         ) : (
           <HomePage
             onSignupCandidate={() => openSignup('candidate')}

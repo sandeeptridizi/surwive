@@ -9,6 +9,7 @@ import {
 } from '../components/icons'
 import { blogCategories, blogCategoryOf, blogPosts, type BlogBlock, type BlogPost } from '../data/blog'
 import { initials, slugifyHeading } from '../lib/utils'
+import { useStickySide } from '../hooks/useStickySide'
 
 const POSTS_PER_PAGE = 6
 
@@ -21,26 +22,28 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
       className="blog-card"
       style={{ '--blog-accent': cat.color, animationDelay: `${index * 70}ms` } as CSSProperties}
     >
-      <div className="blog-card__top">
-        <span className="blog-card__badge" aria-hidden="true"><Icon /></span>
+      <div className="blog-card__cover" aria-hidden="true">
+        <span className="blog-card__cover-rings" />
+        <Icon />
         <span className="blog-card__chip">{post.category}</span>
       </div>
-      <div className="blog-card__meta">
-        <span>{post.date}</span>
-        <span className="blog-card__dot" aria-hidden="true" />
-        <span><IconClock /> {post.readTime}</span>
-      </div>
-      <h3>{post.title}</h3>
-      <p>{post.excerpt}</p>
-      <div className="blog-card__foot">
-        <span className="blog-card__author">
-          <span className="blog-card__avatar" aria-hidden="true">{initials(post.author)}</span>
-          <span className="blog-card__who">
-            <strong>{post.author}</strong>
-            <span>{post.role}</span>
+      <div className="blog-card__body">
+        <div className="blog-card__meta">
+          <span>{post.date}</span>
+          <span className="blog-card__dot" aria-hidden="true" />
+          <span><IconClock /> {post.readTime}</span>
+        </div>
+        <h3>{post.title}</h3>
+        <div className="blog-card__foot">
+          <span className="blog-card__author">
+            <span className="blog-card__avatar" aria-hidden="true">{initials(post.author)}</span>
+            <span className="blog-card__who">
+              <strong>{post.author}</strong>
+              <span>{post.role}</span>
+            </span>
           </span>
-        </span>
-        <span className="blog-card__arrow" aria-hidden="true"><IconArrowUpRight /></span>
+          <span className="blog-card__arrow" aria-hidden="true"><IconArrowUpRight /></span>
+        </div>
       </div>
     </a>
   )
@@ -103,7 +106,7 @@ function BlogList() {
   }
 
   return (
-    <section className="blog">
+    <section className="blog blog-page">
       <SectionHead
         eyebrow="Career resources"
         title="Insights to move your career forward"
@@ -182,6 +185,7 @@ function BlogArticle({ post }: { post: BlogPost }) {
   const Icon = cat.icon
   const [copied, setCopied] = useState(false)
   const [activeHeading, setActiveHeading] = useState('')
+  const sideRef = useStickySide<HTMLElement>()
 
   const headings = post.sections
     .filter((s): s is BlogBlock & { heading: string } => Boolean(s.heading))
@@ -282,7 +286,7 @@ function BlogArticle({ post }: { post: BlogPost }) {
           </div>
         </article>
 
-        <aside className="article-side">
+        <aside className="article-side" ref={sideRef}>
           {headings.length > 0 && (
             <nav className="article-side__card article-toc" aria-label="On this page">
               <h3>On this page</h3>

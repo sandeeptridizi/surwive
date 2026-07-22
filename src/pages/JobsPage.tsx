@@ -12,6 +12,8 @@ import {
   IconUsers,
 } from '../components/icons'
 import { jobAccent, jobCatalog, type JobInfo } from '../data/jobs'
+import { LocationLink } from '../components/LocationLink'
+import { useStickySide } from '../hooks/useStickySide'
 
 const MODES = ['All', 'Remote', 'Hybrid', 'On-site'] as const
 
@@ -152,6 +154,7 @@ function JobsList({ initialTab }: { initialTab: 'job' | 'internship' }) {
 
 function JobDetail({ job, onApply }: { job: JobInfo; onApply: () => void }) {
   const similar = jobCatalog.filter((j) => j.type === job.type && j.slug !== job.slug).slice(0, 3)
+  const sideRef = useStickySide<HTMLElement>()
 
   return (
     <section
@@ -174,7 +177,7 @@ function JobDetail({ job, onApply }: { job: JobInfo; onApply: () => void }) {
           </div>
           <h1>{job.title}</h1>
           <p className="event-hero__org">
-            at <strong>{job.company}</strong> · {job.location}
+            at <strong>{job.company}</strong> · <LocationLink location={job.location} />
           </p>
         </div>
         <div className="drive-hero__facts">
@@ -188,7 +191,7 @@ function JobDetail({ job, onApply }: { job: JobInfo; onApply: () => void }) {
           </div>
           <div className="drive-fact">
             <span className="drive-fact__label">Work mode</span>
-            <strong>{job.location} · {job.mode}</strong>
+            <strong><LocationLink location={job.location} /> · {job.mode}</strong>
           </div>
           <div className="drive-fact">
             <span className="drive-fact__label">Openings</span>
@@ -267,7 +270,7 @@ function JobDetail({ job, onApply }: { job: JobInfo; onApply: () => void }) {
           </div>
         </div>
 
-        <aside className="article-side">
+        <aside className="article-side" ref={sideRef}>
           <div className="article-side__card event-register">
             <span className="event-register__price">{job.pay}</span>
             <span className="event-register__note">{job.per} · {job.applicants}</span>
@@ -280,7 +283,7 @@ function JobDetail({ job, onApply }: { job: JobInfo; onApply: () => void }) {
             <h3>Role details</h3>
             <ul className="event-facts">
               <li><span className="event-facts__icon"><IconRupee /></span><span><strong>{job.pay}</strong><span>{job.per}</span></span></li>
-              <li><span className="event-facts__icon"><IconPin /></span><span><strong>{job.location}</strong><span>{job.mode}</span></span></li>
+              <li><span className="event-facts__icon"><IconPin /></span><span><strong><LocationLink location={job.location} /></strong><span>{job.mode}</span></span></li>
               <li><span className="event-facts__icon"><IconGrad /></span><span><strong>Experience</strong><span>{job.detail}</span></span></li>
               <li><span className="event-facts__icon"><IconUsers /></span><span><strong>{job.openings}</strong><span>{job.applicants}</span></span></li>
               <li><span className="event-facts__icon"><IconClock /></span><span><strong>Posted</strong><span>{job.posted}</span></span></li>

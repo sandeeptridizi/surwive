@@ -38,17 +38,19 @@ export function Footer() {
 
       <nav className="footer__col" aria-label="Policies">
         <h4>Policies</h4>
-        <a href="#privacy">Privacy policy</a>
-        <a href="#terms">Terms of service</a>
-        <a href="#cookies">Cookie policy</a>
+        <a href="#/legal/terms-and-conditions">Terms &amp; conditions</a>
+        <a href="#/legal/privacy-policy">Privacy policy</a>
+        <a href="#/legal/cookie-policy">Cookie policy</a>
+        <a href="#/legal/data-protection">Data protection</a>
+        <a href="#/legal/user-agreement">User agreement</a>
       </nav>
 
       <div className="footer__bottom">
         <span>© {new Date().getFullYear()} Surwive. All rights reserved.</span>
         <div className="footer__bottom-links">
           <span className="footer__lang"><IconGlobe /> English (US)</span>
-          <a href="#privacy">Privacy</a>
-          <a href="#terms">Terms</a>
+          <a href="#/legal/privacy-policy">Privacy</a>
+          <a href="#/legal/terms-and-conditions">Terms</a>
         </div>
       </div>
     </footer>

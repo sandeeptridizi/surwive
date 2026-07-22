@@ -10,6 +10,8 @@ import {
   IconUsers,
 } from '../components/icons'
 import { eventAccent, eventCatalog, type EventInfo } from '../data/events'
+import { LocationLink } from '../components/LocationLink'
+import { useStickySide } from '../hooks/useStickySide'
 import { initials } from '../lib/utils'
 
 function EventCard({ event, index }: { event: EventInfo; index: number }) {
@@ -100,6 +102,7 @@ function EventsList() {
 
 function EventDetail({ event, onRegister }: { event: EventInfo; onRegister: () => void }) {
   const others = eventCatalog.filter((e) => e.slug !== event.slug).slice(0, 3)
+  const sideRef = useStickySide<HTMLElement>()
 
   return (
     <section
@@ -203,7 +206,7 @@ function EventDetail({ event, onRegister }: { event: EventInfo; onRegister: () =
           </div>
         </div>
 
-        <aside className="article-side">
+        <aside className="article-side" ref={sideRef}>
           <div className="article-side__card event-register">
             <span className="event-register__price">{event.price}</span>
             <span className="event-register__note">{event.priceNote}</span>
@@ -216,7 +219,7 @@ function EventDetail({ event, onRegister }: { event: EventInfo; onRegister: () =
             <h3>Event details</h3>
             <ul className="event-facts">
               <li><span className="event-facts__icon"><IconClock /></span><span><strong>{event.day} {event.month}</strong><span>{event.time}</span></span></li>
-              <li><span className="event-facts__icon"><IconPin /></span><span><strong>{event.location}</strong><span>{event.mode}</span></span></li>
+              <li><span className="event-facts__icon"><IconPin /></span><span><strong><LocationLink location={event.location} online={event.mode === 'Online'} /></strong><span>{event.mode}</span></span></li>
               <li><span className="event-facts__icon"><IconUsers /></span><span><strong>Attendees</strong><span>{event.attendees}</span></span></li>
               <li><span className="event-facts__icon"><IconTrophy /></span><span><strong>Perk</strong><span>{event.perk}</span></span></li>
             </ul>
