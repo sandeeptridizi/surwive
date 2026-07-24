@@ -40,7 +40,7 @@ export function PricingPage({
             className={`pricing-toggle__btn ${audience === 'student' ? 'is-active' : ''}`}
             onClick={() => onAudienceChange('student')}
           >
-            <IconGrad /> For Students
+            <IconGrad /> For Candidates
           </button>
           <button
             type="button"

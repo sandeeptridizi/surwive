@@ -8,7 +8,7 @@ export function Footer() {
         <a href="/" className="nav__logo">
           <img src={logo} alt="Surwive Logo" className="nav__logo-img" />
         </a>
-        <p>Your trusted partner in finding the perfect career opportunity. Get hired faster than ever.</p>
+        <p>Your trusted AI career partner for finding the right job and getting hired faster.</p>
       </div>
 
       <nav className="footer__col" aria-label="For job seekers">

@@ -208,7 +208,7 @@ function WalkInDrives({ onApply }: { onApply: () => void }) {
         align="split"
         eyebrow="Happening now"
         title="Walk-in drives near you"
-        sub="Show up with your resume, walk out with an offer. Verified companies, real openings, zero cover letters."
+        sub="Walk In with Confidence. Walk Out with Opportunity. Meet verified employers, attend real interviews, and get hired faster."
         action={
           <a href="#/drives" className="link-arrow">
             View all walk-in drives <IconArrowUpRight />
@@ -235,8 +235,8 @@ function EventsAndHackathons({ onApply }: { onApply: () => void }) {
       <SectionHead
         align="split"
         eyebrow="Beyond the drives"
-        title="Events & hackathons worth your weekend"
-        sub="Build, compete, and get noticed — every event puts you in the room with the people who hire."
+        title="Events & hackathons"
+        sub="Showcase Your Skills, Win Challenges, and Connect with Leading Companies Through Events and Hackathons."
         action={
           <a href="#/events" className="link-arrow">
             View all events & hackathons <IconArrowUpRight />
@@ -296,7 +296,7 @@ export function HomePage({
         <div className="hero__copy">
           <a href="#copilot" className="hero__badge reveal">
             <span className="hero__badge-new">New</span>
-            AI copilot now matches you in real time
+            Instant AI Job Matching Based on Your Skills
             <IconArrowUpRight />
           </a>
 
@@ -306,8 +306,7 @@ export function HomePage({
           </h1>
 
           <p className="hero__sub reveal" style={{ transitionDelay: '140ms' }}>
-            Describe the role you want in plain words. Our copilot reads every listing,
-            reasons about fit, and hands you a ranked shortlist, not a keyword dump.
+            Describe your ideal job in simple words. Surwive AI analyzes thousands of job listings, understands your skills and career goals, and delivers a personalized shortlist of the best-matched opportunities, not just another keyword search.
           </p>
 
           <form
@@ -363,7 +362,7 @@ export function HomePage({
       </section>
 
       <section className="trusted" id="companies">
-        <span className="trusted__label reveal">Trusted by teams hiring at 4,800+ companies</span>
+        <span className="trusted__label reveal">Connecting Talent with Leading Companies Through AI</span>
         <div className="marquee reveal" aria-hidden="true">
           <div className="marquee__track">
             {[...trustedLogos, ...trustedLogos].map((item, i) => (
@@ -383,8 +382,8 @@ export function HomePage({
       <section className="why-section">
         <SectionHead
           eyebrow="Why Surwive"
-          title="Everything you need to get hired"
-          sub="A complete toolkit built around your skills — not your keywords."
+          title="Everything You Need to Build Your Career"
+          sub="An AI-powered career platform with smart job matching, verified opportunities, internships, walk-in drives, hackathons, and career events—all in one place."
         />
         <div className="why-bento">
           {whyFeatures.map((f, i) => (
@@ -422,11 +421,10 @@ export function HomePage({
 
       <section className="copilot" id="copilot">
         <div className="copilot__copy reveal">
-          <span className="eyebrow eyebrow--left">AI copilot</span>
+          <span className="eyebrow eyebrow--left">AI Hishi</span>
           <h2>Your job search, with a brain behind it</h2>
           <p>
-            Ask in plain language. The copilot reasons over every open role, weighs your
-            skills and goals, and explains exactly why each match made the list.
+            Ask Hishi in plain language. Our AI analyzes every job, matches your skills and career goals, and explains why each opportunity is the right fit for you.
           </p>
           <ul className="copilot__points">
             <li>
@@ -439,7 +437,7 @@ export function HomePage({
             </li>
             <li>
               <strong>Learns as you go</strong>
-              <span>Skip a role or save one, and the next shortlist gets sharper.</span>
+              <span>Save or skip jobs, and Hishi continuously learns your preferences to deliver smarter, more personalized job recommendations.</span>
             </li>
           </ul>
         </div>
@@ -476,12 +474,10 @@ export function HomePage({
 
       <section className="verify" id="verified-skills">
         <div className="verify__copy reveal">
-          <span className="eyebrow eyebrow--left">Verified skill graph</span>
-          <h2>Skills companies never have to double-check</h2>
+          <span className="eyebrow eyebrow--left">AI Hishi skill graph</span>
+          <h2>Showcase Verified Skills with Confidence</h2>
           <p>
-            Every Surwive profile carries a skill graph built from evidence — shipped
-            projects, reviewed code, and confirmed credentials — so the score a recruiter
-            sees means exactly what it says.
+            Every Surwive profile showcases verified skills, certifications, projects, and achievements helping employers hire with confidence and trust every candidate.
           </p>
           <ul className="checklist">
             {verificationChecks.map((c) => (
@@ -489,8 +485,7 @@ export function HomePage({
             ))}
           </ul>
           <p className="verify__note">
-            As more proof lands — portfolio, references, certifications — the graph and
-            score update on their own.
+            Your Surwive profile updates automatically as you add new projects, certifications, portfolios, and achievements keeping your skills verified and recruiter-ready.
           </p>
         </div>
 
@@ -539,7 +534,7 @@ export function HomePage({
         <SectionHead
           eyebrow="Both sides of the table"
           title="Two sides. One source of truth."
-          sub="Candidates and companies work from the same verified data — so nobody wastes an application or a call."
+          sub="Candidates and companies work from the same verified data. So nobody wastes an application or a call."
         />
         <div className="clarity-grid">
           {clarityCards.map((card, i) => (
@@ -623,15 +618,14 @@ export function HomePage({
         <div className="recruiter__panel reveal reveal--panel">
           <div className="recruiter__copy">
             <span className="eyebrow eyebrow--ink">For recruiters</span>
-            <h2>A shortlist worth reading, not a pile worth sorting.</h2>
+            <h2>Smarter Job Recommendations. Better Career Opportunities.</h2>
             <p>
-              Skip the keyword filters. Surwive ranks applicants against the role you actually
-              opened — so your first interview is with someone worth interviewing.
+              Skip manual screening. Hishi AI matches candidates based on skills, experience, and job requirements, helping you discover the best-fit talent faster.
             </p>
             <ul className="checklist checklist--ink">
-              <li>Reach candidates actively looking for this exact role</li>
-              <li>Screen by verified skills, not résumé formatting</li>
-              <li>Fill roles in days, not job-board months</li>
+              <li>Reach AI-matched candidates actively seeking your role.</li>
+              <li>Shortlist talent using verified skills and matching scores.</li>
+              <li>Reduce hiring time with faster, smarter recruitment.</li>
             </ul>
             <div className="recruiter__ctas">
               <button type="button" className="btn btn--ink" onClick={onSignupEmployer}>
@@ -658,8 +652,7 @@ export function HomePage({
           <span className="eyebrow eyebrow--left">Mobile app</span>
           <h2>Your job search, in your pocket</h2>
           <p>
-            Get instant match alerts, apply in one tap, and message recruiters on the go.
-            Everything on desktop, now mobile.
+            Get instant AI job alerts, apply with one tap, and connect with recruiters anytime. Your complete AI job search, now on mobile.
           </p>
           <ul className="checklist">
             <li>Instant match alerts, the moment a role opens</li>

@@ -19,12 +19,12 @@ export const trustedLogos: { src: string; invert?: boolean }[] = [
 ]
 
 export const whyFeatures: { icon: ReactNode; title: string; body: string; size?: 'hero' | 'wide' }[] = [
-  { icon: <IconGear />, title: 'AI Job Matching', body: 'Our model reads roles the way a hiring manager does — scoring every opening against your skills, salary target, and seniority before it ever reaches you.', size: 'hero' },
-  { icon: <IconShieldCheck />, title: 'Verified Employers', body: 'Every company is vetted before a single role goes live. No ghost listings, no scams.' },
-  { icon: <IconArrowUpRight />, title: 'One-click Apply', body: 'Tailored applications submitted on your behalf the moment a fitting role opens up.' },
-  { icon: <IconDoc />, title: 'Resume Builder', body: 'Build one profile that speaks for you everywhere — polished, parsable, always up to date.' },
-  { icon: <IconGrad />, title: 'Career Coaching', body: 'On-demand guidance from people who have sat on both sides of the interview table.' },
-  { icon: <IconRupee />, title: 'Salary Insights', body: 'Know your worth before the offer. Real compensation data across roles and regions.', size: 'wide' },
+  { icon: <IconGear />, title: 'AI Job Matching', body: 'Surwive AI analyzes every job based on your skills, experience, career goals, and preferences  delivering personalized opportunities, not just keyword matches.', size: 'hero' },
+  { icon: <IconShieldCheck />, title: 'Verified Employers', body: 'Every employer is verified before jobs go live, ensuring genuine opportunities, trusted companies, and a safe job search experience.' },
+  { icon: <IconArrowUpRight />, title: 'One-click Apply', body: 'Apply to matching jobs instantly with your Surwive profile, helping you reach employers faster.' },
+  { icon: <IconDoc />, title: 'Resume Builder', body: 'Create one professional profile that highlights your skills and matches opportunities across companies.' },
+  { icon: <IconGrad />, title: 'Career Coaching', body: 'Get expert career guidance, interview tips, and hiring insights from experienced industry professionals.' },
+  { icon: <IconRupee />, title: 'Salary Insights', body: 'Explore salary trends, compensation benchmarks, and pay insights across industries, roles, and locations.', size: 'wide' },
 ]
 
 export const matchSignals = [
@@ -41,9 +41,9 @@ export const statBand = [
 ]
 
 export const journeySteps = [
-  { id: '01', title: 'Create your profile', body: 'One profile, built around your skills and trajectory — not a stack of keywords.' },
-  { id: '02', title: 'Find matched jobs', body: 'See roles ranked by real fit, with a clear reason each one was recommended to you.' },
-  { id: '03', title: 'Get hired faster', body: 'Apply in one tap, talk to verified recruiters, and land the offer worth taking.' },
+  { id: '01', title: 'Create your profile', body: 'Build your professional profile by adding your skills, experience, education, projects, and career goals. Hishi AI uses your profile to find the most relevant job opportunities.' },
+  { id: '02', title: 'Get AI Job Matches', body: 'Hishi AI analyzes your profile and recommends personalized jobs with the highest matching score, helping you discover the right opportunities faster.' },
+  { id: '03', title: 'Get Hired Faster', body: 'Apply to verified jobs, connect with trusted employers, track your applications, and start your career with confidence.' },
 ]
 
 export const testimonials = [
@@ -80,11 +80,11 @@ export const clarityCards: {
     title: 'Career',
     accent: 'Clarity',
     points: [
-      'Applications go out on their own.',
-      'Verified badge makes you stand out.',
-      'Resume gets rewritten for every role.',
-      'One score companies actually trust.',
-      'Track every application in one place.',
+      'Hishi AI Finds Your Best Jobs.',
+      'Personalized AI Job Matches.',
+      'Companies Find You by Match Score.',
+      'Verified Skills. Trusted Profile.',
+      'Track Jobs and Applications.',
     ],
     cta: 'Get verified free',
   },
@@ -94,11 +94,11 @@ export const clarityCards: {
     title: 'Recruitment',
     accent: 'Clarity',
     points: [
-      'Every profile is verified before you see it.',
-      'Search by skills, not just keywords.',
-      'No cold sourcing, just a verified pool.',
-      'Profile score shows who is worth calling.',
-      'Pay only when someone joins.',
+      'Find AI-Matched Candidates Instantly.',
+      'Hire by Skills and Match Score.',
+      'Access Verified Talent Profiles.',
+      'Shortlist the Best Candidates Faster.',
+      'Hire Smarter with Hishi AI.',
     ],
     cta: 'Hire verified talent',
   },

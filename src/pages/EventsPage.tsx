@@ -55,7 +55,7 @@ function EventsList() {
       <SectionHead
         eyebrow="Events & Hackathons"
         title="Every event worth your calendar"
-        sub="Hackathons with real prize money, conferences with real builders, and meetups where the hiring actually happens."
+        sub="Showcase Your Skills, Win Challenges, and Connect with Leading Companies Through Events and Hackathons."
       />
 
       <div className="blog__filters reveal" role="tablist" aria-label="Event types">

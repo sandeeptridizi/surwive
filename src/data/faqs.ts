@@ -26,84 +26,16 @@ export function faqCategoryOf(faq: Faq) {
 }
 
 export const faqs: Faq[] = [
-  {
-    category: 'Getting started',
-    q: 'What is Surwive and how does it work?',
-    a: 'Surwive is an AI-powered career platform. You describe the role you want in plain words, our copilot reads 25,000+ live listings, reasons about fit against your skills, salary target, and seniority, and hands you a ranked shortlist — with the exact reasons each role made the list.',
-  },
-  {
-    category: 'Getting started',
-    q: 'Is Surwive free for job seekers?',
-    a: 'Yes. Browsing jobs, internships, walk-in drives, and applying is completely free. Paid plans (Elite at ₹99 for 60 days, Pro at ₹199 for 100 days) add extras like a verified badge, background verification, auto-applications, and the AI resume builder.',
-  },
-  {
-    category: 'Getting started',
-    q: 'How do I create an account?',
-    a: 'Click "Sign up" anywhere on the site, tell us whether you are looking for a job or looking to hire, and share a few basics. That is it — we will be in touch with matches worth your time.',
-  },
-  {
-    category: 'For job seekers',
-    q: 'How does the AI matching actually work?',
-    a: 'Our model reads roles the way a hiring manager does. Every opening is scored against your skills overlap, salary fit, and seniority match — and every recommendation comes with the "why", so you can see exactly which signals earned its score.',
-  },
-  {
-    category: 'For job seekers',
-    q: 'What is the verified badge and background verification?',
-    a: 'Verified profiles are checked by our team so recruiters can trust what they read. Verification is included in the Elite and Pro plans and consistently increases recruiter responses, because your skills stop competing with unverifiable claims.',
-  },
-  {
-    category: 'For job seekers',
-    q: 'Can I find internships and walk-in drives on Surwive?',
-    a: 'Absolutely. The Jobs section has a dedicated Internships tab with stipend details, and the Walk-in Drives section lists verified drives across India every week — show up with your resume, and many companies make same-day offers.',
-  },
-  {
-    category: 'For job seekers',
-    q: 'How does the resume builder work?',
-    a: 'You build one profile and Surwive turns it into a polished, ATS-parsable resume that stays up to date everywhere you apply. Pro users also get AI tailoring that highlights the experience each specific employer cares about.',
-  },
-  {
-    category: 'For employers',
-    q: 'How do I post a job?',
-    a: 'Sign up as an employer and choose a plan. The Free plan keeps a listing live for 15 days with up to 20 applicants; the Premium plan (₹249 per posting) runs for 60 days, accepts up to 50 applicants, and features your job to top candidates.',
-  },
-  {
-    category: 'For employers',
-    q: 'How are candidates ranked for my role?',
-    a: 'Applicants are scored against the role you actually opened — verified skills, salary expectations, and seniority — not resume formatting or keyword stuffing. Teams using Surwive report 3.2× faster time-to-hire and 92% shortlist relevance.',
-  },
-  {
-    category: 'For employers',
-    q: 'What does "verified candidates priority" mean?',
-    a: 'With the Premium plan, candidates who have completed background verification appear at the top of your applicant list. You spend your first interviews on people whose skills and history have already been checked.',
-  },
-  {
-    category: 'Pricing & billing',
-    q: 'What payment methods do you accept?',
-    a: 'We accept UPI, all major credit and debit cards, and net banking. Payments are processed securely and you receive a GST invoice by email immediately after purchase.',
-  },
-  {
-    category: 'Pricing & billing',
-    q: 'Do plans auto-renew?',
-    a: 'No. Every plan is a one-time purchase for a fixed duration — 60 days for Elite, 100 days for Pro, and per-posting for employers. When a plan ends, you simply drop back to the free tier; nothing is charged automatically.',
-  },
-  {
-    category: 'Pricing & billing',
-    q: 'Can I get a refund or switch plans?',
-    a: 'If you upgrade mid-plan, the unused value of your current plan is adjusted against the new one. For refund requests, write to our support team within 7 days of purchase and we will sort it out case by case.',
-  },
-  {
-    category: 'Events & hackathons',
-    q: 'Are the events and hackathons free to join?',
-    a: 'Most are — hackathons like CodeStorm and meetups are free with registration, and webinars are free entry. Some conferences have paid in-person passes (with a free livestream option); the price is always shown on the event page.',
-  },
-  {
-    category: 'Events & hackathons',
-    q: 'What do winners of hackathons get?',
-    a: 'It varies by event: prize pools (₹5L at CodeStorm, ₹2L at FinTech Sprint), pre-placement interviews, fast-tracked hiring rounds, and cloud credits. Every event page lists its perks under "Why attend".',
-  },
-  {
-    category: 'Events & hackathons',
-    q: 'Can my company host an event or drive on Surwive?',
-    a: 'Yes — walk-in drives, hackathons, and hiring events are all part of our employer solutions. Sign up as an employer or reach out through the contact link in the footer and our events team will set it up with you.',
-  },
+  { category: 'Getting started', q: 'What is Surwive?', a: 'Surwive is an AI-powered job and hiring platform that connects job seekers with verified employers. Hishi AI analyzes your skills, experience, and career goals to recommend the best-matched jobs and help recruiters find the right candidates faster.', },
+  { category: 'Getting started', q: 'Is Surwive free for job seekers?', a: 'Yes. Creating a profile, searching jobs, internships, walk-in drives, and applying to opportunities is free. Premium plans unlock additional AI-powered career features and profile enhancements.', },
+  { category: 'Getting started', q: 'How do I create an account?', a: 'Sign up with your email or mobile number, complete your professional profile, and let Hishi AI start recommending jobs that match your skills and career goals.', },
+  { category: 'For job seekers', q: 'How does Hishi AI match jobs?', a: 'Hishi AI analyzes your skills, experience, education, and preferences to recommend jobs with the highest matching score, helping you discover relevant opportunities faster.', },
+  { category: 'For job seekers', q: 'What is a verified profile?', a: 'A verified profile confirms your skills, education, certifications, and experience, helping recruiters trust your profile and improving your visibility to employers.', },
+  { category: 'For job seekers', q: 'Can I find internships and walk-in drives?', a: 'Yes. Surwive offers jobs, internships, walk-in drives, hackathons, career events, and hiring opportunities from verified companies across multiple industries.', },
+  { category: 'For job seekers', q: 'Does Surwive provide an AI resume builder?', a: 'Yes. Create a professional ATS-friendly resume using your Surwive profile, making it easier to apply for jobs and impress recruiters.', },
+  { category: 'For employers', q: 'How do I post a job?', a: 'Create an employer account, complete your company profile, and publish job openings to reach AI-matched candidates with verified skills.', },
+  { category: 'For employers', q: 'How are candidates matched?', a: 'Hishi AI ranks candidates based on skills, experience, qualifications, and job requirements, helping recruiters identify the best-fit talent quickly.', },
+  { category: 'For employers', q: 'Can I hire verified candidates?', a: 'Yes. Employers can prioritize verified candidates with authenticated skills and profiles, making hiring faster and more reliable.', },
+  { category: 'Pricing & billing', q: 'Which payment methods are supported?', a: 'We support secure online payments, including UPI, credit cards, debit cards, and net banking for premium plans and employer services.', },
+  { category: 'Pricing & billing', q: 'Do premium plans renew automatically?', a: 'No. Premium plans do not renew automatically. You can upgrade or renew whenever you choose.', }
 ]
