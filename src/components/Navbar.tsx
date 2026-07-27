@@ -19,10 +19,10 @@ export function Navbar({ onSignup }: { onSignup: () => void }) {
           <img src={logo} alt="Surwive Logo" className="nav__logo-img" />
         </a>
         <nav className={`nav__links ${mobileNavOpen ? 'nav__links--open' : ''}`} aria-label="Primary">
-          <a href="#jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
-          <a href="#internships" onClick={() => setMobileNavOpen(false)}>Internships</a>
-          <a href="#drives" onClick={() => setMobileNavOpen(false)}>Walk In Drives</a>
-          <a href="#events" onClick={() => setMobileNavOpen(false)}>Events & Hackathons</a>
+          <a href="#/jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
+          <a href="#/jobs?tab=internships" onClick={() => setMobileNavOpen(false)}>Internships</a>
+          <a href="#/drives" onClick={() => setMobileNavOpen(false)}>Walk In Drives</a>
+          <a href="#/events" onClick={() => setMobileNavOpen(false)}>Events & Hackathons</a>
           <a href="#recruiters" onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
           <button type="button" className="btn btn--outline nav__links-login" onClick={handleSignup}>
             Login

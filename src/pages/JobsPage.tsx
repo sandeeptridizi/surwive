@@ -331,5 +331,5 @@ export function JobsPage({ hash, onApply }: { hash: string; onApply: () => void 
   const job = slug ? jobCatalog.find((j) => j.slug === slug) : undefined
   if (job) return <JobDetail job={job} onApply={onApply} />
   const initialTab = hash.includes('tab=internships') ? 'internship' : 'job'
-  return <JobsList initialTab={initialTab} />
+  return <JobsList key={initialTab} initialTab={initialTab} />
 }
