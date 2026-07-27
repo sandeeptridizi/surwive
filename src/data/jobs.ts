@@ -16,6 +16,10 @@ export type FeaturedRole = {
 export type JobInfo = FeaturedRole & {
   slug: string
   type: 'job' | 'internship'
+  /** Employment type label from the backend ('Full-time' | 'Part-time' | 'Freelance' | 'Internship'). Absent on the bundled sample data, where `detail` holds the experience level instead. */
+  roleType?: string
+  department?: string
+  duration?: string
   summary: string
   posted: string
   applicants: string
@@ -31,8 +35,9 @@ export type JobInfo = FeaturedRole & {
 const jobAccentPalette = ['#ffc53d', '#7b8cff', '#ff7a50', '#35d0bc']
 
 export function jobAccent(job: JobInfo) {
-  const i = jobCatalog.findIndex((j) => j.slug === job.slug)
-  return jobAccentPalette[(i < 0 ? 0 : i) % jobAccentPalette.length]
+  let h = 0
+  for (let i = 0; i < job.slug.length; i++) h = (h * 31 + job.slug.charCodeAt(i)) | 0
+  return jobAccentPalette[Math.abs(h) % jobAccentPalette.length]
 }
 
 export const featuredJobs: JobInfo[] = [

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import appPic from '../assets/apppic.png'
 import { DriveCard } from '../components/DriveCard'
 import { NewsletterForm } from '../components/NewsletterForm'
@@ -30,9 +30,61 @@ import {
   verificationChecks,
   whyFeatures,
 } from '../data/home'
-import { featuredInternships, featuredJobs, trendingChips } from '../data/jobs'
+import { trendingChips } from '../data/jobs'
+import { useJobs } from '../hooks/useJobs'
 import { driveCatalog } from '../data/drives'
 import { initials } from '../lib/utils'
+
+/** Where the hero search sends the visitor, based on what they typed. */
+function searchTarget(query: string): string {
+  const q = query.toLowerCase()
+  if (/intern/.test(q)) return '#/jobs?tab=internships'
+  if (/hackathon|event/.test(q)) return '#/events'
+  if (/walk|drive/.test(q)) return '#/drives'
+  return '#/jobs'
+}
+
+function HeroSearch({ onEmptySubmit }: { onEmptySubmit: () => void }) {
+  const [query, setQuery] = useState('')
+  const [matching, setMatching] = useState(false)
+  const timer = useRef<number | null>(null)
+
+  useEffect(() => () => {
+    if (timer.current !== null) window.clearTimeout(timer.current)
+  }, [])
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault()
+    if (matching) return
+    const q = query.trim()
+    if (!q) {
+      onEmptySubmit()
+      return
+    }
+    setMatching(true)
+    timer.current = window.setTimeout(() => {
+      window.location.hash = searchTarget(q)
+    }, 900)
+  }
+
+  return (
+    <form className="hero-prompt reveal" style={{ transitionDelay: '210ms' }} onSubmit={submit}>
+      <span className="hero-prompt__icon">
+        {matching ? <span className="hero-spinner" aria-hidden="true" /> : <IconSpark />}
+      </span>
+      <input
+        type="text"
+        value={query}
+        placeholder='Try "remote senior frontend, ₹140k+"'
+        aria-label="Describe your ideal role"
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <button type="submit" className="btn btn--solid hero-prompt__btn" disabled={matching}>
+        {matching ? 'Matching…' : <>Match me <IconArrowUpRight /></>}
+      </button>
+    </form>
+  )
+}
 
 function CopilotChatCard({ onApply }: { onApply: () => void }) {
   const [scene, setScene] = useState(0)
@@ -111,7 +163,8 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
 
 function FeaturedRoles({ onApply }: { onApply: () => void }) {
   const [tab, setTab] = useState<'jobs' | 'internships'>('jobs')
-  const roles = tab === 'jobs' ? featuredJobs : featuredInternships
+  const { jobs } = useJobs()
+  const roles = jobs.filter((j) => j.type === (tab === 'jobs' ? 'job' : 'internship')).slice(0, 6)
 
   useEffect(() => {
     const applyHash = () => {
@@ -164,7 +217,7 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
         {roles.map((job, i) => (
           <article
             className="job-card job-card--link"
-            key={`${tab}-${job.title}`}
+            key={`${tab}-${job.slug}`}
             style={{ animationDelay: `${i * 70}ms` }}
             onClick={() => { window.location.hash = `#/jobs/${job.slug}` }}
           >
@@ -309,21 +362,7 @@ export function HomePage({
             Describe your ideal job in simple words. Surwive AI analyzes thousands of job listings, understands your skills and career goals, and delivers a personalized shortlist of the best-matched opportunities, not just another keyword search.
           </p>
 
-          <form
-            className="hero-prompt reveal"
-            style={{ transitionDelay: '210ms' }}
-            onSubmit={(e) => { e.preventDefault(); onSignupCandidate() }}
-          >
-            <span className="hero-prompt__icon"><IconSpark /></span>
-            <input
-              type="text"
-              placeholder='Try "remote senior frontend, ₹140k+"'
-              aria-label="Describe your ideal role"
-            />
-            <button type="submit" className="btn btn--solid hero-prompt__btn">
-              Match me <IconArrowUpRight />
-            </button>
-          </form>
+          <HeroSearch onEmptySubmit={onSignupCandidate} />
 
           <div className="trending-row reveal" style={{ transitionDelay: '280ms' }}>
             <span>Trending:</span>
