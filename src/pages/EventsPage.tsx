@@ -9,10 +9,30 @@ import {
   IconTrophy,
   IconUsers,
 } from '../components/icons'
-import { eventAccent, eventCatalog, type EventInfo } from '../data/events'
+import { eventAccent, type EventInfo } from '../data/events'
 import { LocationLink } from '../components/LocationLink'
 import { useStickySide } from '../hooks/useStickySide'
-import { initials } from '../lib/utils'
+import { useEvents } from '../hooks/useEvents'
+import { initials, mapsUrl } from '../lib/utils'
+
+function EventMedia({ event, className }: { event: EventInfo; className: string }) {
+  return (
+    <div className={className}>
+      {event.image ? (
+        <img
+          src={event.image}
+          alt=""
+          loading="lazy"
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
+        />
+      ) : (
+        <span className="event-media__fallback" aria-hidden="true">
+          {event.type === 'Hackathon' ? <IconTrophy /> : <IconSpark />}
+        </span>
+      )}
+    </div>
+  )
+}
 
 function EventCard({ event, index }: { event: EventInfo; index: number }) {
   return (
@@ -21,34 +41,74 @@ function EventCard({ event, index }: { event: EventInfo; index: number }) {
       className="event-card"
       style={{ '--ev-accent': eventAccent(event), animationDelay: `${index * 70}ms` } as CSSProperties}
     >
-      <div className="event-card__top">
+      <div className="event-card__media">
+        <EventMedia event={event} className="event-card__img" />
+        <span className="event-card__type event-card__type--overlay">{event.type}</span>
         <span className="event-card__date" aria-hidden="true">
           <strong>{event.day}</strong>
           <span>{event.month}</span>
         </span>
-        <span className="event-card__type">{event.type}</span>
       </div>
-      <h3>{event.title}</h3>
-      <span className="event-card__host">by {event.host}</span>
-      <div className="event-card__facts">
-        <span><IconClock /> {event.time}</span>
-        <span><IconPin /> {event.location} · {event.mode}</span>
-      </div>
-      <div className="event-card__foot">
-        <span className="event-card__perk"><IconSpark /> {event.perk}</span>
-        <span className="event-card__arrow" aria-hidden="true"><IconArrowUpRight /></span>
+      <div className="event-card__body">
+        <h3>{event.title}</h3>
+        <span className="event-card__host">by {event.host}</span>
+        <div className="event-card__facts">
+          <span><IconClock /> {event.time}</span>
+          <span><IconPin /> {event.location} · {event.mode}</span>
+        </div>
+        <div className="event-card__foot">
+          <span className="event-card__perk"><IconSpark /> {event.perk}</span>
+          <span className="event-card__arrow" aria-hidden="true"><IconArrowUpRight /></span>
+        </div>
       </div>
     </a>
   )
 }
 
-function EventsList() {
+function EventSpotlight({ event }: { event: EventInfo }) {
+  return (
+    <a
+      href={`#/events/${event.slug}`}
+      className="event-spotlight"
+      style={{ '--ev-accent': eventAccent(event) } as CSSProperties}
+    >
+      <div className="event-spotlight__media">
+        <EventMedia event={event} className="event-spotlight__img" />
+        <span className="event-card__date" aria-hidden="true">
+          <strong>{event.day}</strong>
+          <span>{event.month}</span>
+        </span>
+      </div>
+      <div className="event-spotlight__body">
+        <div className="event-spotlight__chips">
+          <span className="event-chip event-chip--type">{event.type}</span>
+          <span className="event-chip">{event.mode}</span>
+          <span className="event-spotlight__soon"><IconSpark /> Up next</span>
+        </div>
+        <h3>{event.title}</h3>
+        <span className="event-card__host">by {event.host}</span>
+        <div className="event-spotlight__facts">
+          <span><IconClock /> {event.time}</span>
+          <span><IconPin /> {event.location}</span>
+          <span><IconUsers /> {event.attendees}</span>
+          <span><IconTrophy /> {event.perk}</span>
+        </div>
+        <div className="event-spotlight__foot">
+          <span className="event-spotlight__price">{event.price}</span>
+          <span className="event-spotlight__cta">View event <IconArrowUpRight /></span>
+        </div>
+      </div>
+    </a>
+  )
+}
+
+function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boolean }) {
   const [filter, setFilter] = useState<'all' | 'events' | 'hackathons'>('all')
 
-  const items = eventCatalog.filter((item) =>
+  const items = catalog.filter((item) =>
     filter === 'all' ? true : filter === 'hackathons' ? item.type === 'Hackathon' : item.type !== 'Hackathon'
   )
-  const hackathonCount = eventCatalog.filter((e) => e.type === 'Hackathon').length
+  const hackathonCount = catalog.filter((e) => e.type === 'Hackathon').length
 
   return (
     <section className="blog events-page">
@@ -67,7 +127,7 @@ function EventsList() {
           style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
           onClick={() => setFilter('all')}
         >
-          <IconSpark /> All <span className="blog-pill__count">{eventCatalog.length}</span>
+          <IconSpark /> All <span className="blog-pill__count">{catalog.length}</span>
         </button>
         <button
           type="button"
@@ -77,7 +137,7 @@ function EventsList() {
           style={{ '--blog-accent': '#7b8cff' } as CSSProperties}
           onClick={() => setFilter('events')}
         >
-          <IconUsers /> Events <span className="blog-pill__count">{eventCatalog.length - hackathonCount}</span>
+          <IconUsers /> Events <span className="blog-pill__count">{catalog.length - hackathonCount}</span>
         </button>
         <button
           type="button"
@@ -91,17 +151,39 @@ function EventsList() {
         </button>
       </div>
 
-      <div className="events-grid" key={filter}>
-        {items.map((event, i) => (
-          <EventCard event={event} index={i} key={event.slug} />
-        ))}
+      <div className="events-feed" key={filter}>
+        {items.length > 0 && <EventSpotlight event={items[0]!} />}
+        <div className="events-grid">
+          {items.slice(1).map((event, i) => (
+            <EventCard event={event} index={i} key={event.slug} />
+          ))}
+        </div>
+        {items.length === 0 && (
+          <div className="jobs-empty">
+            <span className="jobs-empty__icon"><IconSpark /></span>
+            <strong>{loading ? 'Loading events…' : 'No events here yet'}</strong>
+            <p>
+              {loading
+                ? 'Fetching the latest events and hackathons from Surwive.'
+                : 'Check back soon — new events and hackathons are announced all the time.'}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   )
 }
 
-function EventDetail({ event, onRegister }: { event: EventInfo; onRegister: () => void }) {
-  const others = eventCatalog.filter((e) => e.slug !== event.slug).slice(0, 3)
+function EventDetail({
+  event,
+  catalog,
+  onRegister,
+}: {
+  event: EventInfo
+  catalog: EventInfo[]
+  onRegister: () => void
+}) {
+  const others = catalog.filter((e) => e.slug !== event.slug).slice(0, 3)
   const sideRef = useStickySide<HTMLElement>()
 
   return (
@@ -112,29 +194,86 @@ function EventDetail({ event, onRegister }: { event: EventInfo; onRegister: () =
     >
       <a href="#/events" className="article__back">← All events & hackathons</a>
 
-      <header className="event-hero">
-        <div className="event-hero__main">
+      <header className="event-hero event-hero--banner">
+        <div className="event-hero__media">
+          <EventMedia event={event} className="event-hero__img" />
+          <div className="event-hero__scrim" aria-hidden="true" />
           <div className="event-hero__chips">
             <span className="event-chip event-chip--type">{event.type}</span>
-            <span className="event-chip">{event.mode}</span>
-            <span className="event-chip">{event.location}</span>
-          </div>
-          <h1>{event.title}</h1>
-          <p className="event-hero__org">
-            Organized by <strong>{event.host}</strong>
-          </p>
-          <div className="event-hero__facts">
-            <span><IconClock /> {event.time}</span>
-            <span><IconUsers /> {event.attendees}</span>
-            <span><IconSpark /> {event.perk}</span>
+            <span className="event-chip event-chip--glass">{event.mode}</span>
+            {event.mode === 'Online' ? (
+              <span className="event-chip event-chip--glass">{event.location}</span>
+            ) : (
+              <a
+                className="event-chip event-chip--glass event-chip--link"
+                href={mapsUrl(event.location)}
+                target="_blank"
+                rel="noreferrer"
+                title={`Open ${event.location} in Google Maps`}
+              >
+                <IconPin /> {event.location}
+              </a>
+            )}
           </div>
         </div>
-        <div className="event-hero__stub" aria-hidden="true">
-          <span className="event-hero__stub-date">
-            <strong>{event.day}</strong>
-            <span>{event.month}</span>
-          </span>
-          <span className="event-hero__stub-label">Save the date</span>
+        <div className="event-hero__main">
+          <div className="event-hero__title-row">
+            <div className="event-hero__heading">
+              <h1>{event.title}</h1>
+              <p className="event-hero__org">
+                Organized by <strong>{event.host}</strong>
+              </p>
+            </div>
+            <div className="event-hero__cta">
+              <span className="event-hero__price">{event.price}</span>
+              <span className="event-hero__price-note">{event.priceNote}</span>
+              <button type="button" className="btn btn--solid event-hero__register" onClick={onRegister}>
+                Register now <IconArrowUpRight />
+              </button>
+            </div>
+          </div>
+          <div className="event-hero__glance">
+            <div className="event-glance">
+              <span className="event-glance__badge" aria-hidden="true">
+                <strong>{event.day}</strong>
+                <span>{event.month}</span>
+              </span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Date</span>
+                <span className="event-glance__value">{event.day} {event.month}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconClock /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Time</span>
+                <span className="event-glance__value">{event.time}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconPin /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">{event.mode} · Location</span>
+                <span className="event-glance__value">
+                  <LocationLink location={event.location} online={event.mode === 'Online'} />
+                </span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconUsers /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Attendees</span>
+                <span className="event-glance__value">{event.attendees}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconTrophy /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Perk</span>
+                <span className="event-glance__value">{event.perk}</span>
+              </span>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -264,7 +403,31 @@ function EventDetail({ event, onRegister }: { event: EventInfo; onRegister: () =
 }
 
 export function EventsPage({ slug, onRegister }: { slug: string | null; onRegister: () => void }) {
-  const event = slug ? eventCatalog.find((e) => e.slug === slug) : undefined
-  if (event) return <EventDetail event={event} onRegister={onRegister} />
-  return <EventsList />
+  const { events, loading } = useEvents()
+  const event = slug ? events.find((e) => e.slug === slug) : undefined
+  if (event) return <EventDetail event={event} catalog={events} onRegister={onRegister} />
+  if (slug && !loading) {
+    return (
+      <section className="blog events-page">
+        <a href="#/events" className="article__back">← All events & hackathons</a>
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>Event not found</strong>
+          <p>It may have wrapped up or been unpublished. Browse what's coming up instead.</p>
+        </div>
+      </section>
+    )
+  }
+  if (slug) {
+    return (
+      <section className="blog events-page">
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>Loading event…</strong>
+          <p>Fetching the details from Surwive.</p>
+        </div>
+      </section>
+    )
+  }
+  return <EventsList catalog={events} loading={loading} />
 }

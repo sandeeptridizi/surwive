@@ -16,7 +16,7 @@ import {
   IconStar,
   IconTrophy,
 } from '../components/icons'
-import { eventCatalog } from '../data/events'
+import { useEvents } from '../hooks/useEvents'
 import {
   CHAT_SCENARIOS,
   clarityCards,
@@ -279,7 +279,8 @@ function WalkInDrives({ onApply }: { onApply: () => void }) {
 
 function EventsAndHackathons({ onApply }: { onApply: () => void }) {
   const [tab, setTab] = useState<'events' | 'hackathons'>('events')
-  const items = eventCatalog.filter((item) =>
+  const { events, loading } = useEvents()
+  const items = events.filter((item) =>
     tab === 'hackathons' ? item.type === 'Hackathon' : item.type !== 'Hackathon'
   )
 
@@ -325,11 +326,23 @@ function EventsAndHackathons({ onApply }: { onApply: () => void }) {
         </div>
       </div>
 
-      <div className="drives-grid" key={tab}>
-        {items.map((item, i) => (
-          <DriveCard item={item} index={i} onApply={onApply} key={item.title} />
-        ))}
-      </div>
+      {items.length > 0 ? (
+        <div className="drives-grid" key={tab}>
+          {items.map((item, i) => (
+            <DriveCard item={item} index={i} onApply={onApply} key={item.title} />
+          ))}
+        </div>
+      ) : (
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>{loading ? 'Loading events…' : `No ${tab} announced right now`}</strong>
+          <p>
+            {loading
+              ? 'Fetching the latest events and hackathons from Surwive.'
+              : 'New events and hackathons are published here as soon as they are announced.'}
+          </p>
+        </div>
+      )}
     </section>
   )
 }
