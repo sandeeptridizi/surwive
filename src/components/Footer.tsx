@@ -30,7 +30,7 @@ export function Footer() {
 
       <nav className="footer__col" aria-label="Company">
         <h4>Company</h4>
-        <a href="#contact">Contact us</a>
+        <a href="#/contact">Contact us</a>
         <a href="#/blog">Blog</a>
         <a href="#/faqs">FAQs</a>
         <a href="#/pricing">Pricing</a>

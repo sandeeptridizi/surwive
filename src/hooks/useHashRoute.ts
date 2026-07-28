@@ -19,8 +19,10 @@ export function useHashRoute() {
           ? 'drives'
           : hash.startsWith('#/faqs')
             ? 'faqs'
-            : hash.startsWith('#/legal')
-              ? 'legal'
-              : 'home'
+            : hash.startsWith('#/contact')
+              ? 'contact'
+              : hash.startsWith('#/legal')
+                ? 'legal'
+                : 'home'
   return { route, hash }
 }

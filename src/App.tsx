@@ -9,6 +9,7 @@ import { SignupModal, type SignupRole } from './components/SignupModal'
 import { useHashRoute } from './hooks/useHashRoute'
 import { useScrollReveal } from './hooks/useScrollReveal'
 import { BlogPage } from './pages/BlogPage'
+import { ContactPage } from './pages/ContactPage'
 import { DrivesPage } from './pages/DrivesPage'
 import { EventsPage } from './pages/EventsPage'
 import { FaqPage } from './pages/FaqPage'
@@ -33,7 +34,7 @@ function App() {
   const closeSignup = () => setSignupModal((s) => ({ ...s, open: false }))
 
   useEffect(() => {
-    if (route === 'jobs' || route === 'pricing' || route === 'blog' || route === 'events' || route === 'drives' || route === 'faqs' || route === 'legal') {
+    if (route === 'jobs' || route === 'pricing' || route === 'blog' || route === 'events' || route === 'drives' || route === 'faqs' || route === 'contact' || route === 'legal') {
       window.scrollTo({ top: 0 })
     } else {
       const id = window.location.hash.slice(1)
@@ -74,6 +75,8 @@ function App() {
           />
         ) : route === 'faqs' ? (
           <FaqPage onSignup={() => openSignup('candidate')} />
+        ) : route === 'contact' ? (
+          <ContactPage />
         ) : route === 'legal' ? (
           <PolicyPage slug={hash.startsWith('#/legal/') ? decodeURIComponent(hash.slice('#/legal/'.length)) : null} />
         ) : (
