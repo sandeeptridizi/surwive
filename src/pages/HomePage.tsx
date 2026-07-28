@@ -32,7 +32,7 @@ import {
 } from '../data/home'
 import { trendingChips } from '../data/jobs'
 import { useJobs } from '../hooks/useJobs'
-import { driveCatalog } from '../data/drives'
+import { useDrives } from '../hooks/useDrives'
 import { initials } from '../lib/utils'
 
 /** Where the hero search sends the visitor, based on what they typed. */
@@ -255,6 +255,8 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
 }
 
 function WalkInDrives({ onApply }: { onApply: () => void }) {
+  const { drives, loading } = useDrives()
+
   return (
     <section className="drives-section" id="drives">
       <SectionHead
@@ -268,11 +270,23 @@ function WalkInDrives({ onApply }: { onApply: () => void }) {
           </a>
         }
       />
-      <div className="drives-grid">
-        {driveCatalog.map((item, i) => (
-          <DriveCard item={item} index={i} onApply={onApply} key={item.title} />
-        ))}
-      </div>
+      {drives.length > 0 ? (
+        <div className="drives-grid">
+          {drives.map((item, i) => (
+            <DriveCard item={item} index={i} onApply={onApply} key={item.slug} />
+          ))}
+        </div>
+      ) : (
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>{loading ? 'Loading walk-in drives…' : 'No walk-in drives announced right now'}</strong>
+          <p>
+            {loading
+              ? 'Fetching the latest drives from Surwive.'
+              : 'Check back soon — new drives are announced all the time.'}
+          </p>
+        </div>
+      )}
     </section>
   )
 }

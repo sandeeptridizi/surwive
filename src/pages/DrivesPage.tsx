@@ -11,9 +11,10 @@ import {
   IconSpark,
   IconUsers,
 } from '../components/icons'
-import { driveAccent, driveCatalog, type DriveInfo } from '../data/drives'
+import { driveAccent, type DriveInfo } from '../data/drives'
 import { LocationLink } from '../components/LocationLink'
 import { useStickySide } from '../hooks/useStickySide'
+import { useDrives } from '../hooks/useDrives'
 import { initials } from '../lib/utils'
 
 function DriveRow({ drive, index }: { drive: DriveInfo; index: number }) {
@@ -55,10 +56,10 @@ function DriveRow({ drive, index }: { drive: DriveInfo; index: number }) {
   )
 }
 
-function DrivesList() {
+function DrivesList({ catalog, loading }: { catalog: DriveInfo[]; loading: boolean }) {
   const [city, setCity] = useState('All')
-  const cities = Array.from(new Set(driveCatalog.map((d) => d.location)))
-  const visible = city === 'All' ? driveCatalog : driveCatalog.filter((d) => d.location === city)
+  const cities = Array.from(new Set(catalog.map((d) => d.location)))
+  const visible = city === 'All' ? catalog : catalog.filter((d) => d.location === city)
 
   return (
     <section className="blog drives-page">
@@ -77,7 +78,7 @@ function DrivesList() {
           style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
           onClick={() => setCity('All')}
         >
-          <IconSpark /> All cities <span className="blog-pill__count">{driveCatalog.length}</span>
+          <IconSpark /> All cities <span className="blog-pill__count">{catalog.length}</span>
         </button>
         {cities.map((c) => (
           <button
@@ -89,7 +90,7 @@ function DrivesList() {
             style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
             onClick={() => setCity(c)}
           >
-            <IconPin /> {c} <span className="blog-pill__count">{driveCatalog.filter((d) => d.location === c).length}</span>
+            <IconPin /> {c} <span className="blog-pill__count">{catalog.filter((d) => d.location === c).length}</span>
           </button>
         ))}
       </div>
@@ -99,12 +100,51 @@ function DrivesList() {
           <DriveRow drive={drive} index={i} key={drive.slug} />
         ))}
       </div>
+
+      {visible.length === 0 && (
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>{loading ? 'Loading walk-in drives…' : 'No walk-in drives right now'}</strong>
+          <p>
+            {loading
+              ? 'Fetching the latest drives from Surwive.'
+              : 'Check back soon — new drives are announced all the time.'}
+          </p>
+        </div>
+      )}
     </section>
   )
 }
 
-function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () => void }) {
-  const others = driveCatalog.filter((d) => d.slug !== drive.slug).slice(0, 3)
+function DriveMedia({ drive, className }: { drive: DriveInfo; className: string }) {
+  return (
+    <div className={className}>
+      {drive.image ? (
+        <img
+          src={drive.image}
+          alt=""
+          loading="lazy"
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
+        />
+      ) : (
+        <span className="event-media__fallback" aria-hidden="true">
+          <IconUsers />
+        </span>
+      )}
+    </div>
+  )
+}
+
+function DriveDetail({
+  drive,
+  catalog,
+  onRegister,
+}: {
+  drive: DriveInfo
+  catalog: DriveInfo[]
+  onRegister: () => void
+}) {
+  const others = catalog.filter((d) => d.slug !== drive.slug).slice(0, 3)
   const sideRef = useStickySide<HTMLElement>()
 
   return (
@@ -115,133 +155,188 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
     >
       <a href="#/drives" className="article__back">← All walk-in drives</a>
 
-      <header className="drive-hero">
-        <div className="drive-hero__top">
+      <header className="event-hero event-hero--banner">
+        <div className="event-hero__media">
+          <DriveMedia drive={drive} className="event-hero__img" />
+          <div className="event-hero__scrim" aria-hidden="true" />
           <div className="event-hero__chips">
             <span className="event-chip event-chip--type">Walk-in drive</span>
-            <span className="event-chip">{drive.mode}</span>
-            <span className="event-chip">{drive.openings}</span>
+            {drive.perk && <span className="event-chip event-chip--glass">{drive.perk}</span>}
+            {drive.tags.map((tag) => (
+              <span className="event-chip event-chip--glass" key={tag}>{tag}</span>
+            ))}
           </div>
-          <h1>{drive.title}</h1>
-          <p className="event-hero__org">
-            Hosted by <strong>{drive.host}</strong> · <LocationLink location={drive.location} online={drive.mode === 'Online'} />
-          </p>
         </div>
-        <div className="drive-hero__facts">
-          <div className="drive-fact">
-            <span className="drive-fact__label">Date</span>
-            <strong>{drive.day} {drive.month}</strong>
+        <div className="event-hero__main">
+          <div className="event-hero__title-row">
+            <div className="event-hero__heading">
+              <h1>{drive.title}</h1>
+              <p className="event-hero__org">
+                Hosted by <strong>{drive.host}</strong>
+              </p>
+            </div>
+            <div className="event-hero__cta">
+              <span className="event-hero__price">Free entry</span>
+              <span className="event-hero__price-note">{drive.deadline}</span>
+              <button type="button" className="btn btn--solid event-hero__register" onClick={onRegister}>
+                Register now <IconArrowUpRight />
+              </button>
+            </div>
           </div>
-          <div className="drive-fact">
-            <span className="drive-fact__label">Time</span>
-            <strong>{drive.time}</strong>
-          </div>
-          <div className="drive-fact">
-            <span className="drive-fact__label">Location</span>
-            <strong><LocationLink location={drive.location} online={drive.mode === 'Online'} /> · {drive.mode}</strong>
-          </div>
-          <div className="drive-fact">
-            <span className="drive-fact__label">Salary range</span>
-            <strong>{drive.salary}</strong>
-          </div>
-          <div className="drive-fact">
-            <span className="drive-fact__label">Openings</span>
-            <strong>{drive.openings}</strong>
+          <div className="event-hero__glance">
+            <div className="event-glance">
+              <span className="event-glance__badge" aria-hidden="true">
+                <strong>{drive.day}</strong>
+                <span>{drive.month}</span>
+              </span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Date</span>
+                <span className="event-glance__value">{drive.day} {drive.month}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconClock /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Time</span>
+                <span className="event-glance__value">{drive.time}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconPin /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Location</span>
+                <span className="event-glance__value">
+                  <LocationLink location={drive.location} online={drive.mode === 'Online'} /> · {drive.mode}
+                </span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconRupee /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Salary range</span>
+                <span className="event-glance__value">{drive.salary}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconUsers /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Openings</span>
+                <span className="event-glance__value">{drive.openings}</span>
+              </span>
+            </div>
           </div>
         </div>
       </header>
 
       <div className="article-layout">
         <div className="event-main">
-          <div className="event-panel">
-            <h2>About {drive.host}</h2>
-            {drive.aboutCompany.map((para) => (
-              <p key={para}>{para}</p>
-            ))}
-          </div>
-
-          <div className="event-panel">
-            <h2>About this drive</h2>
-            {drive.aboutDrive.map((para) => (
-              <p key={para}>{para}</p>
-            ))}
-          </div>
-
-          <div className="event-panel">
-            <h2>Open positions</h2>
-            <div className="drive-positions">
-              {drive.positions.map((pos) => (
-                <div className="drive-position" key={pos.title}>
-                  <strong>{pos.title}</strong>
-                  <span>{pos.exp}</span>
-                </div>
+          {drive.aboutCompany.length > 0 && (
+            <div className="event-panel">
+              <h2>About {drive.host}</h2>
+              {drive.aboutCompany.map((para) => (
+                <p key={para}>{para}</p>
               ))}
             </div>
-          </div>
+          )}
 
-          <div className="event-panel">
-            <h2>Selection process</h2>
-            <ol className="drive-steps">
-              {drive.process.map((p, i) => (
-                <li key={p.step}>
-                  <span className="drive-steps__node" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                  <div className="drive-steps__body">
-                    <strong>{p.step}</strong>
-                    <span>{p.detail}</span>
+          {drive.aboutDrive.length > 0 && (
+            <div className="event-panel">
+              <h2>About this drive</h2>
+              {drive.aboutDrive.map((para) => (
+                <p key={para}>{para}</p>
+              ))}
+            </div>
+          )}
+
+          {drive.positions.length > 0 && (
+            <div className="event-panel">
+              <h2>Open positions</h2>
+              <div className="drive-positions">
+                {drive.positions.map((pos) => (
+                  <div className="drive-position" key={pos.title}>
+                    <strong>{pos.title}</strong>
+                    <span>{pos.exp}</span>
                   </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-          <div className="event-panel">
-            <h2>Drive schedule</h2>
-            <ol className="event-agenda">
-              {drive.schedule.map((slot) => (
-                <li key={`${slot.time}-${slot.item}`}>
-                  <span className="event-agenda__time">{slot.time}</span>
-                  <span className="event-agenda__item">{slot.item}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="drive-2col">
+          {drive.process.length > 0 && (
             <div className="event-panel">
-              <h2>Eligibility</h2>
-              <ul className="event-highlights event-highlights--single">
-                {drive.eligibility.map((e) => (
-                  <li key={e}>
+              <h2>Selection process</h2>
+              <ol className="drive-steps">
+                {drive.process.map((p, i) => (
+                  <li key={p.step}>
+                    <span className="drive-steps__node" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                    <div className="drive-steps__body">
+                      <strong>{p.step}</strong>
+                      <span>{p.detail}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {drive.schedule.length > 0 && (
+            <div className="event-panel">
+              <h2>Drive schedule</h2>
+              <ol className="event-agenda">
+                {drive.schedule.map((slot) => (
+                  <li key={`${slot.time}-${slot.item}`}>
+                    <span className="event-agenda__time">{slot.time}</span>
+                    <span className="event-agenda__item">{slot.item}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {(drive.eligibility.length > 0 || drive.documents.length > 0) && (
+            <div className="drive-2col">
+              {drive.eligibility.length > 0 && (
+                <div className="event-panel">
+                  <h2>Eligibility</h2>
+                  <ul className="event-highlights event-highlights--single">
+                    {drive.eligibility.map((e) => (
+                      <li key={e}>
+                        <span className="article__bullet" aria-hidden="true"><IconCheck /></span>
+                        {e}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {drive.documents.length > 0 && (
+                <div className="event-panel">
+                  <h2>Documents to bring</h2>
+                  <ul className="event-highlights event-highlights--single">
+                    {drive.documents.map((d) => (
+                      <li key={d}>
+                        <span className="article__bullet" aria-hidden="true"><IconDoc /></span>
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {drive.perks.length > 0 && (
+            <div className="event-panel">
+              <h2>Benefits & perks</h2>
+              <ul className="event-highlights">
+                {drive.perks.map((p) => (
+                  <li key={p}>
                     <span className="article__bullet" aria-hidden="true"><IconCheck /></span>
-                    {e}
+                    {p}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="event-panel">
-              <h2>Documents to bring</h2>
-              <ul className="event-highlights event-highlights--single">
-                {drive.documents.map((d) => (
-                  <li key={d}>
-                    <span className="article__bullet" aria-hidden="true"><IconDoc /></span>
-                    {d}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="event-panel">
-            <h2>Benefits & perks</h2>
-            <ul className="event-highlights">
-              {drive.perks.map((p) => (
-                <li key={p}>
-                  <span className="article__bullet" aria-hidden="true"><IconCheck /></span>
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
+          )}
         </div>
 
         <aside className="article-side" ref={sideRef}>
@@ -253,29 +348,23 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
             </button>
           </div>
 
-          <div className="article-side__card">
-            <h3>Drive details</h3>
-            <ul className="event-facts">
-              <li><span className="event-facts__icon"><IconClock /></span><span><strong>{drive.day} {drive.month}</strong><span>{drive.time}</span></span></li>
-              <li><span className="event-facts__icon"><IconPin /></span><span><strong><LocationLink location={drive.location} online={drive.mode === 'Online'} /></strong><span>{drive.mode}</span></span></li>
-              <li><span className="event-facts__icon"><IconRupee /></span><span><strong>Salary range</strong><span>{drive.salary}</span></span></li>
-              <li><span className="event-facts__icon"><IconUsers /></span><span><strong>Openings</strong><span>{drive.openings}</span></span></li>
-            </ul>
-          </div>
-
-          <div className="article-side__card">
-            <h3>Contact person</h3>
-            <div className="article-side__author-head">
-              <span className="article__avatar article__avatar--lg" aria-hidden="true">{initials(drive.contact.name)}</span>
-              <div>
-                <h3 className="event-org__name">{drive.contact.name}</h3>
-                <span className="article__author-role">{drive.contact.role}</span>
+          {drive.contact.name && (
+            <div className="article-side__card">
+              <h3>Contact person</h3>
+              <div className="article-side__author-head">
+                <span className="article__avatar article__avatar--lg" aria-hidden="true">{initials(drive.contact.name)}</span>
+                <div>
+                  <h3 className="event-org__name">{drive.contact.name}</h3>
+                  <span className="article__author-role">{drive.contact.role}</span>
+                </div>
               </div>
+              {drive.contact.email && (
+                <a className="drive-contact__mail" href={`mailto:${drive.contact.email}`}>
+                  <IconMail /> {drive.contact.email}
+                </a>
+              )}
             </div>
-            <a className="drive-contact__mail" href={`mailto:${drive.contact.email}`}>
-              <IconMail /> {drive.contact.email}
-            </a>
-          </div>
+          )}
 
           {others.length > 0 && (
             <div className="article-side__card">
@@ -305,7 +394,31 @@ function DriveDetail({ drive, onRegister }: { drive: DriveInfo; onRegister: () =
 }
 
 export function DrivesPage({ slug, onRegister }: { slug: string | null; onRegister: () => void }) {
-  const drive = slug ? driveCatalog.find((d) => d.slug === slug) : undefined
-  if (drive) return <DriveDetail drive={drive} onRegister={onRegister} />
-  return <DrivesList />
+  const { drives, loading } = useDrives()
+  const drive = slug ? drives.find((d) => d.slug === slug) : undefined
+  if (drive) return <DriveDetail drive={drive} catalog={drives} onRegister={onRegister} />
+  if (slug && !loading) {
+    return (
+      <section className="blog drives-page">
+        <a href="#/drives" className="article__back">← All walk-in drives</a>
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>Drive not found</strong>
+          <p>It may have wrapped up or been unpublished. Browse what's coming up instead.</p>
+        </div>
+      </section>
+    )
+  }
+  if (slug) {
+    return (
+      <section className="blog drives-page">
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>Loading drive…</strong>
+          <p>Fetching the details from Surwive.</p>
+        </div>
+      </section>
+    )
+  }
+  return <DrivesList catalog={drives} loading={loading} />
 }
