@@ -237,9 +237,12 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
             <div className="job-card__tags">
               <span className="job-tag job-tag--mode">{job.mode}</span>
               <span className="job-tag">{job.detail}</span>
-              {job.skills.map((skill) => (
+              {job.skills.slice(0, 3).map((skill) => (
                 <span className="job-tag" key={skill}>{skill}</span>
               ))}
+              {job.skills.length > 3 && (
+                <span className="job-tag job-tag--more">+{job.skills.length - 3} more</span>
+              )}
             </div>
             <div className="job-card__foot">
               <span className="job-card__salary">{job.pay}<small>{job.per}</small></span>

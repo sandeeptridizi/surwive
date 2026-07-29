@@ -1544,10 +1544,26 @@ section[id] { scroll-margin-top: 84px; }
   margin: 0;
 }
 
+/* Clamp title to two lines to keep card heights consistent */
+.job-card__title a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .job-card__tags {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
+}
+
+/* Keep tags visually compact by collapsing the container */
+.job-card__tags {
+  max-height: 72px; /* keep a compact block; no hover expansion */
+  overflow: hidden;
+  transition: max-height 0.28s ease;
 }
 
 .job-tag {
@@ -1558,6 +1574,19 @@ section[id] { scroll-margin-top: 84px; }
   border: 1px solid var(--border);
   padding: 4px 11px;
   border-radius: 999px;
+}
+
+/* Keep long tags on a single line and truncate if needed */
+.job-tag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 12.5rem;
+}
+
+.job-tag--more {
+  background: rgba(255,255,255,0.02);
+  border-style: dashed;
 }
 .job-tag--mode {
   color: var(--accent-2);
