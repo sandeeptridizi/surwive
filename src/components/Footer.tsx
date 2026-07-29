@@ -1,6 +1,8 @@
 import logo from '../assets/Group 2.png'
 import { IconGlobe } from './icons'
 
+const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
+
 export function Footer() {
   return (
     <footer className="footer">
@@ -22,10 +24,10 @@ export function Footer() {
 
       <nav className="footer__col" aria-label="For employers">
         <h4>For employers</h4>
-        <a href="#recruiters">Post a job</a>
+        <a href={EMPLOYER_PORTAL_URL}>Post a job</a>
         <a href="#companies">Browse companies</a>
         <a href="#drives">Hiring events</a>
-        <a href="#recruiters">Employer solutions</a>
+        <a href={EMPLOYER_PORTAL_URL}>Employer solutions</a>
       </nav>
 
       <nav className="footer__col" aria-label="Company">

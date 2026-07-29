@@ -3,6 +3,8 @@ import logo from '../assets/Group 2.png'
 import { useNavScrollState } from '../hooks/useNavScrollState'
 import { IconClose, IconMenu } from './icons'
 
+const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
+
 export function Navbar({ onSignup }: { onSignup: () => void }) {
   const navScrolled = useNavScrollState()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
@@ -23,7 +25,7 @@ export function Navbar({ onSignup }: { onSignup: () => void }) {
           <a href="#/jobs?tab=internships" onClick={() => setMobileNavOpen(false)}>Internships</a>
           <a href="#/drives" onClick={() => setMobileNavOpen(false)}>Walk In Drives</a>
           <a href="#/events" onClick={() => setMobileNavOpen(false)}>Events & Hackathons</a>
-          <a href="#recruiters" onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
+          <a href={EMPLOYER_PORTAL_URL} onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
           <button type="button" className="btn btn--outline nav__links-login" onClick={handleSignup}>
             Login
           </button>
