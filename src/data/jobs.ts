@@ -40,6 +40,17 @@ export function jobAccent(job: JobInfo) {
   return jobAccentPalette[Math.abs(h) % jobAccentPalette.length]
 }
 
+/** Rupee bounds in a `pay` string (handles "₹24L – ₹32L", "₹40k", stipend text). Returns null for non-numeric pay like "Not disclosed". */
+export function parsePayRange(pay: string): { min: number; max: number } | null {
+  const matches = [...pay.matchAll(/([\d,.]+)\s*(l|k)\b/gi)]
+  if (!matches.length) return null
+  const values = matches.map(([, num, unit]) => {
+    const n = parseFloat(num.replace(/,/g, ''))
+    return unit.toLowerCase() === 'l' ? n * 100_000 : n * 1_000
+  })
+  return { min: Math.min(...values), max: Math.max(...values) }
+}
+
 export const featuredJobs: JobInfo[] = [
   {
     company: 'TriDizi Digital Innovations', initial: 'T', featured: true, title: 'Senior Frontend Engineer', location: 'Hyderabad', mode: 'Remote', detail: '5+ yrs', skills: ['React', 'TypeScript'], pay: '₹24L – ₹32L', per: 'per year',

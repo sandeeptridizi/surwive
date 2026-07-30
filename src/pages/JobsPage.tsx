@@ -4,17 +4,39 @@ import {
   IconArrowUpRight,
   IconCheck,
   IconClock,
+  IconClose,
   IconPin,
+  IconRupee,
   IconSpark,
   IconStar,
   IconUsers,
 } from '../components/icons'
-import { jobAccent, type JobInfo } from '../data/jobs'
+import { jobAccent, parsePayRange, type JobInfo } from '../data/jobs'
 import { LocationLink } from '../components/LocationLink'
 import { useJobs } from '../hooks/useJobs'
 import { useStickySide } from '../hooks/useStickySide'
 
 const MODES = ['All', 'Remote', 'Hybrid', 'On-site'] as const
+
+const SALARY_BOUNDS = {
+  job: { min: 0, max: 6_000_000, step: 100_000 },
+  internship: { min: 0, max: 60_000, step: 5_000 },
+} as const
+
+function formatINR(value: number): string {
+  if (value >= 100_000) {
+    const lakhs = value / 100_000
+    return `₹${Number.isInteger(lakhs) ? lakhs : lakhs.toFixed(1)}L`
+  }
+  if (value >= 1_000) return `₹${Math.round(value / 1_000)}k`
+  return `₹${value}`
+}
+
+function matchesSalaryRange(job: JobInfo, min: number, max: number) {
+  const range = parsePayRange(job.pay)
+  if (!range) return false
+  return range.max >= min && range.min <= max
+}
 
 function JobRow({ job, index }: { job: JobInfo; index: number }) {
   return (
@@ -66,12 +88,41 @@ function JobsList({
 }) {
   const [tab, setTab] = useState<'job' | 'internship'>(initialTab)
   const [mode, setMode] = useState<(typeof MODES)[number]>('All')
+  const [location, setLocation] = useState('All')
+  const [salaryMin, setSalaryMin] = useState<number>(SALARY_BOUNDS[initialTab].min)
+  const [salaryMax, setSalaryMax] = useState<number>(SALARY_BOUNDS[initialTab].max)
   const [query, setQuery] = useState('')
 
+  const bounds = SALARY_BOUNDS[tab]
+  const salaryActive = salaryMin > bounds.min || salaryMax < bounds.max
+
+  function switchTab(next: 'job' | 'internship') {
+    setTab(next)
+    setLocation('All')
+    setSalaryMin(SALARY_BOUNDS[next].min)
+    setSalaryMax(SALARY_BOUNDS[next].max)
+  }
+
+  function resetSalary() {
+    setSalaryMin(bounds.min)
+    setSalaryMax(bounds.max)
+  }
+
+  function clearFilters() {
+    setQuery('')
+    setMode('All')
+    setLocation('All')
+    resetSalary()
+  }
+
+  const byTab = catalog.filter((j) => j.type === tab)
+  const byMode = byTab.filter((j) => mode === 'All' || j.mode === mode)
+  const byLocation = byMode.filter((j) => location === 'All' || j.location === location)
+  const locations = Array.from(new Set(byMode.map((j) => j.location))).sort()
+
   const q = query.trim().toLowerCase()
-  const visible = catalog.filter((job) => {
-    if (job.type !== tab) return false
-    if (mode !== 'All' && job.mode !== mode) return false
+  const visible = byLocation.filter((job) => {
+    if (salaryActive && !matchesSalaryRange(job, salaryMin, salaryMax)) return false
     if (!q) return true
     return [job.title, job.company, job.location, ...job.skills]
       .some((field) => field.toLowerCase().includes(q))
@@ -91,7 +142,7 @@ function JobsList({
               role="tab"
               aria-selected={tab === 'job'}
               className={tab === 'job' ? 'is-active' : ''}
-              onClick={() => setTab('job')}
+              onClick={() => switchTab('job')}
             >
               Jobs
             </button>
@@ -100,7 +151,7 @@ function JobsList({
               role="tab"
               aria-selected={tab === 'internship'}
               className={tab === 'internship' ? 'is-active' : ''}
-              onClick={() => setTab('internship')}
+              onClick={() => switchTab('internship')}
             >
               Internships
             </button>
@@ -109,23 +160,82 @@ function JobsList({
       />
 
       <div className="jobs-listbar reveal">
-        <div className="blog__filters jobs-listbar__filters" role="tablist" aria-label="Filter by work mode">
-          {MODES.map((m) => (
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === m}
-              key={m}
-              className={`blog-pill ${mode === m ? 'is-active' : ''}`}
-              style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
-              onClick={() => setMode(m)}
+        <div className="jobs-toolbar">
+          <div className="blog__filters jobs-listbar__filters" role="tablist" aria-label="Filter by work mode">
+            {MODES.map((m) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === m}
+                key={m}
+                className={`blog-pill ${mode === m ? 'is-active' : ''}`}
+                style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
+                onClick={() => setMode(m)}
+              >
+                {m === 'All' ? <IconSpark /> : <IconPin />} {m}
+                <span className="blog-pill__count">
+                  {byTab.filter((j) => m === 'All' || j.mode === m).length}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <label className="jobs-select">
+            <IconPin />
+            <select
+              value={location}
+              aria-label="Filter by location"
+              onChange={(e) => setLocation(e.target.value)}
             >
-              {m === 'All' ? <IconSpark /> : <IconPin />} {m}
-              <span className="blog-pill__count">
-                {catalog.filter((j) => j.type === tab && (m === 'All' || j.mode === m)).length}
-              </span>
-            </button>
-          ))}
+              <option value="All">All locations ({byMode.length})</option>
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc} ({byMode.filter((j) => j.location === loc).length})
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="salary-range" style={{
+            '--min-pct': `${((salaryMin - bounds.min) / (bounds.max - bounds.min)) * 100}%`,
+            '--max-pct': `${((salaryMax - bounds.min) / (bounds.max - bounds.min)) * 100}%`,
+          } as CSSProperties}
+          >
+            <span className="salary-range__label">
+              <IconRupee />
+              {salaryActive
+                ? `${formatINR(salaryMin)} – ${salaryMax >= bounds.max ? `${formatINR(bounds.max)}+` : formatINR(salaryMax)}`
+                : tab === 'job' ? 'Any package' : 'Any stipend'}
+            </span>
+            <div className="salary-range__track-wrap">
+              <div className="salary-range__track" />
+              <input
+                type="range"
+                className="salary-range__input"
+                min={bounds.min}
+                max={bounds.max}
+                step={bounds.step}
+                value={salaryMin}
+                aria-label={`Minimum ${tab === 'job' ? 'salary' : 'stipend'}`}
+                onChange={(e) => setSalaryMin(Math.min(Number(e.target.value), salaryMax))}
+              />
+              <input
+                type="range"
+                className="salary-range__input"
+                min={bounds.min}
+                max={bounds.max}
+                step={bounds.step}
+                value={salaryMax}
+                aria-label={`Maximum ${tab === 'job' ? 'salary' : 'stipend'}`}
+                onChange={(e) => setSalaryMax(Math.max(Number(e.target.value), salaryMin))}
+              />
+            </div>
+            {salaryActive && (
+              <button type="button" className="salary-range__reset" aria-label="Reset salary filter" onClick={resetSalary}>
+                <IconClose />
+              </button>
+            )}
+          </div>
         </div>
 
         <label className="jobs-search">
@@ -140,7 +250,7 @@ function JobsList({
         </label>
       </div>
 
-      <div className="drive-rows" key={`${tab}-${mode}-${q}`}>
+      <div className="drive-rows" key={`${tab}-${mode}-${location}-${salaryMin}-${salaryMax}-${q}`}>
         {visible.map((job, i) => (
           <JobRow job={job} index={i} key={job.slug} />
         ))}
@@ -156,7 +266,7 @@ function JobsList({
             <span className="jobs-empty__icon"><IconSpark /></span>
             <strong>No roles match that search</strong>
             <p>Try a different keyword, or clear the filters to see every open {tab === 'job' ? 'job' : 'internship'}.</p>
-            <button type="button" className="btn btn--outline btn--sm" onClick={() => { setQuery(''); setMode('All') }}>
+            <button type="button" className="btn btn--outline btn--sm" onClick={clearFilters}>
               Clear filters
             </button>
           </div>
