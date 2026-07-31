@@ -2,6 +2,7 @@ export const trendingChips = ['Remote roles', 'AI Engineer', 'Product Manager', 
 
 export type FeaturedRole = {
   company: string
+  companyLogo?: string
   initial: string
   featured: boolean
   title: string

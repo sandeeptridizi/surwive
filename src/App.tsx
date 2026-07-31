@@ -5,7 +5,7 @@ import { AuroraBackground } from './components/AuroraBackground'
 import { Footer } from './components/Footer'
 import { HomeBackgroundFx } from './components/HomeBackgroundFx'
 import { Navbar } from './components/Navbar'
-import { useHashRoute } from './hooks/useHashRoute'
+import { useRoute } from './hooks/useRoute'
 import { useScrollReveal } from './hooks/useScrollReveal'
 import { BlogPage } from './pages/BlogPage'
 import { ContactPage } from './pages/ContactPage'
@@ -22,8 +22,8 @@ const USER_PORTAL_URL = 'https://user.surwive.com'
 const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
 
 function App() {
-  const { route, hash } = useHashRoute()
-  useScrollReveal(hash)
+  const { route, path, hash } = useRoute()
+  useScrollReveal(path)
   const [pricingAudience, setPricingAudience] = useState<PricingAudience>('student')
 
   const goToPortal = (role: 'candidate' | 'employer') => {
@@ -31,13 +31,13 @@ function App() {
   }
 
   useEffect(() => {
-    if (route === 'jobs' || route === 'pricing' || route === 'blog' || route === 'events' || route === 'drives' || route === 'faqs' || route === 'contact' || route === 'legal') {
+    if (route !== 'home') {
       window.scrollTo({ top: 0 })
     } else {
-      const id = window.location.hash.slice(1)
-      if (id && !id.startsWith('/')) document.getElementById(id)?.scrollIntoView()
+      const id = hash.slice(1)
+      if (id) document.getElementById(id)?.scrollIntoView()
     }
-  }, [route, hash])
+  }, [route, path, hash])
 
   return (
     <>
@@ -51,7 +51,7 @@ function App() {
 
       <main id="main">
         {route === 'jobs' ? (
-          <JobsPage hash={hash} onApply={() => goToPortal('candidate')} />
+          <JobsPage path={path} onApply={() => goToPortal('candidate')} />
         ) : route === 'pricing' ? (
           <PricingPage
             audience={pricingAudience}
@@ -59,15 +59,15 @@ function App() {
             onSelectPlan={(audience) => goToPortal(audience === 'company' ? 'employer' : 'candidate')}
           />
         ) : route === 'blog' ? (
-          <BlogPage slug={hash.startsWith('#/blog/') ? decodeURIComponent(hash.slice('#/blog/'.length)) : null} />
+          <BlogPage slug={path.startsWith('/blog/') ? decodeURIComponent(path.slice('/blog/'.length)) : null} />
         ) : route === 'events' ? (
           <EventsPage
-            slug={hash.startsWith('#/events/') ? decodeURIComponent(hash.slice('#/events/'.length)) : null}
+            slug={path.startsWith('/events/') ? decodeURIComponent(path.slice('/events/'.length)) : null}
             onRegister={() => goToPortal('candidate')}
           />
         ) : route === 'drives' ? (
           <DrivesPage
-            slug={hash.startsWith('#/drives/') ? decodeURIComponent(hash.slice('#/drives/'.length)) : null}
+            slug={path.startsWith('/drives/') ? decodeURIComponent(path.slice('/drives/'.length)) : null}
             onRegister={() => goToPortal('candidate')}
           />
         ) : route === 'faqs' ? (
@@ -75,7 +75,7 @@ function App() {
         ) : route === 'contact' ? (
           <ContactPage />
         ) : route === 'legal' ? (
-          <PolicyPage slug={hash.startsWith('#/legal/') ? decodeURIComponent(hash.slice('#/legal/'.length)) : null} />
+          <PolicyPage slug={path.startsWith('/legal/') ? decodeURIComponent(path.slice('/legal/'.length)) : null} />
         ) : (
           <HomePage
             onSignupCandidate={() => goToPortal('candidate')}

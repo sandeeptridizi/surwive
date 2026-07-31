@@ -10,6 +10,7 @@ import {
 import { blogCategories, blogCategoryOf, blogPosts, type BlogBlock, type BlogPost } from '../data/blog'
 import { initials, slugifyHeading } from '../lib/utils'
 import { useStickySide } from '../hooks/useStickySide'
+import { Link } from '../components/Link'
 
 const POSTS_PER_PAGE = 6
 
@@ -17,8 +18,8 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
   const cat = blogCategoryOf(post)
   const Icon = cat.icon
   return (
-    <a
-      href={`#/blog/${post.slug}`}
+    <Link
+      href={`/blog/${post.slug}`}
       className="blog-card"
       style={{ '--blog-accent': cat.color, animationDelay: `${index * 70}ms` } as CSSProperties}
     >
@@ -45,7 +46,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
           <span className="blog-card__arrow" aria-hidden="true"><IconArrowUpRight /></span>
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
 
@@ -53,8 +54,8 @@ function BlogFeatured({ post }: { post: BlogPost }) {
   const cat = blogCategoryOf(post)
   const Icon = cat.icon
   return (
-    <a
-      href={`#/blog/${post.slug}`}
+    <Link
+      href={`/blog/${post.slug}`}
       className="blog-feature"
       style={{ '--blog-accent': cat.color } as CSSProperties}
     >
@@ -83,7 +84,7 @@ function BlogFeatured({ post }: { post: BlogPost }) {
           <span className="blog-feature__cta">Read article <IconArrowUpRight /></span>
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
 
@@ -234,7 +235,7 @@ function BlogArticle({ post }: { post: BlogPost }) {
 
   return (
     <section className="blog blog--article" style={{ '--blog-accent': cat.color } as CSSProperties} key={post.slug}>
-      <a href="#/blog" className="article__back">← All articles</a>
+      <Link href="/blog" className="article__back">← All articles</Link>
 
       <header className="article-hero">
         <div className="article-hero__main">
@@ -330,7 +331,7 @@ function BlogArticle({ post }: { post: BlogPost }) {
             <span className="article-side__cta-icon"><IconSpark /></span>
             <strong>Put it into practice</strong>
             <p>25,000+ live roles are waiting. Let the copilot find your match.</p>
-            <a href="#jobs" className="btn btn--solid">Browse jobs <IconArrowUpRight /></a>
+            <a href="/#jobs" className="btn btn--solid">Browse jobs <IconArrowUpRight /></a>
           </div>
         </aside>
       </div>

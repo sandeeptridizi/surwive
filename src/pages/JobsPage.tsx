@@ -13,6 +13,8 @@ import {
 } from '../components/icons'
 import { jobAccent, parsePayRange, type JobInfo } from '../data/jobs'
 import { LocationLink } from '../components/LocationLink'
+import { CompanyLogo } from '../components/CompanyLogo'
+import { Link } from '../components/Link'
 import { useJobs } from '../hooks/useJobs'
 import { useStickySide } from '../hooks/useStickySide'
 
@@ -40,12 +42,12 @@ function matchesSalaryRange(job: JobInfo, min: number, max: number) {
 
 function JobRow({ job, index }: { job: JobInfo; index: number }) {
   return (
-    <a
-      href={`#/jobs/${job.slug}`}
+    <Link
+      href={`/jobs/${job.slug}`}
       className="drive-row job-row"
       style={{ '--ev-accent': jobAccent(job), animationDelay: `${index * 60}ms` } as CSSProperties}
     >
-      <span className="job-row__logo" aria-hidden="true">{job.initial}</span>
+      <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-row__logo" />
 
       <div className="drive-row__body">
         <div className="drive-row__title-line">
@@ -73,7 +75,7 @@ function JobRow({ job, index }: { job: JobInfo; index: number }) {
         <span className="drive-row__perk"><IconSpark /> {job.posted}</span>
         <span className="drive-row__cta">View role <IconArrowUpRight /></span>
       </div>
-    </a>
+    </Link>
   )
 }
 
@@ -300,7 +302,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
       style={{ '--ev-accent': jobAccent(job) } as CSSProperties}
       key={job.slug}
     >
-      <a href="#/jobs" className="article__back">← All open roles</a>
+      <Link href="/jobs" className="article__back">← All open roles</Link>
 
       <header className="drive-hero job-hero">
         <div className="drive-hero__top job-hero__top">
@@ -440,11 +442,11 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
   )
 }
 
-export function JobsPage({ hash, onApply }: { hash: string; onApply: () => void }) {
+export function JobsPage({ path, onApply }: { path: string; onApply: () => void }) {
   const { jobs: catalog, loading } = useJobs()
-  const slug = hash.startsWith('#/jobs/') ? decodeURIComponent(hash.slice('#/jobs/'.length)) : null
+  const slug = path.startsWith('/jobs/') ? decodeURIComponent(path.slice('/jobs/'.length).split('?')[0]) : null
   const job = slug ? catalog.find((j) => j.slug === slug) : undefined
   if (job) return <JobDetail job={job} catalog={catalog} onApply={onApply} />
-  const initialTab = hash.includes('tab=internships') ? 'internship' : 'job'
+  const initialTab = path.includes('tab=internships') ? 'internship' : 'job'
   return <JobsList key={initialTab} initialTab={initialTab} catalog={catalog} loading={loading} />
 }

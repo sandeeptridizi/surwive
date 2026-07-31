@@ -16,11 +16,12 @@ import { LocationLink } from '../components/LocationLink'
 import { useStickySide } from '../hooks/useStickySide'
 import { useDrives } from '../hooks/useDrives'
 import { initials } from '../lib/utils'
+import { Link } from '../components/Link'
 
 function DriveRow({ drive, index }: { drive: DriveInfo; index: number }) {
   return (
-    <a
-      href={`#/drives/${drive.slug}`}
+    <Link
+      href={`/drives/${drive.slug}`}
       className="drive-row"
       style={{ '--ev-accent': driveAccent(drive), animationDelay: `${index * 60}ms` } as CSSProperties}
     >
@@ -52,7 +53,7 @@ function DriveRow({ drive, index }: { drive: DriveInfo; index: number }) {
         <span className="drive-row__perk"><IconSpark /> {drive.perk}</span>
         <span className="drive-row__cta">View drive <IconArrowUpRight /></span>
       </div>
-    </a>
+    </Link>
   )
 }
 
@@ -153,7 +154,7 @@ function DriveDetail({
       style={{ '--ev-accent': driveAccent(drive) } as CSSProperties}
       key={drive.slug}
     >
-      <a href="#/drives" className="article__back">← All walk-in drives</a>
+      <Link href="/drives" className="article__back">← All walk-in drives</Link>
 
       <header className="event-hero event-hero--banner">
         <div className="event-hero__media">
@@ -372,7 +373,7 @@ function DriveDetail({
               <ul className="event-mini-list">
                 {others.map((o) => (
                   <li key={o.slug}>
-                    <a href={`#/drives/${o.slug}`} style={{ '--ev-accent': driveAccent(o) } as CSSProperties}>
+                    <Link href={`/drives/${o.slug}`} style={{ '--ev-accent': driveAccent(o) } as CSSProperties}>
                       <span className="event-mini-list__date" aria-hidden="true">
                         <strong>{o.day}</strong>
                         <span>{o.month}</span>
@@ -381,7 +382,7 @@ function DriveDetail({
                         <strong>{o.title}</strong>
                         <span>{o.host} · {o.location}</span>
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -400,7 +401,7 @@ export function DrivesPage({ slug, onRegister }: { slug: string | null; onRegist
   if (slug && !loading) {
     return (
       <section className="blog drives-page">
-        <a href="#/drives" className="article__back">← All walk-in drives</a>
+        <Link href="/drives" className="article__back">← All walk-in drives</Link>
         <div className="jobs-empty">
           <span className="jobs-empty__icon"><IconSpark /></span>
           <strong>Drive not found</strong>

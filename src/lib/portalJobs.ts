@@ -1,5 +1,6 @@
 import type { JobInfo } from '../data/jobs'
 import { API_BASE } from './config'
+import { slugifyHeading } from './utils'
 
 /** Job shape returned by the backend's public portal endpoint (GET /api/portal/jobs). */
 type PortalJob = {
@@ -88,6 +89,14 @@ function relativeDate(iso: string): string {
   return `${months} month${months > 1 ? 's' : ''} ago`
 }
 
+/** Readable URL slug for a job, e.g. "aws-developer-7ea60d" — the title plus a short
+ * suffix from the job id so postings with the same title never collide. */
+function jobSlug(job: PortalJob): string {
+  const titleSlug = slugifyHeading(job.title)
+  const idSuffix = job.id.slice(-6)
+  return titleSlug ? `${titleSlug}-${idSuffix}` : job.id
+}
+
 function summarize(description: string): string {
   const text = description.replace(/\s+/g, ' ').trim()
   if (text.length <= 160) return text
@@ -101,12 +110,13 @@ function toJobInfo(job: PortalJob): JobInfo {
   const mode = workMode(job.location || 'India')
   const location = cleanLocation(job.location || 'India', mode)
   return {
-    slug: job.id,
+    slug: jobSlug(job),
     type: isInternship ? 'internship' : 'job',
     roleType: job.type,
     ...(job.department ? { department: job.department } : {}),
     ...(job.duration ? { duration: job.duration } : {}),
     company: job.company || 'Surwive partner',
+    companyLogo: job.companyLogo || undefined,
     initial: (job.company || 'S').trim().charAt(0).toUpperCase(),
     featured: false,
     title: job.title,

@@ -14,6 +14,7 @@ import { LocationLink } from '../components/LocationLink'
 import { useStickySide } from '../hooks/useStickySide'
 import { useEvents } from '../hooks/useEvents'
 import { initials, mapsUrl } from '../lib/utils'
+import { Link } from '../components/Link'
 
 function EventMedia({ event, className }: { event: EventInfo; className: string }) {
   return (
@@ -36,8 +37,8 @@ function EventMedia({ event, className }: { event: EventInfo; className: string 
 
 function EventCard({ event, index }: { event: EventInfo; index: number }) {
   return (
-    <a
-      href={`#/events/${event.slug}`}
+    <Link
+      href={`/events/${event.slug}`}
       className="event-card"
       style={{ '--ev-accent': eventAccent(event), animationDelay: `${index * 70}ms` } as CSSProperties}
     >
@@ -61,14 +62,14 @@ function EventCard({ event, index }: { event: EventInfo; index: number }) {
           <span className="event-card__arrow" aria-hidden="true"><IconArrowUpRight /></span>
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
 
 function EventSpotlight({ event }: { event: EventInfo }) {
   return (
-    <a
-      href={`#/events/${event.slug}`}
+    <Link
+      href={`/events/${event.slug}`}
       className="event-spotlight"
       style={{ '--ev-accent': eventAccent(event) } as CSSProperties}
     >
@@ -98,7 +99,7 @@ function EventSpotlight({ event }: { event: EventInfo }) {
           <span className="event-spotlight__cta">View event <IconArrowUpRight /></span>
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
 
@@ -192,7 +193,7 @@ function EventDetail({
       style={{ '--ev-accent': eventAccent(event) } as CSSProperties}
       key={event.slug}
     >
-      <a href="#/events" className="article__back">← All events & hackathons</a>
+      <Link href="/events" className="article__back">← All events & hackathons</Link>
 
       <header className="event-hero event-hero--banner">
         <div className="event-hero__media">
@@ -381,7 +382,7 @@ function EventDetail({
               <ul className="event-mini-list">
                 {others.map((o) => (
                   <li key={o.slug}>
-                    <a href={`#/events/${o.slug}`} style={{ '--ev-accent': eventAccent(o) } as CSSProperties}>
+                    <Link href={`/events/${o.slug}`} style={{ '--ev-accent': eventAccent(o) } as CSSProperties}>
                       <span className="event-mini-list__date" aria-hidden="true">
                         <strong>{o.day}</strong>
                         <span>{o.month}</span>
@@ -390,7 +391,7 @@ function EventDetail({
                         <strong>{o.title}</strong>
                         <span>{o.type} · {o.location}</span>
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -409,7 +410,7 @@ export function EventsPage({ slug, onRegister }: { slug: string | null; onRegist
   if (slug && !loading) {
     return (
       <section className="blog events-page">
-        <a href="#/events" className="article__back">← All events & hackathons</a>
+        <Link href="/events" className="article__back">← All events & hackathons</Link>
         <div className="jobs-empty">
           <span className="jobs-empty__icon"><IconSpark /></span>
           <strong>Event not found</strong>

@@ -3,6 +3,7 @@ import { IconCheck, IconClock, IconMail } from '../components/icons'
 import { policyBySlug, policyCatalog } from '../data/policies'
 import { slugifyHeading } from '../lib/utils'
 import { useStickySide } from '../hooks/useStickySide'
+import { Link } from '../components/Link'
 
 export function PolicyPage({ slug }: { slug: string | null }) {
   const policy = policyBySlug(slug)
@@ -98,14 +99,14 @@ export function PolicyPage({ slug }: { slug: string | null }) {
                 const PIcon = p.icon
                 return (
                   <li key={p.slug}>
-                    <a
-                      href={`#/legal/${p.slug}`}
+                    <Link
+                      href={`/legal/${p.slug}`}
                       className={p.slug === policy.slug ? 'is-active' : ''}
                       style={{ '--blog-accent': p.color } as CSSProperties}
                     >
                       <span className="policy-nav__icon" aria-hidden="true"><PIcon /></span>
                       {p.shortTitle}
-                    </a>
+                    </Link>
                   </li>
                 )
               })}

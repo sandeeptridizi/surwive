@@ -2,6 +2,7 @@ import { useState } from 'react'
 import logo from '../assets/Group 2.png'
 import { useNavScrollState } from '../hooks/useNavScrollState'
 import { IconClose, IconMenu } from './icons'
+import { Link } from './Link'
 
 const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
 
@@ -21,10 +22,10 @@ export function Navbar({ onSignup }: { onSignup: () => void }) {
           <img src={logo} alt="Surwive Logo" className="nav__logo-img" />
         </a>
         <nav className={`nav__links ${mobileNavOpen ? 'nav__links--open' : ''}`} aria-label="Primary">
-          <a href="#/jobs" onClick={() => setMobileNavOpen(false)}>Jobs</a>
-          <a href="#/jobs?tab=internships" onClick={() => setMobileNavOpen(false)}>Internships</a>
-          <a href="#/drives" onClick={() => setMobileNavOpen(false)}>Walk In Drives</a>
-          <a href="#/events" onClick={() => setMobileNavOpen(false)}>Events & Hackathons</a>
+          <Link href="/jobs" onClick={() => setMobileNavOpen(false)}>Jobs</Link>
+          <Link href="/jobs?tab=internships" onClick={() => setMobileNavOpen(false)}>Internships</Link>
+          <Link href="/drives" onClick={() => setMobileNavOpen(false)}>Walk In Drives</Link>
+          <Link href="/events" onClick={() => setMobileNavOpen(false)}>Events & Hackathons</Link>
           <a href={EMPLOYER_PORTAL_URL} onClick={() => setMobileNavOpen(false)}>For Recruiters</a>
           <button type="button" className="btn btn--outline nav__links-login" onClick={handleSignup}>
             Login

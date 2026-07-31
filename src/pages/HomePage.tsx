@@ -3,6 +3,9 @@ import appPic from '../assets/apppic.png'
 import { DriveCard } from '../components/DriveCard'
 import { NewsletterForm } from '../components/NewsletterForm'
 import { SectionHead } from '../components/SectionHead'
+import { CompanyLogo } from '../components/CompanyLogo'
+import { Link } from '../components/Link'
+import { navigate } from '../lib/router'
 import {
   IconApple,
   IconArrowUpRight,
@@ -38,10 +41,10 @@ import { initials } from '../lib/utils'
 /** Where the hero search sends the visitor, based on what they typed. */
 function searchTarget(query: string): string {
   const q = query.toLowerCase()
-  if (/intern/.test(q)) return '#/jobs?tab=internships'
-  if (/hackathon|event/.test(q)) return '#/events'
-  if (/walk|drive/.test(q)) return '#/drives'
-  return '#/jobs'
+  if (/intern/.test(q)) return '/jobs?tab=internships'
+  if (/hackathon|event/.test(q)) return '/events'
+  if (/walk|drive/.test(q)) return '/drives'
+  return '/jobs'
 }
 
 function HeroSearch({ onEmptySubmit }: { onEmptySubmit: () => void }) {
@@ -63,7 +66,7 @@ function HeroSearch({ onEmptySubmit }: { onEmptySubmit: () => void }) {
     }
     setMatching(true)
     timer.current = window.setTimeout(() => {
-      window.location.hash = searchTarget(q)
+      navigate(searchTarget(q))
     }, 900)
   }
 
@@ -207,9 +210,9 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
                 Internships
               </button>
             </div>
-            <a className="link-arrow" href={tab === 'jobs' ? '#/jobs' : '#/jobs?tab=internships'}>
+            <Link className="link-arrow" href={tab === 'jobs' ? '/jobs' : '/jobs?tab=internships'}>
               View all {tab} <IconArrowUpRight />
-            </a>
+            </Link>
           </div>
         }
       />
@@ -219,10 +222,10 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
             className="job-card job-card--link"
             key={`${tab}-${job.slug}`}
             style={{ animationDelay: `${i * 70}ms` }}
-            onClick={() => { window.location.hash = `#/jobs/${job.slug}` }}
+            onClick={() => navigate(`/jobs/${job.slug}`)}
           >
             <div className="job-card__head">
-              <span className="job-card__logo">{job.initial}</span>
+              <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-card__logo" />
               <div className="job-card__co">
                 <strong>{job.company}</strong>
                 <span><IconPin /> {job.location}</span>
@@ -232,7 +235,7 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
               )}
             </div>
             <h3 className="job-card__title">
-              <a href={`#/jobs/${job.slug}`} onClick={(e) => e.stopPropagation()}>{job.title}</a>
+              <Link href={`/jobs/${job.slug}`} onClick={(e) => e.stopPropagation()}>{job.title}</Link>
             </h3>
             <div className="job-card__tags">
               <span className="job-tag job-tag--mode">{job.mode}</span>
@@ -268,9 +271,9 @@ function WalkInDrives({ onApply }: { onApply: () => void }) {
         title="Walk-in drives near you"
         sub="Walk In with Confidence. Walk Out with Opportunity. Meet verified employers, attend real interviews, and get hired faster."
         action={
-          <a href="#/drives" className="link-arrow">
+          <Link href="/drives" className="link-arrow">
             View all walk-in drives <IconArrowUpRight />
-          </a>
+          </Link>
         }
       />
       {drives.length > 0 ? (
@@ -309,9 +312,9 @@ function EventsAndHackathons({ onApply }: { onApply: () => void }) {
         title="Events & hackathons"
         sub="Showcase Your Skills, Win Challenges, and Connect with Leading Companies Through Events and Hackathons."
         action={
-          <a href="#/events" className="link-arrow">
+          <Link href="/events" className="link-arrow">
             View all events & hackathons <IconArrowUpRight />
-          </a>
+          </Link>
         }
       />
 
@@ -700,9 +703,9 @@ export function HomePage({
               <button type="button" className="btn btn--ink" onClick={onSignupEmployer}>
                 Post a job <IconArrowUpRight />
               </button>
-              <a className="btn btn--outline-ink" href="#/pricing" onClick={onCompanyPricing}>
+              <Link className="btn btn--outline-ink" href="/pricing" onClick={onCompanyPricing}>
                 See pricing
-              </a>
+              </Link>
             </div>
           </div>
           <div className="recruiter__stats">
