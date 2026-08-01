@@ -60,6 +60,14 @@ export function IconPin() {
   )
 }
 
+export function IconFilter() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3.5 5h17M6.5 12h11M10 19h4" />
+    </svg>
+  )
+}
+
 export function IconShieldCheck() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">

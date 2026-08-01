@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { IconSpark } from './icons'
 
 const announcements = [
@@ -8,18 +7,26 @@ const announcements = [
   'Walk-in drives every week across India — no referrals needed',
 ]
 
+function AnnounceTrack({ hidden }: { hidden?: boolean }) {
+  return (
+    <div className="announce__track" aria-hidden={hidden || undefined}>
+      {announcements.map((text, i) => (
+        <span className="announce__item" key={i}>
+          <IconSpark />
+          {text}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export function AnnounceBar() {
-  const [index, setIndex] = useState(0)
-
-  useEffect(() => {
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % announcements.length), 4500)
-    return () => window.clearInterval(id)
-  }, [])
-
   return (
     <div className="announce">
-      <IconSpark />
-      <span key={index} className="announce__text">{announcements[index]}</span>
+      <div className="announce__marquee">
+        <AnnounceTrack />
+        <AnnounceTrack hidden />
+      </div>
     </div>
   )
 }

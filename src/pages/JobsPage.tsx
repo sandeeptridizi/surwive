@@ -5,6 +5,7 @@ import {
   IconCheck,
   IconClock,
   IconClose,
+  IconFilter,
   IconPin,
   IconRupee,
   IconSpark,
@@ -19,6 +20,7 @@ import { useJobs } from '../hooks/useJobs'
 import { useStickySide } from '../hooks/useStickySide'
 
 const MODES = ['All', 'Remote', 'Hybrid', 'On-site'] as const
+const ROLES_PER_PAGE = 12
 
 const SALARY_BOUNDS = {
   job: { min: 0, max: 6_000_000, step: 100_000 },
@@ -79,6 +81,42 @@ function JobRow({ job, index }: { job: JobInfo; index: number }) {
   )
 }
 
+function JobCard({ job, index }: { job: JobInfo; index: number }) {
+  return (
+    <Link
+      href={`/jobs/${job.slug}`}
+      className="job-tile"
+      style={{ '--ev-accent': jobAccent(job), animationDelay: `${index * 50}ms` } as CSSProperties}
+    >
+      <div className="job-tile__head">
+        <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-tile__logo" />
+        <div className="job-tile__co">
+          <strong>{job.company}</strong>
+        </div>
+        {job.featured && <span className="job-card__badge"><IconStar /> Featured</span>}
+      </div>
+
+      <h3 className="job-tile__title">{job.title}</h3>
+      {job.summary && <p className="job-tile__summary">{job.summary}</p>}
+
+      <div className="job-tile__meta">
+        {job.detail && <span><IconClock /> {job.detail}</span>}
+        {job.openings && <span><IconUsers /> {job.openings}</span>}
+      </div>
+
+      <div className="job-card__tags">
+        <span className="job-tag job-tag--mode">{job.mode}</span>
+        <span className="job-tile__location"><IconPin /> {job.location}</span>
+      </div>
+
+      <div className="job-tile__foot">
+        <span className="job-tile__salary">{job.pay}<small>{job.per}</small></span>
+        <span className="job-tile__cta">View role <IconArrowUpRight /></span>
+      </div>
+    </Link>
+  )
+}
+
 function JobsList({
   initialTab,
   catalog,
@@ -88,26 +126,24 @@ function JobsList({
   catalog: JobInfo[]
   loading: boolean
 }) {
-  const [tab, setTab] = useState<'job' | 'internship'>(initialTab)
+  const type = initialTab
+  const bounds = SALARY_BOUNDS[type]
+
+  const [showFilters, setShowFilters] = useState(false)
   const [mode, setMode] = useState<(typeof MODES)[number]>('All')
   const [location, setLocation] = useState('All')
-  const [salaryMin, setSalaryMin] = useState<number>(SALARY_BOUNDS[initialTab].min)
-  const [salaryMax, setSalaryMax] = useState<number>(SALARY_BOUNDS[initialTab].max)
+  const [salaryMin, setSalaryMin] = useState<number>(bounds.min)
+  const [salaryMax, setSalaryMax] = useState<number>(bounds.max)
   const [query, setQuery] = useState('')
+  const [page, setPage] = useState(1)
 
-  const bounds = SALARY_BOUNDS[tab]
   const salaryActive = salaryMin > bounds.min || salaryMax < bounds.max
-
-  function switchTab(next: 'job' | 'internship') {
-    setTab(next)
-    setLocation('All')
-    setSalaryMin(SALARY_BOUNDS[next].min)
-    setSalaryMax(SALARY_BOUNDS[next].max)
-  }
+  const activeFilterCount = (mode !== 'All' ? 1 : 0) + (location !== 'All' ? 1 : 0) + (salaryActive ? 1 : 0)
 
   function resetSalary() {
     setSalaryMin(bounds.min)
     setSalaryMax(bounds.max)
+    setPage(1)
   }
 
   function clearFilters() {
@@ -117,8 +153,8 @@ function JobsList({
     resetSalary()
   }
 
-  const byTab = catalog.filter((j) => j.type === tab)
-  const byMode = byTab.filter((j) => mode === 'All' || j.mode === mode)
+  const byType = catalog.filter((j) => j.type === type)
+  const byMode = byType.filter((j) => mode === 'All' || j.mode === mode)
   const byLocation = byMode.filter((j) => location === 'All' || j.location === location)
   const locations = Array.from(new Set(byMode.map((j) => j.location))).sort()
 
@@ -130,131 +166,148 @@ function JobsList({
       .some((field) => field.toLowerCase().includes(q))
   })
 
+  const totalPages = Math.max(1, Math.ceil(visible.length / ROLES_PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const paged = visible.slice((safePage - 1) * ROLES_PER_PAGE, safePage * ROLES_PER_PAGE)
+
+  function gotoPage(p: number) {
+    setPage(Math.min(Math.max(1, p), totalPages))
+    window.scrollTo({ top: 0 })
+  }
+
   return (
     <section className="blog jobs-page">
       <SectionHead
         align="split"
         eyebrow="Open roles"
-        title={tab === 'job' ? 'Every job, verified and ranked' : 'Internships that open doors'}
+        title={type === 'job' ? 'Every job, verified and ranked' : 'Internships that open doors'}
         sub="Browse the full board — every opening is verified, salary-transparent, and one click from a full description."
-        action={
-          <div className="jobs-toggle" role="tablist" aria-label="Role type">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === 'job'}
-              className={tab === 'job' ? 'is-active' : ''}
-              onClick={() => switchTab('job')}
-            >
-              Jobs
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === 'internship'}
-              className={tab === 'internship' ? 'is-active' : ''}
-              onClick={() => switchTab('internship')}
-            >
-              Internships
-            </button>
-          </div>
-        }
       />
 
       <div className="jobs-listbar reveal">
-        <div className="jobs-toolbar">
-          <div className="blog__filters jobs-listbar__filters" role="tablist" aria-label="Filter by work mode">
-            {MODES.map((m) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mode === m}
-                key={m}
-                className={`blog-pill ${mode === m ? 'is-active' : ''}`}
-                style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
-                onClick={() => setMode(m)}
-              >
-                {m === 'All' ? <IconSpark /> : <IconPin />} {m}
-                <span className="blog-pill__count">
-                  {byTab.filter((j) => m === 'All' || j.mode === m).length}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <label className="jobs-select">
-            <IconPin />
-            <select
-              value={location}
-              aria-label="Filter by location"
-              onChange={(e) => setLocation(e.target.value)}
-            >
-              <option value="All">All locations ({byMode.length})</option>
-              {locations.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc} ({byMode.filter((j) => j.location === loc).length})
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="salary-range" style={{
-            '--min-pct': `${((salaryMin - bounds.min) / (bounds.max - bounds.min)) * 100}%`,
-            '--max-pct': `${((salaryMax - bounds.min) / (bounds.max - bounds.min)) * 100}%`,
-          } as CSSProperties}
-          >
-            <span className="salary-range__label">
-              <IconRupee />
-              {salaryActive
-                ? `${formatINR(salaryMin)} – ${salaryMax >= bounds.max ? `${formatINR(bounds.max)}+` : formatINR(salaryMax)}`
-                : tab === 'job' ? 'Any package' : 'Any stipend'}
-            </span>
-            <div className="salary-range__track-wrap">
-              <div className="salary-range__track" />
-              <input
-                type="range"
-                className="salary-range__input"
-                min={bounds.min}
-                max={bounds.max}
-                step={bounds.step}
-                value={salaryMin}
-                aria-label={`Minimum ${tab === 'job' ? 'salary' : 'stipend'}`}
-                onChange={(e) => setSalaryMin(Math.min(Number(e.target.value), salaryMax))}
-              />
-              <input
-                type="range"
-                className="salary-range__input"
-                min={bounds.min}
-                max={bounds.max}
-                step={bounds.step}
-                value={salaryMax}
-                aria-label={`Maximum ${tab === 'job' ? 'salary' : 'stipend'}`}
-                onChange={(e) => setSalaryMax(Math.max(Number(e.target.value), salaryMin))}
-              />
-            </div>
-            {salaryActive && (
-              <button type="button" className="salary-range__reset" aria-label="Reset salary filter" onClick={resetSalary}>
-                <IconClose />
-              </button>
-            )}
-          </div>
-        </div>
-
         <label className="jobs-search">
           <IconSpark />
           <input
             type="search"
             value={query}
-            placeholder={`Search ${tab === 'job' ? 'jobs' : 'internships'}, skills, cities…`}
+            placeholder={`Search ${type === 'job' ? 'jobs' : 'internships'}, skills, cities…`}
             aria-label="Search roles"
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setPage(1) }}
           />
         </label>
+
+        <button
+          type="button"
+          className={`jobs-filter-toggle ${showFilters ? 'is-active' : ''}`}
+          aria-expanded={showFilters}
+          onClick={() => setShowFilters((v) => !v)}
+        >
+          <IconFilter /> Filters
+          {activeFilterCount > 0 && <span className="jobs-filter-toggle__count">{activeFilterCount}</span>}
+        </button>
       </div>
 
-      <div className="drive-rows" key={`${tab}-${mode}-${location}-${salaryMin}-${salaryMax}-${q}`}>
-        {visible.map((job, i) => (
-          <JobRow job={job} index={i} key={job.slug} />
+      {showFilters && (
+        <div className="jobs-filter-panel">
+          <div className="jobs-filter-panel__row">
+            <div className="jobs-filter-panel__group">
+              <span className="jobs-filter-panel__label">Work mode</span>
+              <div className="blog__filters jobs-filter-panel__modes" role="tablist" aria-label="Filter by work mode">
+                {MODES.map((m) => (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={mode === m}
+                    key={m}
+                    className={`blog-pill ${mode === m ? 'is-active' : ''}`}
+                    style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
+                    onClick={() => { setMode(m); setPage(1) }}
+                  >
+                    {m === 'All' ? <IconSpark /> : <IconPin />} {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="jobs-filter-panel__group">
+              <span className="jobs-filter-panel__label">Location</span>
+              <label className="jobs-select">
+                <IconPin />
+                <select
+                  value={location}
+                  aria-label="Filter by location"
+                  onChange={(e) => { setLocation(e.target.value); setPage(1) }}
+                >
+                  <option value="All">All locations</option>
+                  {locations.map((loc) => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="jobs-filter-panel__group jobs-filter-panel__group--salary">
+              <span className="jobs-filter-panel__label">{type === 'job' ? 'Salary range' : 'Stipend range'}</span>
+              <div className="salary-inputs">
+                <label className="salary-inputs__field">
+                  <IconRupee />
+                  <span>Min</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={bounds.min}
+                    max={bounds.max}
+                    step={bounds.step}
+                    value={salaryMin === bounds.min ? '' : salaryMin}
+                    placeholder="0"
+                    aria-label={`Minimum ${type === 'job' ? 'salary' : 'stipend'}`}
+                    onChange={(e) => {
+                      const raw = e.target.value === '' ? bounds.min : Number(e.target.value)
+                      setSalaryMin(Math.min(Math.max(raw, bounds.min), salaryMax))
+                      setPage(1)
+                    }}
+                  />
+                </label>
+                <span className="salary-inputs__sep">to</span>
+                <label className="salary-inputs__field">
+                  <IconRupee />
+                  <span>Max</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={bounds.min}
+                    max={bounds.max}
+                    step={bounds.step}
+                    value={salaryMax === bounds.max ? '' : salaryMax}
+                    placeholder={formatINR(bounds.max)}
+                    aria-label={`Maximum ${type === 'job' ? 'salary' : 'stipend'}`}
+                    onChange={(e) => {
+                      const raw = e.target.value === '' ? bounds.max : Number(e.target.value)
+                      setSalaryMax(Math.max(Math.min(raw, bounds.max), salaryMin))
+                      setPage(1)
+                    }}
+                  />
+                </label>
+                {salaryActive && (
+                  <button type="button" className="salary-inputs__reset" aria-label="Reset salary filter" onClick={resetSalary}>
+                    <IconClose />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {activeFilterCount > 0 && (
+            <button type="button" className="btn btn--outline btn--sm jobs-filter-panel__clear" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="jobs-card-grid" key={`${type}-${mode}-${location}-${salaryMin}-${salaryMax}-${q}-${safePage}`}>
+        {paged.map((job, i) => (
+          <JobCard job={job} index={i} key={job.slug} />
         ))}
         {visible.length === 0 && loading && (
           <div className="jobs-empty">
@@ -267,13 +320,35 @@ function JobsList({
           <div className="jobs-empty">
             <span className="jobs-empty__icon"><IconSpark /></span>
             <strong>No roles match that search</strong>
-            <p>Try a different keyword, or clear the filters to see every open {tab === 'job' ? 'job' : 'internship'}.</p>
+            <p>Try a different keyword, or clear the filters to see every open {type === 'job' ? 'job' : 'internship'}.</p>
             <button type="button" className="btn btn--outline btn--sm" onClick={clearFilters}>
               Clear filters
             </button>
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <nav className="blog__pagination" aria-label={`${type === 'job' ? 'Job' : 'Internship'} pages`}>
+          <button type="button" onClick={() => gotoPage(safePage - 1)} disabled={safePage === 1}>
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              type="button"
+              key={i}
+              className={safePage === i + 1 ? 'is-active' : ''}
+              aria-current={safePage === i + 1 ? 'page' : undefined}
+              onClick={() => gotoPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button type="button" onClick={() => gotoPage(safePage + 1)} disabled={safePage === totalPages}>
+            Next
+          </button>
+        </nav>
+      )}
     </section>
   )
 }

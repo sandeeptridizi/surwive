@@ -55,7 +55,7 @@ function payInfo(job: PortalJob): { pay: string; per: string } {
     return { pay: job.isPaid ? 'Paid' : 'Not disclosed', per: '' }
   }
   const range = salaryRange(job)
-  return range ? { pay: range, per: 'per year' } : { pay: 'Not disclosed', per: '' }
+  return range ? { pay: range, per: 'per month' } : { pay: 'Not disclosed', per: '' }
 }
 
 function workMode(location: string): JobInfo['mode'] {

@@ -45,9 +45,10 @@ function App() {
       <AuroraBackground />
       {route === 'home' && <HomeBackgroundFx />}
 
-      <AnnounceBar />
-
-      <Navbar onSignup={() => goToPortal('candidate')} />
+      <div className="site-header">
+        <AnnounceBar />
+        <Navbar onSignup={() => goToPortal('candidate')} />
+      </div>
 
       <main id="main">
         {route === 'jobs' ? (

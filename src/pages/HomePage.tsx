@@ -6,6 +6,9 @@ import { SectionHead } from '../components/SectionHead'
 import { CompanyLogo } from '../components/CompanyLogo'
 import { Link } from '../components/Link'
 import { navigate } from '../lib/router'
+import type { JobInfo } from '../data/jobs'
+import type { DriveInfo } from '../data/drives'
+import type { EventInfo } from '../data/events'
 import {
   IconApple,
   IconArrowUpRight,
@@ -47,14 +50,87 @@ function searchTarget(query: string): string {
   return '/jobs'
 }
 
+type SearchHit = {
+  id: string
+  kind: 'job' | 'internship' | 'drive' | 'event'
+  title: string
+  subtitle: string
+  href: string
+}
+
+const SEARCH_KIND_LABEL: Record<SearchHit['kind'], string> = {
+  job: 'Job',
+  internship: 'Internship',
+  drive: 'Walk-in',
+  event: 'Event',
+}
+
+function fieldsMatch(fields: Array<string | undefined>, terms: string[]): boolean {
+  const haystack = fields.filter(Boolean).join(' ').toLowerCase()
+  return terms.every((term) => haystack.includes(term))
+}
+
+/** Top 4 live matches across jobs, internships, drives and events for the hero search dropdown. */
+function buildSearchResults(query: string, jobs: JobInfo[], drives: DriveInfo[], events: EventInfo[]): SearchHit[] {
+  const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  if (!terms.length) return []
+
+  const jobHits: SearchHit[] = jobs
+    .filter((j) => fieldsMatch([j.title, j.company, j.location, j.mode, j.detail, ...j.skills], terms))
+    .map((j) => ({
+      id: `job-${j.slug}`,
+      kind: j.type,
+      title: j.title,
+      subtitle: `${j.company} · ${j.location}`,
+      href: `/jobs/${j.slug}`,
+    }))
+
+  const driveHits: SearchHit[] = drives
+    .filter((d) => fieldsMatch([d.title, d.host, d.location, d.type, ...d.tags], terms))
+    .map((d) => ({
+      id: `drive-${d.slug}`,
+      kind: 'drive',
+      title: d.title,
+      subtitle: `${d.host} · ${d.location}`,
+      href: `/drives/${d.slug}`,
+    }))
+
+  const eventHits: SearchHit[] = events
+    .filter((e) => fieldsMatch([e.title, e.host, e.location, e.type, ...e.tags], terms))
+    .map((e) => ({
+      id: `event-${e.slug}`,
+      kind: 'event',
+      title: e.title,
+      subtitle: `${e.host} · ${e.day} ${e.month}`,
+      href: `/events/${e.slug}`,
+    }))
+
+  return [...jobHits, ...driveHits, ...eventHits].slice(0, 4)
+}
+
 function HeroSearch({ onEmptySubmit }: { onEmptySubmit: () => void }) {
   const [query, setQuery] = useState('')
   const [matching, setMatching] = useState(false)
+  const [open, setOpen] = useState(false)
   const timer = useRef<number | null>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const { jobs } = useJobs()
+  const { drives } = useDrives()
+  const { events } = useEvents()
 
   useEffect(() => () => {
     if (timer.current !== null) window.clearTimeout(timer.current)
   }, [])
+
+  useEffect(() => {
+    const onPointerDown = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    return () => document.removeEventListener('mousedown', onPointerDown)
+  }, [])
+
+  const results = buildSearchResults(query, jobs, drives, events)
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -64,28 +140,76 @@ function HeroSearch({ onEmptySubmit }: { onEmptySubmit: () => void }) {
       onEmptySubmit()
       return
     }
+    setOpen(false)
     setMatching(true)
     timer.current = window.setTimeout(() => {
       navigate(searchTarget(q))
     }, 900)
   }
 
+  const goToResult = (href: string) => {
+    setOpen(false)
+    navigate(href)
+  }
+
   return (
-    <form className="hero-prompt reveal" style={{ transitionDelay: '210ms' }} onSubmit={submit}>
-      <span className="hero-prompt__icon">
-        {matching ? <span className="hero-spinner" aria-hidden="true" /> : <IconSpark />}
-      </span>
-      <input
-        type="text"
-        value={query}
-        placeholder='Try "remote senior frontend, ₹140k+"'
-        aria-label="Describe your ideal role"
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button type="submit" className="btn btn--solid hero-prompt__btn" disabled={matching}>
-        {matching ? 'Matching…' : <>Match me <IconArrowUpRight /></>}
-      </button>
-    </form>
+    <div
+      className="hero-search"
+      ref={wrapRef}
+      onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
+    >
+      <form className="hero-prompt reveal" style={{ transitionDelay: '210ms' }} onSubmit={submit}>
+        <span className="hero-prompt__icon">
+          {matching ? <span className="hero-spinner" aria-hidden="true" /> : <IconSpark />}
+        </span>
+        <input
+          type="text"
+          value={query}
+          placeholder='Try "remote senior frontend, ₹140k+"'
+          aria-label="Describe your ideal role"
+          autoComplete="off"
+          role="combobox"
+          aria-expanded={open && query.trim().length > 0}
+          aria-controls="hero-search-results"
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setOpen(true)
+          }}
+          onFocus={() => query.trim() && setOpen(true)}
+        />
+        <button type="submit" className="btn btn--solid hero-prompt__btn" disabled={matching}>
+          {matching ? 'Matching…' : <>Match me <IconArrowUpRight /></>}
+        </button>
+      </form>
+
+      {open && query.trim() && (
+        <div className="hero-search__panel" id="hero-search-results" role="listbox">
+          {results.length ? (
+            results.map((r) => (
+              <button
+                type="button"
+                key={r.id}
+                role="option"
+                aria-selected={false}
+                className="hero-search__result"
+                onClick={() => goToResult(r.href)}
+              >
+                <span className={`hero-search__kind hero-search__kind--${r.kind}`}>{SEARCH_KIND_LABEL[r.kind]}</span>
+                <span className="hero-search__copy">
+                  <strong>{r.title}</strong>
+                  <small>{r.subtitle}</small>
+                </span>
+                <IconArrowUpRight />
+              </button>
+            ))
+          ) : (
+            <div className="hero-search__empty">
+              No live matches yet — press <strong>Match me</strong> to browse AI-ranked results.
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -167,7 +291,10 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
 function FeaturedRoles({ onApply }: { onApply: () => void }) {
   const [tab, setTab] = useState<'jobs' | 'internships'>('jobs')
   const { jobs } = useJobs()
-  const roles = jobs.filter((j) => j.type === (tab === 'jobs' ? 'job' : 'internship')).slice(0, 6)
+  const roles = jobs.filter((j) => j.type === (tab === 'jobs' ? 'job' : 'internship'))
+  // Slow, constant px/s drift regardless of how many cards are in the loop.
+  const trackDuration = Math.max(20, (roles.length * 320) / 30)
+  const loopRoles = roles.length ? [...roles, ...roles] : []
 
   useEffect(() => {
     const applyHash = () => {
@@ -216,45 +343,49 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
           </div>
         }
       />
-      <div className="jobs-grid">
-        {roles.map((job, i) => (
-          <article
-            className="job-card job-card--link"
-            key={`${tab}-${job.slug}`}
-            style={{ animationDelay: `${i * 70}ms` }}
-            onClick={() => navigate(`/jobs/${job.slug}`)}
-          >
-            <div className="job-card__head">
-              <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-card__logo" />
-              <div className="job-card__co">
-                <strong>{job.company}</strong>
-                <span><IconPin /> {job.location}</span>
-              </div>
-              {job.featured && (
-                <span className="job-card__badge"><IconStar /> Featured</span>
-              )}
-            </div>
-            <h3 className="job-card__title">
-              <Link href={`/jobs/${job.slug}`} onClick={(e) => e.stopPropagation()}>{job.title}</Link>
-            </h3>
-            <div className="job-card__tags">
-              <span className="job-tag job-tag--mode">{job.mode}</span>
-              <span className="job-tag">{job.detail}</span>
-              {job.skills.slice(0, 3).map((skill) => (
-                <span className="job-tag" key={skill}>{skill}</span>
-              ))}
-              {job.skills.length > 3 && (
-                <span className="job-tag job-tag--more">+{job.skills.length - 3} more</span>
-              )}
-            </div>
-            <div className="job-card__foot">
-              <span className="job-card__salary">{job.pay}<small>{job.per}</small></span>
-              <button type="button" className="btn btn--solid btn--sm job-card__apply" onClick={(e) => { e.stopPropagation(); onApply() }}>
-                Apply <IconArrowUpRight />
-              </button>
-            </div>
-          </article>
-        ))}
+      <div className="jobs-marquee">
+        <div className="jobs-marquee__track" style={{ animationDuration: `${trackDuration}s` }}>
+          {loopRoles.map((job, i) => {
+            const isDuplicate = i >= roles.length
+            return (
+              <article
+                className="job-card job-card--link"
+                key={`${tab}-${job.slug}-${i}`}
+                aria-hidden={isDuplicate || undefined}
+                style={{ animationDelay: `${(i % roles.length) * 70}ms` }}
+                onClick={() => navigate(`/jobs/${job.slug}`)}
+              >
+                <div className="job-card__head">
+                  <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-card__logo" />
+                  <div className="job-card__co">
+                    <strong>{job.company}</strong>
+                  </div>
+                  {job.featured && (
+                    <span className="job-card__badge"><IconStar /> Featured</span>
+                  )}
+                </div>
+                <h3 className="job-card__title">
+                  <Link href={`/jobs/${job.slug}`} tabIndex={isDuplicate ? -1 : undefined} onClick={(e) => e.stopPropagation()}>{job.title}</Link>
+                </h3>
+                <div className="job-card__tags">
+                  <span className="job-tag job-tag--mode">{job.mode}</span>
+                  <span className="job-tag job-tag--location"><IconPin /> {job.location}</span>
+                </div>
+                <div className="job-card__foot">
+                  <span className="job-card__salary">{job.pay}<small>{job.per}</small></span>
+                  <button
+                    type="button"
+                    className="btn btn--solid btn--sm job-card__apply"
+                    tabIndex={isDuplicate ? -1 : undefined}
+                    onClick={(e) => { e.stopPropagation(); onApply() }}
+                  >
+                    Apply <IconArrowUpRight />
+                  </button>
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </div>
     </section>
   )

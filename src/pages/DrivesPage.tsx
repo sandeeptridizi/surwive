@@ -57,10 +57,26 @@ function DriveRow({ drive, index }: { drive: DriveInfo; index: number }) {
   )
 }
 
+const DRIVES_PER_PAGE = 8
+
 function DrivesList({ catalog, loading }: { catalog: DriveInfo[]; loading: boolean }) {
   const [city, setCity] = useState('All')
+  const [page, setPage] = useState(1)
   const cities = Array.from(new Set(catalog.map((d) => d.location)))
   const visible = city === 'All' ? catalog : catalog.filter((d) => d.location === city)
+
+  const totalPages = Math.max(1, Math.ceil(visible.length / DRIVES_PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const paged = visible.slice((safePage - 1) * DRIVES_PER_PAGE, safePage * DRIVES_PER_PAGE)
+
+  function pickCity(c: string) {
+    setCity(c)
+    setPage(1)
+  }
+  function gotoPage(p: number) {
+    setPage(Math.min(Math.max(1, p), totalPages))
+    window.scrollTo({ top: 0 })
+  }
 
   return (
     <section className="blog drives-page">
@@ -77,7 +93,7 @@ function DrivesList({ catalog, loading }: { catalog: DriveInfo[]; loading: boole
           aria-selected={city === 'All'}
           className={`blog-pill ${city === 'All' ? 'is-active' : ''}`}
           style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
-          onClick={() => setCity('All')}
+          onClick={() => pickCity('All')}
         >
           <IconSpark /> All cities <span className="blog-pill__count">{catalog.length}</span>
         </button>
@@ -89,15 +105,15 @@ function DrivesList({ catalog, loading }: { catalog: DriveInfo[]; loading: boole
             key={c}
             className={`blog-pill ${city === c ? 'is-active' : ''}`}
             style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
-            onClick={() => setCity(c)}
+            onClick={() => pickCity(c)}
           >
             <IconPin /> {c} <span className="blog-pill__count">{catalog.filter((d) => d.location === c).length}</span>
           </button>
         ))}
       </div>
 
-      <div className="drive-rows" key={city}>
-        {visible.map((drive, i) => (
+      <div className="drive-rows" key={`${city}-${safePage}`}>
+        {paged.map((drive, i) => (
           <DriveRow drive={drive} index={i} key={drive.slug} />
         ))}
       </div>
@@ -112,6 +128,28 @@ function DrivesList({ catalog, loading }: { catalog: DriveInfo[]; loading: boole
               : 'Check back soon — new drives are announced all the time.'}
           </p>
         </div>
+      )}
+
+      {totalPages > 1 && (
+        <nav className="blog__pagination" aria-label="Walk-in drive pages">
+          <button type="button" onClick={() => gotoPage(safePage - 1)} disabled={safePage === 1}>
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              type="button"
+              key={i}
+              className={safePage === i + 1 ? 'is-active' : ''}
+              aria-current={safePage === i + 1 ? 'page' : undefined}
+              onClick={() => gotoPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button type="button" onClick={() => gotoPage(safePage + 1)} disabled={safePage === totalPages}>
+            Next
+          </button>
+        </nav>
       )}
     </section>
   )

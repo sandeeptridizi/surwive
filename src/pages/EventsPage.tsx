@@ -103,13 +103,30 @@ function EventSpotlight({ event }: { event: EventInfo }) {
   )
 }
 
+const EVENTS_PER_PAGE = 9
+
 function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boolean }) {
   const [filter, setFilter] = useState<'all' | 'events' | 'hackathons'>('all')
+  const [page, setPage] = useState(1)
 
   const items = catalog.filter((item) =>
     filter === 'all' ? true : filter === 'hackathons' ? item.type === 'Hackathon' : item.type !== 'Hackathon'
   )
   const hackathonCount = catalog.filter((e) => e.type === 'Hackathon').length
+
+  const [spotlight, ...rest] = items
+  const totalPages = Math.max(1, Math.ceil(rest.length / EVENTS_PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const paged = rest.slice((safePage - 1) * EVENTS_PER_PAGE, safePage * EVENTS_PER_PAGE)
+
+  function pickFilter(f: 'all' | 'events' | 'hackathons') {
+    setFilter(f)
+    setPage(1)
+  }
+  function gotoPage(p: number) {
+    setPage(Math.min(Math.max(1, p), totalPages))
+    window.scrollTo({ top: 0 })
+  }
 
   return (
     <section className="blog events-page">
@@ -126,7 +143,7 @@ function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boole
           aria-selected={filter === 'all'}
           className={`blog-pill ${filter === 'all' ? 'is-active' : ''}`}
           style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
-          onClick={() => setFilter('all')}
+          onClick={() => pickFilter('all')}
         >
           <IconSpark /> All <span className="blog-pill__count">{catalog.length}</span>
         </button>
@@ -136,7 +153,7 @@ function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boole
           aria-selected={filter === 'events'}
           className={`blog-pill ${filter === 'events' ? 'is-active' : ''}`}
           style={{ '--blog-accent': '#7b8cff' } as CSSProperties}
-          onClick={() => setFilter('events')}
+          onClick={() => pickFilter('events')}
         >
           <IconUsers /> Events <span className="blog-pill__count">{catalog.length - hackathonCount}</span>
         </button>
@@ -146,16 +163,16 @@ function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boole
           aria-selected={filter === 'hackathons'}
           className={`blog-pill ${filter === 'hackathons' ? 'is-active' : ''}`}
           style={{ '--blog-accent': '#ff7a50' } as CSSProperties}
-          onClick={() => setFilter('hackathons')}
+          onClick={() => pickFilter('hackathons')}
         >
           <IconTrophy /> Hackathons <span className="blog-pill__count">{hackathonCount}</span>
         </button>
       </div>
 
-      <div className="events-feed" key={filter}>
-        {items.length > 0 && <EventSpotlight event={items[0]!} />}
+      <div className="events-feed" key={`${filter}-${safePage}`}>
+        {safePage === 1 && spotlight && <EventSpotlight event={spotlight} />}
         <div className="events-grid">
-          {items.slice(1).map((event, i) => (
+          {paged.map((event, i) => (
             <EventCard event={event} index={i} key={event.slug} />
           ))}
         </div>
@@ -171,6 +188,28 @@ function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boole
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <nav className="blog__pagination" aria-label="Event pages">
+          <button type="button" onClick={() => gotoPage(safePage - 1)} disabled={safePage === 1}>
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              type="button"
+              key={i}
+              className={safePage === i + 1 ? 'is-active' : ''}
+              aria-current={safePage === i + 1 ? 'page' : undefined}
+              onClick={() => gotoPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button type="button" onClick={() => gotoPage(safePage + 1)} disabled={safePage === totalPages}>
+            Next
+          </button>
+        </nav>
+      )}
     </section>
   )
 }
