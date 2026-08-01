@@ -31,6 +31,9 @@
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 
   --ease-out: cubic-bezier(.16, .84, .44, 1);
+
+  /* Combined height of the sticky announce bar + nav (.site-header) — anchor point for anything sticking below it. */
+  --header-h: 132px;
 }
 
 * { box-sizing: border-box; }
@@ -4543,7 +4546,7 @@ section[id] { scroll-margin-top: 124px; }
 
 .article-side {
   position: sticky;
-  top: 92px;
+  top: var(--header-h);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -4562,6 +4565,40 @@ section[id] { scroll-margin-top: 124px; }
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 14px;
+}
+
+.job-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.job-skills__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.job-skills__item:hover {
+  border-color: color-mix(in srgb, var(--ev-accent, var(--accent)) 45%, var(--border));
+  background: color-mix(in srgb, var(--ev-accent, var(--accent)) 8%, rgba(255, 255, 255, 0.03));
+  transform: translateX(2px);
+}
+.job-skills__item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--ev-accent, var(--accent));
 }
 
 .article-toc ul { display: flex; flex-direction: column; gap: 2px; }
@@ -6017,11 +6054,157 @@ a.event-chip--link:hover {
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
-  position: sticky;
-  top: 92px;
-  z-index: 15;
 }
 .jobs-listbar .jobs-search { flex: 1 1 280px; max-width: 440px; }
+
+/* Floating quick-search/filter dock — appears on the left once .jobs-listbar
+   scrolls out of view. A slim vertical bar so it never overlaps the card grid;
+   search and filters open as flyouts to its right, only while in use. */
+.jobs-float {
+  position: fixed;
+  top: calc(var(--header-h) + 20px);
+  left: 20px;
+  z-index: 25;
+  opacity: 0;
+  transform: translateX(-14px);
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.jobs-float.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.jobs-float__bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 48px;
+  padding: 8px;
+  background: rgba(14, 16, 24, 0.88);
+  border: 1px solid rgba(255, 197, 61, 0.22);
+  border-radius: 999px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.4);
+}
+
+.jobs-float__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.jobs-float__icon svg { width: 15px; height: 15px; }
+.jobs-float__icon:hover { background: rgba(255, 255, 255, 0.07); color: var(--text-h); }
+.jobs-float__icon.is-active {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: var(--accent);
+}
+
+.jobs-float__divider {
+  width: 22px;
+  height: 1px;
+  margin: 2px 0;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.jobs-float__count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), #ffdd8a);
+  color: var(--accent-ink);
+  font-size: 9.5px;
+  font-weight: 800;
+  box-shadow: 0 0 0 2px rgba(14, 16, 24, 0.9);
+}
+
+@keyframes jobsFloatFlyoutIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.jobs-float__flyout {
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 0;
+  z-index: 1;
+  background: rgba(14, 16, 24, 0.94);
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.42);
+  animation: jobsFloatFlyoutIn 0.2s var(--ease-out);
+}
+
+.jobs-float__flyout--search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 230px;
+  padding: 10px 16px;
+  border-radius: 999px;
+}
+.jobs-float__flyout--search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 197, 61, 0.14);
+}
+.jobs-float__flyout--search svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--accent); }
+.jobs-float__flyout--search input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-h);
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.jobs-float__flyout--search input::placeholder { color: var(--text-muted); }
+
+.jobs-float__flyout--filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 300px;
+  max-height: calc(100vh - var(--header-h) - 40px);
+  overflow-y: auto;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+.jobs-float__flyout--filters .jobs-filter-panel__row {
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.jobs-float__flyout--filters .jobs-filter-panel__group--salary { min-width: 0; }
+.jobs-float__flyout--filters .jobs-filter-panel__clear { align-self: stretch; }
+
+@media (max-width: 1240px) {
+  .jobs-float { left: 12px; }
+}
+
+/* Not enough side gutter beside the card grid below this width — floating dock would sit on top of cards. */
+@media (max-width: 980px) {
+  .jobs-float { display: none; }
+}
 
 .jobs-filter-toggle {
   position: relative;
@@ -6316,7 +6499,7 @@ a.event-chip--link:hover {
 
 .job-tile__head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
 }
 
@@ -6512,7 +6695,6 @@ a.event-chip--link:hover {
 .job-hero__top {
   position: relative;
   z-index: 1;
-  gap: 14px;
   padding-right: 200px;
 }
 .job-hero__top h1 {
@@ -6520,6 +6702,55 @@ a.event-chip--link:hover {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.job-hero__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  width: 100%;
+}
+
+.job-hero__title-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.job-hero__logo {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  color: #fff;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ev-accent, var(--accent)) 85%, #fff), var(--ev-accent, var(--accent)));
+  border: 1px solid color-mix(in srgb, var(--ev-accent, var(--accent)) 45%, transparent);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--ev-accent, var(--accent)) 30%, transparent);
+}
+
+.job-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.job-hero__chips {
+  align-items: center;
+}
+.job-hero__chips::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--text-muted);
 }
 
 .job-hero__verified {
@@ -6542,6 +6773,12 @@ a.event-chip--link:hover {
 @media (max-width: 900px) {
   .job-hero__top { padding-right: 22px; }
   .job-hero__apply { position: static; margin-top: 6px; }
+}
+
+@media (max-width: 560px) {
+  .job-hero__title-row { gap: 14px; }
+  .job-hero__meta { gap: 10px; }
+  .job-hero__logo { width: 54px; height: 54px; font-size: 19px; border-radius: 16px; }
 }
 
 .job-perks {

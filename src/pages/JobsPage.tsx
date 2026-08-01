@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { SectionHead } from '../components/SectionHead'
 import {
   IconArrowUpRight,
@@ -136,9 +136,62 @@ function JobsList({
   const [salaryMax, setSalaryMax] = useState<number>(bounds.max)
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
+  const [floating, setFloating] = useState(false)
+  const [dockSearchOpen, setDockSearchOpen] = useState(false)
+  const listbarRef = useRef<HTMLDivElement>(null)
+  const dockRef = useRef<HTMLDivElement>(null)
+
+  // Once the real search/filter bar scrolls out of view, show the compact
+  // floating dock on the left so search stays reachable without a full-width sticky bar.
+  useEffect(() => {
+    const el = listbarRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(([entry]) => setFloating(!entry.isIntersecting), {
+      rootMargin: `-${140}px 0px 0px 0px`,
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // Close the dock's search/filter flyouts on outside click or Escape.
+  useEffect(() => {
+    if (!floating || (!dockSearchOpen && !showFilters)) return
+    const closeOnOutsideClick = (e: MouseEvent) => {
+      if (dockRef.current && !dockRef.current.contains(e.target as Node)) {
+        setDockSearchOpen(false)
+        setShowFilters(false)
+      }
+    }
+    const closeOnEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDockSearchOpen(false)
+        setShowFilters(false)
+      }
+    }
+    document.addEventListener('mousedown', closeOnOutsideClick)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [dockSearchOpen, showFilters, floating])
 
   const salaryActive = salaryMin > bounds.min || salaryMax < bounds.max
   const activeFilterCount = (mode !== 'All' ? 1 : 0) + (location !== 'All' ? 1 : 0) + (salaryActive ? 1 : 0)
+
+  function toggleFilters() {
+    setShowFilters((v) => !v)
+  }
+
+  function toggleDockFilters() {
+    setDockSearchOpen(false)
+    setShowFilters((v) => !v)
+  }
+
+  function toggleDockSearch() {
+    setShowFilters(false)
+    setDockSearchOpen((v) => !v)
+  }
 
   function resetSalary() {
     setSalaryMin(bounds.min)
@@ -175,6 +228,104 @@ function JobsList({
     window.scrollTo({ top: 0 })
   }
 
+  const filterFields = (
+    <>
+      <div className="jobs-filter-panel__row">
+        <div className="jobs-filter-panel__group">
+          <span className="jobs-filter-panel__label">Work mode</span>
+          <div className="blog__filters jobs-filter-panel__modes" role="tablist" aria-label="Filter by work mode">
+            {MODES.map((m) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === m}
+                key={m}
+                className={`blog-pill ${mode === m ? 'is-active' : ''}`}
+                style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
+                onClick={() => { setMode(m); setPage(1) }}
+              >
+                {m === 'All' ? <IconSpark /> : <IconPin />} {m}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="jobs-filter-panel__group">
+          <span className="jobs-filter-panel__label">Location</span>
+          <label className="jobs-select">
+            <IconPin />
+            <select
+              value={location}
+              aria-label="Filter by location"
+              onChange={(e) => { setLocation(e.target.value); setPage(1) }}
+            >
+              <option value="All">All locations</option>
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className="jobs-filter-panel__group jobs-filter-panel__group--salary">
+          <span className="jobs-filter-panel__label">{type === 'job' ? 'Salary range' : 'Stipend range'}</span>
+          <div className="salary-inputs">
+            <label className="salary-inputs__field">
+              <IconRupee />
+              <span>Min</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={bounds.min}
+                max={bounds.max}
+                step={bounds.step}
+                value={salaryMin === bounds.min ? '' : salaryMin}
+                placeholder="0"
+                aria-label={`Minimum ${type === 'job' ? 'salary' : 'stipend'}`}
+                onChange={(e) => {
+                  const raw = e.target.value === '' ? bounds.min : Number(e.target.value)
+                  setSalaryMin(Math.min(Math.max(raw, bounds.min), salaryMax))
+                  setPage(1)
+                }}
+              />
+            </label>
+            <span className="salary-inputs__sep">to</span>
+            <label className="salary-inputs__field">
+              <IconRupee />
+              <span>Max</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={bounds.min}
+                max={bounds.max}
+                step={bounds.step}
+                value={salaryMax === bounds.max ? '' : salaryMax}
+                placeholder={formatINR(bounds.max)}
+                aria-label={`Maximum ${type === 'job' ? 'salary' : 'stipend'}`}
+                onChange={(e) => {
+                  const raw = e.target.value === '' ? bounds.max : Number(e.target.value)
+                  setSalaryMax(Math.max(Math.min(raw, bounds.max), salaryMin))
+                  setPage(1)
+                }}
+              />
+            </label>
+            {salaryActive && (
+              <button type="button" className="salary-inputs__reset" aria-label="Reset salary filter" onClick={resetSalary}>
+                <IconClose />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {activeFilterCount > 0 && (
+        <button type="button" className="btn btn--outline btn--sm jobs-filter-panel__clear" onClick={clearFilters}>
+          Clear filters
+        </button>
+      )}
+    </>
+  )
+
   return (
     <section className="blog jobs-page">
       <SectionHead
@@ -184,7 +335,7 @@ function JobsList({
         sub="Browse the full board — every opening is verified, salary-transparent, and one click from a full description."
       />
 
-      <div className="jobs-listbar reveal">
+      <div className="jobs-listbar reveal" ref={listbarRef}>
         <label className="jobs-search">
           <IconSpark />
           <input
@@ -200,110 +351,61 @@ function JobsList({
           type="button"
           className={`jobs-filter-toggle ${showFilters ? 'is-active' : ''}`}
           aria-expanded={showFilters}
-          onClick={() => setShowFilters((v) => !v)}
+          onClick={toggleFilters}
         >
           <IconFilter /> Filters
           {activeFilterCount > 0 && <span className="jobs-filter-toggle__count">{activeFilterCount}</span>}
         </button>
       </div>
 
-      {showFilters && (
-        <div className="jobs-filter-panel">
-          <div className="jobs-filter-panel__row">
-            <div className="jobs-filter-panel__group">
-              <span className="jobs-filter-panel__label">Work mode</span>
-              <div className="blog__filters jobs-filter-panel__modes" role="tablist" aria-label="Filter by work mode">
-                {MODES.map((m) => (
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={mode === m}
-                    key={m}
-                    className={`blog-pill ${mode === m ? 'is-active' : ''}`}
-                    style={{ '--blog-accent': 'var(--accent)' } as CSSProperties}
-                    onClick={() => { setMode(m); setPage(1) }}
-                  >
-                    {m === 'All' ? <IconSpark /> : <IconPin />} {m}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="jobs-filter-panel__group">
-              <span className="jobs-filter-panel__label">Location</span>
-              <label className="jobs-select">
-                <IconPin />
-                <select
-                  value={location}
-                  aria-label="Filter by location"
-                  onChange={(e) => { setLocation(e.target.value); setPage(1) }}
-                >
-                  <option value="All">All locations</option>
-                  {locations.map((loc) => (
-                    <option key={loc} value={loc}>{loc}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
-
-            <div className="jobs-filter-panel__group jobs-filter-panel__group--salary">
-              <span className="jobs-filter-panel__label">{type === 'job' ? 'Salary range' : 'Stipend range'}</span>
-              <div className="salary-inputs">
-                <label className="salary-inputs__field">
-                  <IconRupee />
-                  <span>Min</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={bounds.min}
-                    max={bounds.max}
-                    step={bounds.step}
-                    value={salaryMin === bounds.min ? '' : salaryMin}
-                    placeholder="0"
-                    aria-label={`Minimum ${type === 'job' ? 'salary' : 'stipend'}`}
-                    onChange={(e) => {
-                      const raw = e.target.value === '' ? bounds.min : Number(e.target.value)
-                      setSalaryMin(Math.min(Math.max(raw, bounds.min), salaryMax))
-                      setPage(1)
-                    }}
-                  />
-                </label>
-                <span className="salary-inputs__sep">to</span>
-                <label className="salary-inputs__field">
-                  <IconRupee />
-                  <span>Max</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={bounds.min}
-                    max={bounds.max}
-                    step={bounds.step}
-                    value={salaryMax === bounds.max ? '' : salaryMax}
-                    placeholder={formatINR(bounds.max)}
-                    aria-label={`Maximum ${type === 'job' ? 'salary' : 'stipend'}`}
-                    onChange={(e) => {
-                      const raw = e.target.value === '' ? bounds.max : Number(e.target.value)
-                      setSalaryMax(Math.max(Math.min(raw, bounds.max), salaryMin))
-                      setPage(1)
-                    }}
-                  />
-                </label>
-                {salaryActive && (
-                  <button type="button" className="salary-inputs__reset" aria-label="Reset salary filter" onClick={resetSalary}>
-                    <IconClose />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {activeFilterCount > 0 && (
-            <button type="button" className="btn btn--outline btn--sm jobs-filter-panel__clear" onClick={clearFilters}>
-              Clear filters
-            </button>
-          )}
-        </div>
+      {showFilters && !floating && (
+        <div className="jobs-filter-panel">{filterFields}</div>
       )}
+
+      <div className={`jobs-float ${floating ? 'is-visible' : ''}`} aria-hidden={!floating} ref={dockRef}>
+        <div className="jobs-float__bar">
+          <button
+            type="button"
+            className={`jobs-float__icon ${dockSearchOpen ? 'is-active' : ''}`}
+            aria-label="Search roles"
+            aria-expanded={dockSearchOpen}
+            tabIndex={floating ? 0 : -1}
+            onClick={toggleDockSearch}
+          >
+            <IconSpark />
+          </button>
+          <span className="jobs-float__divider" aria-hidden="true" />
+          <button
+            type="button"
+            className={`jobs-float__icon ${showFilters ? 'is-active' : ''}`}
+            aria-label="Filters"
+            aria-expanded={showFilters}
+            tabIndex={floating ? 0 : -1}
+            onClick={toggleDockFilters}
+          >
+            <IconFilter />
+            {activeFilterCount > 0 && <span className="jobs-float__count">{activeFilterCount}</span>}
+          </button>
+        </div>
+
+        {floating && dockSearchOpen && (
+          <label className="jobs-float__flyout jobs-float__flyout--search">
+            <IconSpark />
+            <input
+              type="search"
+              value={query}
+              placeholder={`Search ${type === 'job' ? 'jobs' : 'internships'}…`}
+              aria-label="Search roles"
+              autoFocus
+              onChange={(e) => { setQuery(e.target.value); setPage(1) }}
+            />
+          </label>
+        )}
+
+        {floating && showFilters && (
+          <div className="jobs-float__flyout jobs-float__flyout--filters">{filterFields}</div>
+        )}
+      </div>
 
       <div className="jobs-card-grid" key={`${type}-${mode}-${location}-${salaryMin}-${salaryMax}-${q}-${safePage}`}>
         {paged.map((job, i) => (
@@ -381,16 +483,23 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
 
       <header className="drive-hero job-hero">
         <div className="drive-hero__top job-hero__top">
-          <div className="event-hero__chips">
-            <span className="event-chip event-chip--type">{job.type === 'job' ? `${typeLabel} role` : 'Internship'}</span>
-            <span className="event-chip">{job.mode}</span>
-            {job.featured && <span className="event-chip">★ Featured</span>}
+          <div className="job-hero__intro">
+            <div className="job-hero__title-row">
+              <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-hero__logo" />
+              <h1>{job.title}</h1>
+            </div>
+            <div className="job-hero__meta">
+              <p className="event-hero__org">
+                at <strong>{job.company}</strong>
+                <span className="job-hero__verified"><IconCheck /> Verified opening</span>
+              </p>
+              <div className="event-hero__chips job-hero__chips">
+                <span className="event-chip event-chip--type">{job.type === 'job' ? `${typeLabel} role` : 'Internship'}</span>
+                <span className="event-chip">{job.mode}</span>
+                {job.featured && <span className="event-chip">★ Featured</span>}
+              </div>
+            </div>
           </div>
-          <h1>{job.title}</h1>
-          <p className="event-hero__org">
-            at <strong>{job.company}</strong>
-            <span className="job-hero__verified"><IconCheck /> Verified opening</span>
-          </p>
           <button type="button" className="btn btn--solid job-hero__apply" onClick={onApply}>
             Apply now <IconArrowUpRight />
           </button>
@@ -493,9 +602,12 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
           <aside className="article-side" ref={sideRef}>
             <div className="article-side__card">
               <h3>Skills</h3>
-              <div className="drive-row__tags">
+              <div className="job-skills">
                 {job.skills.map((skill) => (
-                  <span className="job-tag" key={skill}>{skill}</span>
+                  <span className="job-skills__item" key={skill}>
+                    <IconCheck aria-hidden="true" />
+                    {skill}
+                  </span>
                 ))}
               </div>
             </div>
