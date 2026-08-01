@@ -288,7 +288,7 @@ function CopilotChatCard({ onApply }: { onApply: () => void }) {
   )
 }
 
-function FeaturedRoles({ onApply }: { onApply: () => void }) {
+function FeaturedRoles({ onApply }: { onApply: (job: JobInfo) => void }) {
   const [tab, setTab] = useState<'jobs' | 'internships'>('jobs')
   const { jobs } = useJobs()
   const roles = jobs.filter((j) => j.type === (tab === 'jobs' ? 'job' : 'internship'))
@@ -377,7 +377,7 @@ function FeaturedRoles({ onApply }: { onApply: () => void }) {
                     type="button"
                     className="btn btn--solid btn--sm job-card__apply"
                     tabIndex={isDuplicate ? -1 : undefined}
-                    onClick={(e) => { e.stopPropagation(); onApply() }}
+                    onClick={(e) => { e.stopPropagation(); onApply(job) }}
                   >
                     Apply <IconArrowUpRight />
                   </button>
@@ -502,10 +502,12 @@ export function HomePage({
   onSignupCandidate,
   onSignupEmployer,
   onCompanyPricing,
+  onApplyJob,
 }: {
   onSignupCandidate: () => void
   onSignupEmployer: () => void
   onCompanyPricing: () => void
+  onApplyJob: (job: JobInfo) => void
 }) {
   return (
     <>
@@ -577,7 +579,7 @@ export function HomePage({
         </div>
       </section>
 
-      <FeaturedRoles onApply={onSignupCandidate} />
+      <FeaturedRoles onApply={onApplyJob} />
 
       <WalkInDrives onApply={onSignupCandidate} />
       <EventsAndHackathons onApply={onSignupCandidate} />

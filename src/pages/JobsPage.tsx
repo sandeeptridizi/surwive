@@ -8,9 +8,11 @@ import {
   IconFilter,
   IconPin,
   IconRupee,
+  IconShare,
   IconSpark,
   IconStar,
   IconUsers,
+  IconVerifiedBadge,
 } from '../components/icons'
 import { jobAccent, parsePayRange, type JobInfo } from '../data/jobs'
 import { LocationLink } from '../components/LocationLink'
@@ -42,45 +44,6 @@ function matchesSalaryRange(job: JobInfo, min: number, max: number) {
   return range.max >= min && range.min <= max
 }
 
-function JobRow({ job, index }: { job: JobInfo; index: number }) {
-  return (
-    <Link
-      href={`/jobs/${job.slug}`}
-      className="drive-row job-row"
-      style={{ '--ev-accent': jobAccent(job), animationDelay: `${index * 60}ms` } as CSSProperties}
-    >
-      <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-row__logo" />
-
-      <div className="drive-row__body">
-        <div className="drive-row__title-line">
-          <h3>{job.title}</h3>
-          {job.featured && <span className="job-card__badge"><IconStar /> Featured</span>}
-        </div>
-        <span className="drive-row__host">{job.company}</span>
-        <p className="job-row__summary">{job.summary}</p>
-        <div className="drive-row__meta">
-          <span><IconPin /> {job.location}</span>
-          {job.detail && <span><IconClock /> {job.detail}</span>}
-          {job.openings && <span><IconUsers /> {job.openings}</span>}
-        </div>
-        <div className="drive-row__tags">
-          <span className="job-tag job-tag--mode">{job.mode}</span>
-          {job.skills.map((skill) => (
-            <span className="job-tag" key={skill}>{skill}</span>
-          ))}
-        </div>
-      </div>
-
-      <div className="drive-row__side">
-        <span className="drive-row__salary">{job.pay}</span>
-        <span className="job-row__per">{job.per}</span>
-        <span className="drive-row__perk"><IconSpark /> {job.posted}</span>
-        <span className="drive-row__cta">View role <IconArrowUpRight /></span>
-      </div>
-    </Link>
-  )
-}
-
 function JobCard({ job, index }: { job: JobInfo; index: number }) {
   return (
     <Link
@@ -91,7 +54,10 @@ function JobCard({ job, index }: { job: JobInfo; index: number }) {
       <div className="job-tile__head">
         <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-tile__logo" />
         <div className="job-tile__co">
-          <strong>{job.company}</strong>
+          <span className="job-tile__co-line">
+            <strong>{job.company}</strong>
+            <span className="job-card__verified" title="Verified opening"><IconVerifiedBadge /></span>
+          </span>
         </div>
         {job.featured && <span className="job-card__badge"><IconStar /> Featured</span>}
       </div>
@@ -112,6 +78,42 @@ function JobCard({ job, index }: { job: JobInfo; index: number }) {
       <div className="job-tile__foot">
         <span className="job-tile__salary">{job.pay}<small>{job.per}</small></span>
         <span className="job-tile__cta">View role <IconArrowUpRight /></span>
+      </div>
+    </Link>
+  )
+}
+
+function SimilarRoleCard({ job, index, onApply }: { job: JobInfo; index: number; onApply: (job: JobInfo) => void }) {
+  return (
+    <Link
+      href={`/jobs/${job.slug}`}
+      className="job-similar__row"
+      style={{ '--ev-accent': jobAccent(job), animationDelay: `${index * 60}ms` } as CSSProperties}
+    >
+      <CompanyLogo logo={job.companyLogo} name={job.company} initial={job.initial} className="job-similar__logo" />
+
+      <div className="job-similar__body">
+        <h3>{job.title}</h3>
+        <span className="job-similar__co">
+          {job.company}
+          <span className="job-card__verified" title="Verified opening"><IconVerifiedBadge /></span>
+        </span>
+        <div className="job-similar__meta">
+          <span className="job-tag job-tag--mode">{job.mode}</span>
+          <span className="job-tag job-tag--location"><IconPin /> {job.location}</span>
+          {job.detail && <span className="job-tag"><IconClock /> {job.detail}</span>}
+        </div>
+      </div>
+
+      <div className="job-similar__side">
+        <span className="job-similar__pay">{job.pay}<small>{job.per}</small></span>
+        <button
+          type="button"
+          className="btn btn--solid btn--sm job-similar__apply"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onApply(job) }}
+        >
+          Apply now <IconArrowUpRight />
+        </button>
       </div>
     </Link>
   )
@@ -455,9 +457,21 @@ function JobsList({
   )
 }
 
-function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]; onApply: () => void }) {
+function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]; onApply: (job: JobInfo) => void }) {
   const similar = catalog.filter((j) => j.type === job.type && j.slug !== job.slug).slice(0, 3)
   const sideRef = useStickySide<HTMLElement>()
+  const [linkCopied, setLinkCopied] = useState(false)
+
+  const copyJobLink = async () => {
+    const url = `${window.location.origin}/jobs/${job.slug}`
+    try {
+      await navigator.clipboard.writeText(url)
+    } catch {
+      /* clipboard unavailable */
+    }
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
+  }
 
   // Backend postings carry roleType/department/duration; the bundled sample
   // data instead keeps an experience level in `detail`.
@@ -491,7 +505,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
             <div className="job-hero__meta">
               <p className="event-hero__org">
                 at <strong>{job.company}</strong>
-                <span className="job-hero__verified"><IconCheck /> Verified opening</span>
+                <span className="job-hero__verified"><IconVerifiedBadge /> Verified opening</span>
               </p>
               <div className="event-hero__chips job-hero__chips">
                 <span className="event-chip event-chip--type">{job.type === 'job' ? `${typeLabel} role` : 'Internship'}</span>
@@ -500,9 +514,20 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
               </div>
             </div>
           </div>
-          <button type="button" className="btn btn--solid job-hero__apply" onClick={onApply}>
-            Apply now <IconArrowUpRight />
-          </button>
+          <div className="job-hero__actions">
+            <button
+              type="button"
+              className="job-hero__share"
+              onClick={copyJobLink}
+              aria-label="Copy shareable link to this job"
+              title={linkCopied ? 'Link copied!' : 'Copy shareable link'}
+            >
+              {linkCopied ? <IconCheck /> : <IconShare />}
+            </button>
+            <button type="button" className="btn btn--solid job-hero__apply" onClick={() => onApply(job)}>
+              Apply now <IconArrowUpRight />
+            </button>
+          </div>
         </div>
         <div className="drive-hero__facts">
           {facts.map((fact) => (
@@ -617,10 +642,15 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
 
       {similar.length > 0 && (
         <div className="job-similar">
-          <h2>Similar roles</h2>
-          <div className="drive-rows">
+          <div className="job-similar__head">
+            <h2>Similar roles</h2>
+            <Link href={job.type === 'internship' ? '/jobs?tab=internships' : '/jobs'} className="job-similar__view-all">
+              View all <IconArrowUpRight />
+            </Link>
+          </div>
+          <div className="job-similar__list">
             {similar.map((o, i) => (
-              <JobRow job={o} index={i} key={o.slug} />
+              <SimilarRoleCard job={o} index={i} onApply={onApply} key={o.slug} />
             ))}
           </div>
         </div>
@@ -629,7 +659,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
   )
 }
 
-export function JobsPage({ path, onApply }: { path: string; onApply: () => void }) {
+export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobInfo) => void }) {
   const { jobs: catalog, loading } = useJobs()
   const slug = path.startsWith('/jobs/') ? decodeURIComponent(path.slice('/jobs/'.length).split('?')[0]) : null
   const job = slug ? catalog.find((j) => j.slug === slug) : undefined

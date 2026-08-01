@@ -16,6 +16,8 @@ export type FeaturedRole = {
 
 export type JobInfo = FeaturedRole & {
   slug: string
+  /** Backend Mongo id — used to deep-link into the user portal's job/internship view. */
+  id: string
   type: 'job' | 'internship'
   /** Employment type label from the backend ('Full-time' | 'Part-time' | 'Freelance' | 'Internship'). */
   roleType?: string

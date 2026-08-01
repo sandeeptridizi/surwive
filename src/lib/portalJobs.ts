@@ -111,6 +111,7 @@ function toJobInfo(job: PortalJob): JobInfo {
   const location = cleanLocation(job.location || 'India', mode)
   return {
     slug: jobSlug(job),
+    id: job.id,
     type: isInternship ? 'internship' : 'job',
     roleType: job.type,
     ...(job.department ? { department: job.department } : {}),

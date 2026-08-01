@@ -17,6 +17,7 @@ import { JobsPage } from './pages/JobsPage'
 import { PolicyPage } from './pages/PolicyPage'
 import { PricingPage } from './pages/PricingPage'
 import type { PricingAudience } from './data/pricing'
+import type { JobInfo } from './data/jobs'
 
 const USER_PORTAL_URL = 'https://user.surwive.com'
 const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
@@ -26,8 +27,15 @@ function App() {
   useScrollReveal(path)
   const [pricingAudience, setPricingAudience] = useState<PricingAudience>('student')
 
-  const goToPortal = (role: 'candidate' | 'employer') => {
-    window.location.href = role === 'employer' ? EMPLOYER_PORTAL_URL : USER_PORTAL_URL
+  const goToPortal = (role: 'candidate' | 'employer', path?: string) => {
+    const base = role === 'employer' ? EMPLOYER_PORTAL_URL : USER_PORTAL_URL
+    window.location.href = path ? `${base}${path}` : base
+  }
+
+  // Deep-links a job/internship's "Apply now" straight to its view in the candidate portal.
+  const applyToJob = (job: JobInfo) => {
+    const screen = job.type === 'internship' ? 'internship-view' : 'job-view'
+    goToPortal('candidate', `/${screen}/${encodeURIComponent(job.id)}`)
   }
 
   useEffect(() => {
@@ -52,7 +60,7 @@ function App() {
 
       <main id="main">
         {route === 'jobs' ? (
-          <JobsPage path={path} onApply={() => goToPortal('candidate')} />
+          <JobsPage path={path} onApply={applyToJob} />
         ) : route === 'pricing' ? (
           <PricingPage
             audience={pricingAudience}
@@ -82,6 +90,7 @@ function App() {
             onSignupCandidate={() => goToPortal('candidate')}
             onSignupEmployer={() => goToPortal('employer')}
             onCompanyPricing={() => setPricingAudience('company')}
+            onApplyJob={applyToJob}
           />
         )}
       </main>
