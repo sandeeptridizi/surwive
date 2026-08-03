@@ -26,6 +26,8 @@ export function useRoute() {
     ? 'jobs'
     : pathname === '/pricing'
       ? 'pricing'
+    : pathname === '/for-recruiters'
+      ? 'for-recruiters'
     : pathname === '/blog' || pathname.startsWith('/blog/')
       ? 'blog'
       : pathname === '/events' || pathname.startsWith('/events/')

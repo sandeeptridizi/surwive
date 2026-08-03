@@ -16,6 +16,7 @@ import { HomePage } from './pages/HomePage'
 import { JobsPage } from './pages/JobsPage'
 import { PolicyPage } from './pages/PolicyPage'
 import { PricingPage } from './pages/PricingPage'
+import { RecruitersPage } from './pages/RecruitersPage'
 import type { PricingAudience } from './data/pricing'
 import type { JobInfo } from './data/jobs'
 
@@ -66,6 +67,11 @@ function App() {
             audience={pricingAudience}
             onAudienceChange={setPricingAudience}
             onSelectPlan={(audience) => goToPortal(audience === 'company' ? 'employer' : 'candidate')}
+          />
+        ) : route === 'for-recruiters' ? (
+          <RecruitersPage
+            onSignupEmployer={() => goToPortal('employer')}
+            onCompanyPricing={() => setPricingAudience('company')}
           />
         ) : route === 'blog' ? (
           <BlogPage slug={path.startsWith('/blog/') ? decodeURIComponent(path.slice('/blog/'.length)) : null} />
