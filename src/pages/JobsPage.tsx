@@ -15,12 +15,19 @@ import {
   IconUsers,
   IconVerifiedBadge,
 } from '../components/icons'
-import { jobAccent, parsePayRange, type JobInfo } from '../data/jobs'
+import { jobAccent, type JobInfo } from '../data/jobs'
 import { LocationLink } from '../components/LocationLink'
 import { CompanyLogo } from '../components/CompanyLogo'
 import { Link } from '../components/Link'
 import { useJobs } from '../hooks/useJobs'
 import { useStickySide } from '../hooks/useStickySide'
+import {
+  cleanLocation,
+  fetchPortalJobById,
+  fetchPortalJobsPage,
+  idSuffixFromSlug,
+  workMode,
+} from '../lib/portalJobs'
 
 const MODES = ['All', 'Remote', 'Hybrid', 'On-site'] as const
 const ROLES_PER_PAGE = 12
@@ -30,6 +37,12 @@ const SALARY_BOUNDS = {
   internship: { min: 0, max: 60_000, step: 5_000 },
 } as const
 
+/** Kind label(s) the backend's `type` filter understands, for a listing tab. */
+const TAB_TYPE_PARAM: Record<'job' | 'internship', string> = {
+  job: 'Full-time,Part-time,Freelance',
+  internship: 'Internship',
+}
+
 function formatINR(value: number): string {
   if (value >= 100_000) {
     const lakhs = value / 100_000
@@ -37,12 +50,6 @@ function formatINR(value: number): string {
   }
   if (value >= 1_000) return `₹${Math.round(value / 1_000)}k`
   return `₹${value}`
-}
-
-function matchesSalaryRange(job: JobInfo, min: number, max: number) {
-  const range = parsePayRange(job.pay)
-  if (!range) return false
-  return range.max >= min && range.min <= max
 }
 
 function JobCard({ job, index }: { job: JobInfo; index: number }) {
@@ -120,15 +127,7 @@ function SimilarRoleCard({ job, index, onApply }: { job: JobInfo; index: number;
   )
 }
 
-function JobsList({
-  initialTab,
-  catalog,
-  loading,
-}: {
-  initialTab: 'job' | 'internship'
-  catalog: JobInfo[]
-  loading: boolean
-}) {
+function JobsList({ initialTab }: { initialTab: 'job' | 'internship' }) {
   const type = initialTab
   const bounds = SALARY_BOUNDS[type]
 
@@ -138,11 +137,24 @@ function JobsList({
   const [salaryMin, setSalaryMin] = useState<number>(bounds.min)
   const [salaryMax, setSalaryMax] = useState<number>(bounds.max)
   const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [page, setPage] = useState(1)
   const [floating, setFloating] = useState(false)
   const [dockSearchOpen, setDockSearchOpen] = useState(false)
   const listbarRef = useRef<HTMLDivElement>(null)
   const dockRef = useRef<HTMLDivElement>(null)
+
+  const [paged, setPaged] = useState<JobInfo[]>([])
+  const [total, setTotal] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [locations, setLocations] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Debounce search-as-you-type so it doesn't fire a request per keystroke.
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query), 350)
+    return () => clearTimeout(t)
+  }, [query])
 
   // Once the real search/filter bar scrolls out of view, show the compact
   // floating dock on the left so search stays reachable without a full-width sticky bar.
@@ -209,22 +221,33 @@ function JobsList({
     resetSalary()
   }
 
-  const byType = catalog.filter((j) => j.type === type)
-  const byMode = byType.filter((j) => mode === 'All' || j.mode === mode)
-  const byLocation = byMode.filter((j) => location === 'All' || j.location === location)
-  const locations = Array.from(new Set(byMode.map((j) => j.location))).sort()
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    fetchPortalJobsPage({
+      type: TAB_TYPE_PARAM[type],
+      search: debouncedQuery || undefined,
+      location: location !== 'All' ? location : undefined,
+      mode: mode !== 'All' ? mode : undefined,
+      salaryMin: salaryActive ? salaryMin : undefined,
+      salaryMax: salaryActive ? salaryMax : undefined,
+      page,
+      limit: ROLES_PER_PAGE,
+    }).then((result) => {
+      if (cancelled) return
+      setPaged(result.jobs)
+      setTotal(result.total)
+      setTotalPages(result.totalPages)
+      setLocations(result.locations)
+      setLoading(false)
+      if (page > result.totalPages) setPage(result.totalPages)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [type, debouncedQuery, location, mode, salaryMin, salaryMax, salaryActive, page])
 
-  const q = query.trim().toLowerCase()
-  const visible = byLocation.filter((job) => {
-    if (salaryActive && !matchesSalaryRange(job, salaryMin, salaryMax)) return false
-    if (!q) return true
-    return [job.title, job.company, job.location, ...job.skills]
-      .some((field) => field.toLowerCase().includes(q))
-  })
-
-  const totalPages = Math.max(1, Math.ceil(visible.length / ROLES_PER_PAGE))
   const safePage = Math.min(page, totalPages)
-  const paged = visible.slice((safePage - 1) * ROLES_PER_PAGE, safePage * ROLES_PER_PAGE)
 
   function gotoPage(p: number) {
     setPage(Math.min(Math.max(1, p), totalPages))
@@ -264,7 +287,7 @@ function JobsList({
             >
               <option value="All">All locations</option>
               {locations.map((loc) => (
-                <option key={loc} value={loc}>{loc}</option>
+                <option key={loc} value={loc}>{cleanLocation(loc, workMode(loc))}</option>
               ))}
             </select>
           </label>
@@ -410,18 +433,18 @@ function JobsList({
         )}
       </div>
 
-      <div className="jobs-card-grid" key={`${type}-${mode}-${location}-${salaryMin}-${salaryMax}-${q}-${safePage}`}>
+      <div className="jobs-card-grid" key={`${type}-${mode}-${location}-${salaryMin}-${salaryMax}-${debouncedQuery}-${safePage}`}>
         {paged.map((job, i) => (
           <JobCard job={job} index={i} key={job.slug} />
         ))}
-        {visible.length === 0 && loading && (
+        {total === 0 && loading && (
           <div className="jobs-empty">
             <span className="jobs-empty__icon"><IconSpark /></span>
             <strong>Loading open roles…</strong>
             <p>Fetching the latest verified openings from Surwive.</p>
           </div>
         )}
-        {visible.length === 0 && !loading && (
+        {total === 0 && !loading && (
           <div className="jobs-empty">
             <span className="jobs-empty__icon"><IconSpark /></span>
             <strong>No roles match that search</strong>
@@ -470,7 +493,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
     ...(job.duration ? [{ label: 'Duration', value: job.duration }] : []),
     { label: 'Location', value: <LocationLink location={job.location} /> },
     ...(job.openings ? [{ label: 'Openings', value: job.openings }] : []),
-    { label: 'Posted', value: job.posted, sub: job.applicants },
+    { label: 'Posted', value: job.posted },
   ]
 
   return (
@@ -646,10 +669,56 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
 }
 
 export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobInfo) => void }) {
-  const { jobs: catalog, loading } = useJobs()
+  // Only needed for "Similar roles" on the detail page — the listing itself
+  // and the detail lookup below fetch just what they need from the server.
+  const { jobs: catalog } = useJobs()
   const slug = path.startsWith('/jobs/') ? decodeURIComponent(path.slice('/jobs/'.length).split('?')[0]) : null
-  const job = slug ? catalog.find((j) => j.slug === slug) : undefined
+
+  const [job, setJob] = useState<JobInfo | null>(null)
+  const [jobLoading, setJobLoading] = useState(false)
+
+  useEffect(() => {
+    if (!slug) {
+      setJob(null)
+      return
+    }
+    let cancelled = false
+    setJob(null)
+    setJobLoading(true)
+    fetchPortalJobById(idSuffixFromSlug(slug)).then((found) => {
+      if (cancelled) return
+      setJob(found)
+      setJobLoading(false)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [slug])
+
   if (job) return <JobDetail job={job} catalog={catalog} onApply={onApply} />
+  if (slug && !jobLoading) {
+    return (
+      <section className="blog drives-page">
+        <Link href="/jobs" className="article__back">← All open roles</Link>
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>Role not found</strong>
+          <p>It may have closed or been unpublished. Browse what's open instead.</p>
+        </div>
+      </section>
+    )
+  }
+  if (slug) {
+    return (
+      <section className="blog drives-page">
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconSpark /></span>
+          <strong>Loading role…</strong>
+          <p>Fetching the details from Surwive.</p>
+        </div>
+      </section>
+    )
+  }
   const initialTab = path.includes('tab=internships') ? 'internship' : 'job'
-  return <JobsList key={initialTab} initialTab={initialTab} catalog={catalog} loading={loading} />
+  return <JobsList key={initialTab} initialTab={initialTab} />
 }

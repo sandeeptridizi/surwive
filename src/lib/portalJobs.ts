@@ -58,7 +58,7 @@ function payInfo(job: PortalJob): { pay: string; per: string } {
   return range ? { pay: range, per: 'per month' } : { pay: 'Not disclosed', per: '' }
 }
 
-function workMode(location: string): JobInfo['mode'] {
+export function workMode(location: string): JobInfo['mode'] {
   const loc = location.toLowerCase()
   if (loc.includes('remote') || loc.includes('work from home') || loc.includes('wfh')) return 'Remote'
   if (loc.includes('hybrid')) return 'Hybrid'
@@ -66,7 +66,7 @@ function workMode(location: string): JobInfo['mode'] {
 }
 
 /** Drop a trailing "(Onsite)"/"(Remote)"-style suffix — the work mode is shown as its own chip. */
-function cleanLocation(location: string, mode: JobInfo['mode']): string {
+export function cleanLocation(location: string, mode: JobInfo['mode']): string {
   const cleaned = location
     .replace(/\s*[(\[]\s*(?:on-?site|remote|hybrid|wfh|work from home)\s*[)\]]\s*$/i, '')
     .trim()
@@ -148,4 +148,82 @@ export async function fetchPortalJobs(): Promise<JobInfo[]> {
   if (!res.ok) throw new Error(`portal jobs request failed: ${res.status}`)
   const data = (await res.json()) as { jobs?: PortalJob[] }
   return (data.jobs ?? []).map(toJobInfo)
+}
+
+export type PortalJobsPageParams = {
+  /** Comma-separated backend kind labels, e.g. "Full-time,Part-time,Freelance" or "Internship". */
+  type: string
+  search?: string
+  /** Raw (unclean) location string as returned by the backend's `locations` facet. */
+  location?: string
+  mode?: JobInfo['mode']
+  salaryMin?: number
+  salaryMax?: number
+  page: number
+  limit: number
+}
+
+export type PortalJobsPageResult = {
+  jobs: JobInfo[]
+  total: number
+  totalPages: number
+  /** Raw location strings (uncleaned) — pass through `cleanLocation`/`workMode` to render, but use the raw value as the filter's `location` param. */
+  locations: string[]
+}
+
+const EMPTY_JOBS_PAGE: PortalJobsPageResult = { jobs: [], total: 0, totalPages: 1, locations: [] }
+
+/**
+ * GET /api/portal/jobs with page/limit — server-side search/filter/pagination.
+ * Cards get summary fields (short description, no benefits/responsibilities/skills);
+ * full detail is fetched separately per-job via `fetchPortalJobById` on the detail page.
+ */
+export async function fetchPortalJobsPage(params: PortalJobsPageParams): Promise<PortalJobsPageResult> {
+  try {
+    const qs = new URLSearchParams()
+    qs.set('type', params.type)
+    if (params.search) qs.set('search', params.search)
+    if (params.location) qs.set('location', params.location)
+    if (params.mode) qs.set('mode', params.mode)
+    if (params.salaryMin != null) qs.set('salaryMin', String(params.salaryMin))
+    if (params.salaryMax != null) qs.set('salaryMax', String(params.salaryMax))
+    qs.set('page', String(params.page))
+    qs.set('limit', String(params.limit))
+
+    const res = await fetch(`${API_BASE}/api/portal/jobs?${qs.toString()}`)
+    if (!res.ok) return EMPTY_JOBS_PAGE
+    const data = (await res.json()) as {
+      jobs?: PortalJob[]
+      total?: number
+      totalPages?: number
+      locations?: string[]
+    }
+    return {
+      jobs: (data.jobs ?? []).map(toJobInfo),
+      total: data.total ?? 0,
+      totalPages: data.totalPages ?? 1,
+      locations: data.locations ?? [],
+    }
+  } catch {
+    return EMPTY_JOBS_PAGE
+  }
+}
+
+/** Last-6-hex-char id suffix a job slug carries (`jobSlug()`'s `idSuffix`), or the whole
+ * slug when it's a bare 24-char Mongo id (the fallback `jobSlug` uses when the title
+ * slugifies to nothing). Either form is accepted by `GET /api/portal/jobs/:id`. */
+export function idSuffixFromSlug(slug: string): string {
+  return /^[0-9a-fA-F]{24}$/.test(slug) ? slug : slug.slice(-6)
+}
+
+/** GET /api/portal/jobs/:id — full detail for one posting, for the job-detail page. */
+export async function fetchPortalJobById(idOrSuffix: string): Promise<JobInfo | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/portal/jobs/${encodeURIComponent(idOrSuffix)}`)
+    if (!res.ok) return null
+    const data = (await res.json()) as { job?: PortalJob }
+    return data.job ? toJobInfo(data.job) : null
+  } catch {
+    return null
+  }
 }
