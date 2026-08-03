@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react'
+import { Pagination } from '../components/Pagination'
 import { SectionHead } from '../components/SectionHead'
 import {
   IconArrowUpRight,
@@ -189,27 +190,7 @@ function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boole
         )}
       </div>
 
-      {totalPages > 1 && (
-        <nav className="blog__pagination" aria-label="Event pages">
-          <button type="button" onClick={() => gotoPage(safePage - 1)} disabled={safePage === 1}>
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              type="button"
-              key={i}
-              className={safePage === i + 1 ? 'is-active' : ''}
-              aria-current={safePage === i + 1 ? 'page' : undefined}
-              onClick={() => gotoPage(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button type="button" onClick={() => gotoPage(safePage + 1)} disabled={safePage === totalPages}>
-            Next
-          </button>
-        </nav>
-      )}
+      <Pagination page={safePage} totalPages={totalPages} onChange={gotoPage} label="Event pages" />
     </section>
   )
 }

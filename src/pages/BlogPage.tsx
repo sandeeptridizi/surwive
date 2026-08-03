@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react'
+import { Pagination } from '../components/Pagination'
 import { SectionHead } from '../components/SectionHead'
 import {
   IconArrowUpRight,
@@ -156,27 +157,7 @@ function BlogList() {
         )}
       </div>
 
-      {pageCount > 1 && (
-        <nav className="blog__pagination" aria-label="Blog pages">
-          <button type="button" onClick={() => gotoPage(page - 1)} disabled={page === 1}>
-            Previous
-          </button>
-          {Array.from({ length: pageCount }, (_, i) => (
-            <button
-              type="button"
-              key={i}
-              className={page === i + 1 ? 'is-active' : ''}
-              aria-current={page === i + 1 ? 'page' : undefined}
-              onClick={() => gotoPage(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button type="button" onClick={() => gotoPage(page + 1)} disabled={page === pageCount}>
-            Next
-          </button>
-        </nav>
-      )}
+      <Pagination page={page} totalPages={pageCount} onChange={gotoPage} label="Blog pages" />
     </section>
   )
 }

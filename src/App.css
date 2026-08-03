@@ -4341,6 +4341,13 @@ section[id] { scroll-margin-top: 124px; }
   color: var(--accent-ink);
 }
 .blog__pagination button:disabled { opacity: 0.4; cursor: default; }
+.blog__pagination-ellipsis {
+  min-width: 38px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
 
 /* ------------- article page ------------- */
 
