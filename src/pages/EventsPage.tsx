@@ -126,7 +126,7 @@ function EventsList({ catalog, loading }: { catalog: EventInfo[]; loading: boole
   }
   function gotoPage(p: number) {
     setPage(Math.min(Math.max(1, p), totalPages))
-    window.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   return (

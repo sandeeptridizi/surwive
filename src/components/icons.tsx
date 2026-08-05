@@ -208,6 +208,27 @@ export function IconShare() {
   )
 }
 
+export function IconLinkedin() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="7.5" cy="8" r="1.4" />
+      <path d="M6.3 11h2.4v7H6.3v-7Z" />
+      <path d="M11.5 11h2.3v1.1c.6-.8 1.4-1.3 2.6-1.3 1.9 0 3.1 1.3 3.1 3.6V18h-2.4v-3.2c0-1-.4-1.7-1.4-1.7-.8 0-1.3.5-1.5 1.1-.1.2-.1.5-.1.8V18h-2.4c0-3.1 0-6.6 0-7Z" />
+    </svg>
+  )
+}
+
+export function IconCalendar() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
+      <path d="M3.5 9.5h17" />
+      <path d="M8 3v4M16 3v4" />
+    </svg>
+  )
+}
+
 export function IconGlobe() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">

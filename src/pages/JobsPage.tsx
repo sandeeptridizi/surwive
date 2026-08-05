@@ -3,10 +3,13 @@ import { Pagination } from '../components/Pagination'
 import { SectionHead } from '../components/SectionHead'
 import {
   IconArrowUpRight,
+  IconCalendar,
   IconCheck,
   IconClock,
   IconClose,
   IconFilter,
+  IconGlobe,
+  IconLinkedin,
   IconPin,
   IconRupee,
   IconShare,
@@ -251,7 +254,7 @@ function JobsList({ initialTab }: { initialTab: 'job' | 'internship' }) {
 
   function gotoPage(p: number) {
     setPage(Math.min(Math.max(1, p), totalPages))
-    window.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const filterFields = (
@@ -520,22 +523,55 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
                 <span className="event-chip event-chip--type">{job.type === 'job' ? `${typeLabel} role` : 'Internship'}</span>
                 <span className="event-chip">{job.mode}</span>
                 {job.featured && <span className="event-chip">★ Featured</span>}
+                {job.companyFounded && (
+                  <span className="event-chip">
+                    <IconCalendar aria-hidden="true" /> Founded {job.companyFounded}
+                  </span>
+                )}
               </div>
             </div>
           </div>
           <div className="job-hero__actions">
-            <button
-              type="button"
-              className="job-hero__share"
-              onClick={copyJobLink}
-              aria-label="Copy shareable link to this job"
-              title={linkCopied ? 'Link copied!' : 'Copy shareable link'}
-            >
-              {linkCopied ? <IconCheck /> : <IconShare />}
-            </button>
-            <button type="button" className="btn btn--solid job-hero__apply" onClick={() => onApply(job)}>
-              Apply now <IconArrowUpRight />
-            </button>
+            <div className="job-hero__actions-row">
+              <button type="button" className="btn btn--solid job-hero__apply" onClick={() => onApply(job)}>
+                Apply now <IconArrowUpRight />
+              </button>
+            </div>
+            <div className="job-hero__actions-row">
+              <button
+                type="button"
+                className="job-hero__share"
+                onClick={copyJobLink}
+                aria-label="Copy shareable link to this job"
+                title={linkCopied ? 'Link copied!' : 'Copy shareable link'}
+              >
+                {linkCopied ? <IconCheck /> : <IconShare />}
+              </button>
+              {job.companyWebsite && (
+                <a
+                  className="job-hero__share"
+                  href={job.companyWebsite}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Open ${job.company}'s website in a new tab`}
+                  title={`${job.company}'s website`}
+                >
+                  <IconGlobe />
+                </a>
+              )}
+              {job.companyLinkedin && (
+                <a
+                  className="job-hero__share"
+                  href={job.companyLinkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Open ${job.company}'s LinkedIn in a new tab`}
+                  title={`${job.company}'s LinkedIn`}
+                >
+                  <IconLinkedin />
+                </a>
+              )}
+            </div>
           </div>
         </div>
         <div className="drive-hero__facts">
@@ -695,7 +731,16 @@ export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobIn
     }
   }, [slug])
 
-  if (job) return <JobDetail job={job} catalog={catalog} onApply={onApply} />
+  // Guard on slug match, not just truthiness: when navigating away from a job
+  // (slug -> null), `job` state hasn't been cleared yet on this render (that
+  // happens in the effect above, one commit later) — without the slug check,
+  // that transitional render still returns the stale <JobDetail>, which has
+  // no `.reveal` elements. Since useScrollReveal(path) re-scans `.reveal`
+  // elements only when `path` changes, and `path` already changed on *this*
+  // commit, it fires while the DOM has none — then never fires again once
+  // <JobsList> actually mounts on the next commit, leaving its section head
+  // and search bar stuck at opacity 0 until a full page reload.
+  if (job && job.slug === slug) return <JobDetail job={job} catalog={catalog} onApply={onApply} />
   if (slug && !jobLoading) {
     return (
       <section className="blog drives-page">

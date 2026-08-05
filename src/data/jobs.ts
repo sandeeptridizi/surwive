@@ -27,6 +27,9 @@ export type JobInfo = FeaturedRole & {
   posted: string
   applicants: string
   openings: string
+  companyFounded?: string
+  companyWebsite?: string
+  companyLinkedin?: string
   aboutCompany: string[]
   aboutRole: string[]
   responsibilities: string[]

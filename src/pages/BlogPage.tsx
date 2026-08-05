@@ -104,7 +104,7 @@ function BlogList() {
   }
   const gotoPage = (p: number) => {
     setPage(Math.min(Math.max(1, p), pageCount))
-    window.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   return (

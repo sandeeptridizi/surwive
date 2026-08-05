@@ -9,6 +9,9 @@ type PortalJob = {
   companyId: string
   company: string
   companyLogo: string
+  companyFounded: string
+  companyWebsite: string
+  companyLinkedin: string
   type: string // 'Full-time' | 'Part-time' | 'Internship' | 'Freelance'
   department: string
   location: string
@@ -97,6 +100,11 @@ function jobSlug(job: PortalJob): string {
   return titleSlug ? `${titleSlug}-${idSuffix}` : job.id
 }
 
+/** Prefix `https://` onto a bare domain (e.g. "vertexcloudlabs.com") so the link is clickable as typed into the company profile form. Leaves an already-absolute URL untouched. */
+function withProtocol(url: string): string {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`
+}
+
 function summarize(description: string): string {
   const text = description.replace(/\s+/g, ' ').trim()
   if (text.length <= 160) return text
@@ -131,6 +139,9 @@ function toJobInfo(job: PortalJob): JobInfo {
     posted: relativeDate(job.postedDate),
     applicants: `${job.applicants} applicant${job.applicants === 1 ? '' : 's'}`,
     openings: job.spots ? `${job.spots} opening${job.spots === 1 ? '' : 's'}` : '',
+    companyFounded: job.companyFounded || undefined,
+    companyWebsite: job.companyWebsite ? withProtocol(job.companyWebsite) : undefined,
+    companyLinkedin: job.companyLinkedin ? withProtocol(job.companyLinkedin) : undefined,
     aboutCompany: [],
     aboutRole: job.description
       .split(/\n+/)

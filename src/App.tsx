@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import './App.css'
 import { AnnounceBar } from './components/AnnounceBar'
 import { AuroraBackground } from './components/AuroraBackground'
@@ -39,9 +39,16 @@ function App() {
     goToPortal('candidate', `/${screen}/${encodeURIComponent(job.id)}`)
   }
 
-  useEffect(() => {
+  // Layout effect (not a passive effect): runs synchronously right after the new
+  // page's DOM commits and before the browser paints, so there's no visible frame
+  // at the old scroll position and no race with the new page's own mount effects
+  // (e.g. the jobs list's IntersectionObserver, which needs the correct scroll
+  // position already in place when it takes its first reading). 'instant' skips
+  // the site's global smooth-scroll animation, which async data loading could
+  // otherwise interrupt partway.
+  useLayoutEffect(() => {
     if (route !== 'home') {
-      window.scrollTo({ top: 0 })
+      window.scrollTo({ top: 0, behavior: 'instant' })
     } else {
       const id = hash.slice(1)
       if (id) document.getElementById(id)?.scrollIntoView()
