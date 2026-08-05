@@ -137,7 +137,11 @@ export const policyCatalog: PolicyInfo[] = [
       },
       {
         heading: 'Contact us',
-        text: 'For any privacy question or to exercise your rights, write to privacy@surwive.com. We respond to verified requests within 30 days.',
+        text: 'For any privacy question or to exercise your rights, write to privacy@surwive.com. We respond to verified requests within 30 days. Surwive is designed and operated by Tridizi, our parent company — you can also reach the Tridizi team directly using the details below:',
+        list: [
+          'Email — hr@tridizi.com',
+          'Registered address — 51, 41/11, Sree Homes, 202, Hitech City Road, Kondapur, Serilingampally, Hyderabad, Telangana, India – 500084',
+        ],
       },
     ],
   },

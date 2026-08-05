@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react'
-import { IconCheck, IconClock, IconMail } from '../components/icons'
+import { IconArrowUpRight, IconCheck, IconClock, IconMail } from '../components/icons'
 import { policyBySlug, policyCatalog } from '../data/policies'
 import { slugifyHeading } from '../lib/utils'
 import { useStickySide } from '../hooks/useStickySide'
@@ -42,11 +42,20 @@ export function PolicyPage({ slug }: { slug: string | null }) {
           <p className="article-hero__excerpt">{policy.summary}</p>
           <div className="article__meta">
             <span className="article__stat"><IconClock /> Last updated {policy.updated}</span>
+            <span className="article__meta-sep" aria-hidden="true" />
+            <a
+              className="policy-page__brand"
+              href="https://tridizi.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Designed &amp; operated by <strong>Tridizi</strong>
+              <span className="policy-page__brand-icon" aria-hidden="true"><IconArrowUpRight /></span>
+            </a>
           </div>
         </div>
         <div className="article-hero__art" aria-hidden="true">
-          <span className="blog-feature__rings" />
-          <Icon />
+          <span className="policy-page__icon-tile"><Icon /></span>
         </div>
       </header>
 
