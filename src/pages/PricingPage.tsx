@@ -1,13 +1,15 @@
+import { useState } from 'react'
 import { SectionHead } from '../components/SectionHead'
 import {
   IconArrowUpRight,
   IconCheck,
   IconCrown,
+  IconDoc,
   IconGrad,
   IconShieldCheck,
   IconUsers,
 } from '../components/icons'
-import { pricingPlans, type PricingAudience } from '../data/pricing'
+import { pricingPlans, type CompanyPlanCategory, type PricingAudience } from '../data/pricing'
 
 export function PricingPage({
   audience,
@@ -18,6 +20,13 @@ export function PricingPage({
   onAudienceChange: (audience: PricingAudience) => void
   onSelectPlan: (audience: PricingAudience) => void
 }) {
+  const [companyCategory, setCompanyCategory] = useState<CompanyPlanCategory>('internship')
+
+  const activePlans =
+    audience === 'company'
+      ? pricingPlans.company.filter((plan) => plan.category === companyCategory)
+      : pricingPlans.student
+
   return (
     <section className="pricing" id="pricing">
       <SectionHead
@@ -54,8 +63,35 @@ export function PricingPage({
         </div>
       </div>
 
-      <div className="pricing__grid" key={audience}>
-        {pricingPlans[audience].map((plan, i) => (
+      {audience === 'company' && (
+        <div className="pricing-subtabs reveal" role="tablist" aria-label="Company plan type">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={companyCategory === 'internship'}
+            className={`pricing-subtabs__btn ${companyCategory === 'internship' ? 'is-active' : ''}`}
+            onClick={() => setCompanyCategory('internship')}
+          >
+            <IconGrad /> Internships
+          </button>
+          <span className="pricing-subtabs__divider" aria-hidden="true" />
+          <button
+            type="button"
+            role="tab"
+            aria-selected={companyCategory === 'job'}
+            className={`pricing-subtabs__btn ${companyCategory === 'job' ? 'is-active' : ''}`}
+            onClick={() => setCompanyCategory('job')}
+          >
+            <IconDoc /> Jobs
+          </button>
+        </div>
+      )}
+
+      <div
+        className={`pricing__grid ${activePlans.length === 1 ? 'pricing__grid--single' : ''}`}
+        key={audience === 'company' ? `company-${companyCategory}` : audience}
+      >
+        {activePlans.map((plan, i) => (
           <article
             className={`plan-card ${plan.featured ? 'plan-card--featured' : ''}`}
             key={plan.name}

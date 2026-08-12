@@ -172,7 +172,7 @@ export function RecruitersPage({
             </Link>
           }
         />
-        <div className="pricing__grid">
+        <div className="pricing__grid pricing__grid--wide">
           {companyPlans.map((plan, i) => (
             <article
               className={`plan-card ${plan.featured ? 'plan-card--featured' : ''}`}

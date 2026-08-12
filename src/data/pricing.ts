@@ -1,4 +1,5 @@
 export type PricingAudience = 'student' | 'company'
+export type CompanyPlanCategory = 'internship' | 'job'
 
 export type PricingPlan = {
   name: string
@@ -8,6 +9,7 @@ export type PricingPlan = {
   featured?: boolean
   badge?: string
   cta: string
+  category?: CompanyPlanCategory
   features: { title: string; sub: string }[]
 }
 
@@ -51,6 +53,7 @@ export const pricingPlans: Record<PricingAudience, PricingPlan[]> = {
       price: '99',
       period: '30 days',
       cta: 'Select Intern Plan',
+      category: 'internship',
       features: [
         { title: '30 Days Validity', sub: 'Internship listing active for 30 days' },
         { title: '30 Applicants', sub: 'Receive up to 30 applications' },
@@ -59,18 +62,38 @@ export const pricingPlans: Record<PricingAudience, PricingPlan[]> = {
       ],
     },
     {
-      name: 'For Jobs',
-      tagline: 'Hire faster, hire better',
+      name: 'Basic Plan',
+      tagline: 'Standard job posting for growing teams',
       price: '249',
-      period: 'per posting',
-      featured: true,
-      cta: 'Select Jobs Plan',
+      period: '30 days',
+      cta: 'Select Basic Plan',
+      category: 'job',
       features: [
-        { title: '100 Days Validity', sub: 'Job listing active for 100 days' },
-        { title: '100 Applicants', sub: 'Receive up to 100 applications' },
-        { title: 'Verified Candidates Priority', sub: 'See verified profiles first' },
+        { title: '30 Days Validity', sub: 'Job listing active for 30 days' },
+        { title: '50 Applicants', sub: 'Receive up to 50 applications' },
+        { title: 'Basic AI Matching', sub: 'Smart candidate matching algorithm' },
+        { title: 'Chat System', sub: 'Direct messaging with candidates' },
+        { title: 'Standard Job Listing', sub: 'Listed in the regular job feed' },
+      ],
+    },
+    {
+      name: 'Premium Plan',
+      tagline: 'Hire faster, hire better',
+      price: '599',
+      period: '60 days',
+      featured: true,
+      badge: 'Popular',
+      cta: 'Select Premium Plan',
+      category: 'job',
+      features: [
+        { title: '60 Days Validity', sub: 'Job listing active for 60 days' },
+        { title: 'Unlimited Applicants', sub: 'No cap on applications received' },
+        { title: 'Featured Jobs', sub: 'Priority placement across the platform' },
+        { title: 'Verified Candidates', sub: 'See verified profiles first' },
         { title: 'AI Matching', sub: 'Smart candidate matching algorithm' },
         { title: 'Chat System', sub: 'Direct messaging with candidates' },
+        { title: 'Interview Scheduling', sub: 'Coordinate interviews without leaving Surwive' },
+        { title: 'Employer Verification Badge', sub: 'Stand out as a verified employer' },
       ],
     },
   ],

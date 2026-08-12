@@ -3110,7 +3110,11 @@ section[id] { scroll-margin-top: 124px; }
 
 /* ---------------------------------- pricing ---------------------------------- */
 
-.pricing { padding-block: 72px 96px; min-height: calc(100vh - 480px); }
+.pricing { padding-block: 40px 96px; min-height: calc(100vh - 480px); }
+
+.pricing .section-head { max-width: 900px; }
+.pricing .section-head h2 { font-size: clamp(24px, 3vw, 34px); white-space: nowrap; }
+.pricing .section-head p { white-space: nowrap; }
 
 .pricing__toggle-wrap {
   display: flex;
@@ -3164,6 +3168,40 @@ section[id] { scroll-margin-top: 124px; }
 .pricing-toggle__btn:hover { color: var(--text-h); }
 .pricing-toggle__btn.is-active { color: var(--accent-ink); }
 
+.pricing-subtabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin: 4px 0 40px;
+  animation: planIn 0.4s var(--ease-out) both;
+}
+
+.pricing-subtabs__divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border-strong);
+}
+
+.pricing-subtabs__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 4px 2px 9px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.pricing-subtabs__btn svg { width: 15px; height: 15px; }
+.pricing-subtabs__btn:hover { color: var(--text-h); }
+.pricing-subtabs__btn.is-active { color: var(--accent); border-color: var(--accent); }
+
 .pricing__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3171,6 +3209,16 @@ section[id] { scroll-margin-top: 124px; }
   max-width: 860px;
   margin: 0 auto;
   align-items: stretch;
+}
+
+.pricing__grid--wide {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1120px;
+}
+
+.pricing__grid--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 400px;
 }
 
 @keyframes planIn {
@@ -3319,6 +3367,12 @@ section[id] { scroll-margin-top: 124px; }
   margin-top: auto;
   justify-content: center;
   width: 100%;
+}
+
+@media (max-width: 900px) {
+  .pricing__grid--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
+  .pricing .section-head h2,
+  .pricing .section-head p { white-space: normal; }
 }
 
 @media (max-width: 720px) {
