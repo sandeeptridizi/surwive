@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { SectionHead } from '../components/SectionHead'
 import {
   IconArrowUpRight,
@@ -9,7 +8,7 @@ import {
   IconShieldCheck,
   IconUsers,
 } from '../components/icons'
-import { pricingPlans, type CompanyPlanCategory, type PricingAudience } from '../data/pricing'
+import { pricingPlans, type PricingAudience } from '../data/pricing'
 
 export function PricingPage({
   audience,
@@ -20,12 +19,7 @@ export function PricingPage({
   onAudienceChange: (audience: PricingAudience) => void
   onSelectPlan: (audience: PricingAudience) => void
 }) {
-  const [companyCategory, setCompanyCategory] = useState<CompanyPlanCategory>('internship')
-
-  const activePlans =
-    audience === 'company'
-      ? pricingPlans.company.filter((plan) => plan.category === companyCategory)
-      : pricingPlans.student
+  const activePlans = audience === 'company' ? pricingPlans.company : pricingPlans.student
 
   return (
     <section className="pricing" id="pricing">
@@ -64,32 +58,19 @@ export function PricingPage({
       </div>
 
       {audience === 'company' && (
-        <div className="pricing-subtabs reveal" role="tablist" aria-label="Company plan type">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={companyCategory === 'internship'}
-            className={`pricing-subtabs__btn ${companyCategory === 'internship' ? 'is-active' : ''}`}
-            onClick={() => setCompanyCategory('internship')}
-          >
+        <div className="pricing-groups reveal" aria-hidden="true">
+          <span className="pricing-groups__label">
             <IconGrad /> Internships
-          </button>
-          <span className="pricing-subtabs__divider" aria-hidden="true" />
-          <button
-            type="button"
-            role="tab"
-            aria-selected={companyCategory === 'job'}
-            className={`pricing-subtabs__btn ${companyCategory === 'job' ? 'is-active' : ''}`}
-            onClick={() => setCompanyCategory('job')}
-          >
+          </span>
+          <span className="pricing-groups__label pricing-groups__label--wide">
             <IconDoc /> Jobs
-          </button>
+          </span>
         </div>
       )}
 
       <div
-        className={`pricing__grid ${activePlans.length === 1 ? 'pricing__grid--single' : ''}`}
-        key={audience === 'company' ? `company-${companyCategory}` : audience}
+        className={`pricing__grid ${audience === 'company' ? 'pricing__grid--wide pricing__grid--grouped' : ''}`}
+        key={audience}
       >
         {activePlans.map((plan, i) => (
           <article

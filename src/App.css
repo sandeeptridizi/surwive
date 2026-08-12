@@ -3168,39 +3168,32 @@ section[id] { scroll-margin-top: 124px; }
 .pricing-toggle__btn:hover { color: var(--text-h); }
 .pricing-toggle__btn.is-active { color: var(--accent-ink); }
 
-.pricing-subtabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 22px;
-  margin: 4px 0 40px;
+.pricing-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 1120px;
+  margin: 4px auto 28px;
   animation: planIn 0.4s var(--ease-out) both;
 }
 
-.pricing-subtabs__divider {
-  width: 1px;
-  height: 14px;
-  background: var(--border-strong);
-}
-
-.pricing-subtabs__btn {
+.pricing-groups__label {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 4px 2px 9px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 24px;
+  border-radius: 999px;
+  background: rgba(255, 197, 61, 0.14);
+  border: 1px solid rgba(255, 197, 61, 0.35);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
-.pricing-subtabs__btn svg { width: 15px; height: 15px; }
-.pricing-subtabs__btn:hover { color: var(--text-h); }
-.pricing-subtabs__btn.is-active { color: var(--accent); border-color: var(--accent); }
+.pricing-groups__label svg { width: 19px; height: 19px; }
+.pricing-groups__label--wide { grid-column: span 2; }
 
 .pricing__grid {
   display: grid;
@@ -3216,9 +3209,18 @@ section[id] { scroll-margin-top: 124px; }
   max-width: 1120px;
 }
 
-.pricing__grid--single {
-  grid-template-columns: minmax(0, 1fr);
-  max-width: 400px;
+/* Divider between the Internship card and the Job-plan pair, sitting in the gap so it doesn't fight either card's own border. */
+.pricing__grid--grouped > .plan-card:nth-child(2) {
+  position: relative;
+}
+.pricing__grid--grouped > .plan-card:nth-child(2)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -13px;
+  width: 1px;
+  background: var(--border-strong);
 }
 
 @keyframes planIn {
@@ -3373,10 +3375,13 @@ section[id] { scroll-margin-top: 124px; }
   .pricing__grid--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; }
   .pricing .section-head h2,
   .pricing .section-head p { white-space: normal; }
+  .pricing-groups { display: flex; justify-content: center; max-width: 640px; }
+  .pricing-groups__label--wide { grid-column: auto; }
 }
 
 @media (max-width: 720px) {
   .pricing__grid { grid-template-columns: 1fr; max-width: 460px; }
+  .pricing__grid--grouped > .plan-card:nth-child(2)::before { display: none; }
 
   .pricing-toggle__btn { min-width: 0; flex: 1; padding: 10px 16px; font-size: 13px; }
   .pricing-toggle { width: 100%; max-width: 380px; }
