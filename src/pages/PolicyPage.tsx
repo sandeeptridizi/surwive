@@ -49,7 +49,7 @@ export function PolicyPage({ slug }: { slug: string | null }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Designed &amp; operated by <strong>Tridizi</strong>
+              Designed &amp; operated by <strong>Tridizi Digital Innovations LLP</strong>
               <span className="policy-page__brand-icon" aria-hidden="true"><IconArrowUpRight /></span>
             </a>
           </div>
@@ -127,8 +127,8 @@ export function PolicyPage({ slug }: { slug: string | null }) {
             <p className="policy-page__help">
               Anything unclear about this policy? Our team reads every message.
             </p>
-            <a className="drive-contact__mail" href="mailto:legal@surwive.com">
-              <IconMail /> legal@surwive.com
+            <a className="drive-contact__mail" href="mailto:support@surwive.com">
+              <IconMail /> support@surwive.com
             </a>
           </div>
         </aside>

@@ -49,7 +49,7 @@ export const journeySteps = [
 export const testimonials = [
   { quote: 'Surwive surfaced a role I would never have found on my own — and I had an offer within two weeks.', name: 'Mamata Sri', role: 'Product Designer at Oraddo' },
   { quote: 'The matching is uncanny. Every role it showed me actually made sense for where my career is going.', name: 'Ramya Ravali', role: 'ML Engineer at 24/7 Intouch' },
-  { quote: 'As a recruiter, the shortlist quality changed everything. My first interview is now my best one.', name: 'Hari Sai', role: 'Head of Talent at TriDizi' },
+  { quote: 'As a recruiter, the shortlist quality changed everything. My first interview is now my best one.', name: 'Hari Sai', role: 'Head of Talent at Tridizi Digital Innovations LLP' },
 ]
 
 export const skillGraph: { label: string; value: number; status: string; low?: boolean }[] = [

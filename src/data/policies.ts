@@ -137,9 +137,9 @@ export const policyCatalog: PolicyInfo[] = [
       },
       {
         heading: 'Contact us',
-        text: 'For any privacy question or to exercise your rights, write to privacy@surwive.com. We respond to verified requests within 30 days. Surwive is designed and operated by Tridizi, our parent company — you can also reach the Tridizi team directly using the details below:',
+        text: 'For any privacy question or to exercise your rights, write to support@surwive.com. We respond to verified requests within 30 days. Surwive is designed and operated by Tridizi Digital Innovations LLP, our parent company — you can also reach the Tridizi Digital Innovations LLP team directly using the details below. TriDizi Digital Innovations LLP is the Parent Organization of Surwive AI.',
         list: [
-          'Email — hr@tridizi.com',
+          'Email — support@surwive.com',
           'Registered address — 51, 41/11, Sree Homes, 202, Hitech City Road, Kondapur, Serilingampally, Hyderabad, Telangana, India – 500084',
         ],
       },
@@ -241,7 +241,7 @@ export const policyCatalog: PolicyInfo[] = [
         list: [
           'Use a strong, unique password for your Surwive account',
           'Never share login credentials or one-time codes with anyone',
-          'Report anything suspicious to security@surwive.com — we investigate every report',
+          'Report anything suspicious to support@surwive.com — we investigate every report',
         ],
       },
     ],
@@ -292,7 +292,7 @@ export const policyCatalog: PolicyInfo[] = [
       },
       {
         heading: 'Reporting problems',
-        text: 'If a listing looks fraudulent, an employer requests payment, or anyone behaves inappropriately, report it to trust@surwive.com or through the report option on the listing. Reports are confidential, and reporting in good faith will never affect your standing on the platform.',
+        text: 'If a listing looks fraudulent, an employer requests payment, or anyone behaves inappropriately, report it to support@surwive.com or through the report option on the listing. Reports are confidential, and reporting in good faith will never affect your standing on the platform.',
       },
       {
         heading: 'Dispute resolution',

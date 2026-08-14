@@ -26,7 +26,7 @@ export function ContactPage() {
           <span className="contact-card__icon"><IconMail /></span>
           <h3>Email support</h3>
           <p>Write to us any time and we'll reply within one business day.</p>
-          <a className="contact-card__link" href="mailto:Support@surwive.com">Support@surwive.com</a>
+          <a className="contact-card__link" href="mailto:support@surwive.com">support@surwive.com</a>
         </div>
 
         <div className="contact-card reveal">
@@ -41,7 +41,7 @@ export function ContactPage() {
 
       <p className="contact-hours reveal">
         <IconClock /> Agents are online Monday to Saturday, 9:00–19:00 IST. Outside those hours,
-        leave a message — it reaches the same inbox as <a href="mailto:Support@surwive.com">Support@surwive.com</a>.
+        leave a message — it reaches the same inbox as <a href="mailto:support@surwive.com">support@surwive.com</a>.
       </p>
 
       {/* No `reveal` here — this mounts on click, after useScrollReveal has
