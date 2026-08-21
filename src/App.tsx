@@ -2,6 +2,7 @@ import { useLayoutEffect, useState } from 'react'
 import './App.css'
 import { AnnounceBar } from './components/AnnounceBar'
 import { AuroraBackground } from './components/AuroraBackground'
+import { FloatingAgentWidget } from './components/FloatingAgentWidget'
 import { Footer } from './components/Footer'
 import { HomeBackgroundFx } from './components/HomeBackgroundFx'
 import { Navbar } from './components/Navbar'
@@ -109,6 +110,7 @@ function App() {
       </main>
 
       <Footer />
+      <FloatingAgentWidget />
     </>
   )
 }
