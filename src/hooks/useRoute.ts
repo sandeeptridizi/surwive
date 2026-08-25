@@ -24,6 +24,10 @@ export function useRoute() {
   const pathname = path.split('?')[0] || '/'
   const route = pathname === '/jobs' || pathname.startsWith('/jobs/')
     ? 'jobs'
+    : pathname === '/internship' || pathname.startsWith('/internship/')
+      ? 'jobs'
+    : pathname === '/workshops' || pathname.startsWith('/workshops/')
+      ? 'workshops'
     : pathname === '/pricing'
       ? 'pricing'
     : pathname === '/for-recruiters'

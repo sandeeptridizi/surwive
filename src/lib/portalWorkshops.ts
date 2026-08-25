@@ -47,3 +47,18 @@ export async function fetchPortalWorkshops(limit = 6): Promise<WorkshopInfo[]> {
   const data = (await res.json()) as { workshops?: PortalWorkshop[] }
   return (data.workshops ?? []).map(toWorkshopInfo)
 }
+
+/** Full workshop detail, for the workshop-detail page (adds the fields the card list doesn't need). */
+export type PortalWorkshopDetail = PortalWorkshop & { id: string; description: string; endDate: string | null }
+
+/** GET /api/portal/workshops/:slug — one published workshop, with its full description. */
+export async function fetchPortalWorkshopBySlug(slug: string): Promise<PortalWorkshopDetail | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/portal/workshops/${encodeURIComponent(slug)}`)
+    if (!res.ok) return null
+    const data = (await res.json()) as { workshop?: PortalWorkshopDetail }
+    return data.workshop ?? null
+  } catch {
+    return null
+  }
+}

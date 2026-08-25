@@ -18,9 +18,9 @@ import { JobsPage } from './pages/JobsPage'
 import { PolicyPage } from './pages/PolicyPage'
 import { PricingPage } from './pages/PricingPage'
 import { RecruitersPage } from './pages/RecruitersPage'
+import { WorkshopsPage } from './pages/WorkshopsPage'
 import type { PricingAudience } from './data/pricing'
 import type { JobInfo } from './data/jobs'
-import type { WorkshopInfo } from './data/workshops'
 
 const USER_PORTAL_URL = 'https://user.surwive.com'
 const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
@@ -42,8 +42,8 @@ function App() {
   }
 
   // Deep-links a workshop's "Register" straight to its view in the candidate portal.
-  const registerForWorkshop = (workshop: WorkshopInfo) => {
-    goToPortal('candidate', `/workshop-view/${encodeURIComponent(workshop.slug)}`)
+  const registerForWorkshop = (slug: string) => {
+    goToPortal('candidate', `/workshop-view/${encodeURIComponent(slug)}`)
   }
 
   // Layout effect (not a passive effect): runs synchronously right after the new
@@ -76,6 +76,11 @@ function App() {
       <main id="main">
         {route === 'jobs' ? (
           <JobsPage path={path} onApply={applyToJob} />
+        ) : route === 'workshops' ? (
+          <WorkshopsPage
+            slug={path.startsWith('/workshops/') ? decodeURIComponent(path.slice('/workshops/'.length).split('?')[0]) : null}
+            onRegister={registerForWorkshop}
+          />
         ) : route === 'pricing' ? (
           <PricingPage
             audience={pricingAudience}
@@ -111,7 +116,7 @@ function App() {
             onSignupEmployer={() => goToPortal('employer')}
             onCompanyPricing={() => setPricingAudience('company')}
             onApplyJob={applyToJob}
-            onRegisterWorkshop={registerForWorkshop}
+            onRegisterWorkshop={(workshop) => registerForWorkshop(workshop.slug)}
           />
         )}
       </main>

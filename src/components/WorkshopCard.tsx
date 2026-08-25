@@ -1,5 +1,6 @@
 import type { WorkshopInfo } from '../data/workshops'
 import { IconArrowUpRight, IconClock, IconGrad, IconPin } from './icons'
+import { navigate } from '../lib/router'
 
 export function WorkshopCard({
   item,
@@ -11,9 +12,14 @@ export function WorkshopCard({
   onRegister: (item: WorkshopInfo) => void
 }) {
   const closed = item.registrationClosed || item.seatsLeft <= 0
+  const href = `/workshops/${item.slug}`
 
   return (
-    <article className="drive-card" style={{ animationDelay: `${index * 70}ms` }}>
+    <article
+      className="drive-card drive-card--link"
+      style={{ animationDelay: `${index * 70}ms` }}
+      onClick={() => navigate(href)}
+    >
       <div className="drive-card__head">
         <span className="drive-card__logo" aria-hidden="true">
           {item.logo ? <img src={item.logo} alt="" /> : <IconGrad />}
@@ -33,7 +39,7 @@ export function WorkshopCard({
         <button
           type="button"
           className="btn btn--solid btn--sm drive-card__cta"
-          onClick={() => onRegister(item)}
+          onClick={(e) => { e.stopPropagation(); onRegister(item) }}
           disabled={closed}
         >
           Register <IconArrowUpRight />

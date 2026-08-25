@@ -55,10 +55,14 @@ function formatINR(value: number): string {
   return `₹${value}`
 }
 
+function jobBasePath(job: JobInfo): string {
+  return job.type === 'internship' ? '/internship' : '/jobs'
+}
+
 function JobCard({ job, index }: { job: JobInfo; index: number }) {
   return (
     <Link
-      href={`/jobs/${job.slug}`}
+      href={`${jobBasePath(job)}/${job.slug}`}
       className="job-tile"
       style={{ '--ev-accent': jobAccent(job), animationDelay: `${index * 50}ms` } as CSSProperties}
     >
@@ -97,7 +101,7 @@ function JobCard({ job, index }: { job: JobInfo; index: number }) {
 function SimilarRoleCard({ job, index, onApply }: { job: JobInfo; index: number; onApply: (job: JobInfo) => void }) {
   return (
     <Link
-      href={`/jobs/${job.slug}`}
+      href={`${jobBasePath(job)}/${job.slug}`}
       className="job-similar__row"
       style={{ '--ev-accent': jobAccent(job), animationDelay: `${index * 60}ms` } as CSSProperties}
     >
@@ -475,7 +479,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
   const [linkCopied, setLinkCopied] = useState(false)
 
   const copyJobLink = async () => {
-    const url = `${window.location.origin}/jobs/${job.slug}`
+    const url = `${window.location.origin}${jobBasePath(job)}/${job.slug}`
     try {
       await navigator.clipboard.writeText(url)
     } catch {
@@ -505,7 +509,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
       style={{ '--ev-accent': jobAccent(job) } as CSSProperties}
       key={job.slug}
     >
-      <Link href="/jobs" className="article__back">← All open roles</Link>
+      <Link href={jobBasePath(job)} className="article__back">← All open roles</Link>
 
       <header className="drive-hero job-hero">
         <div className="drive-hero__top job-hero__top">
@@ -689,7 +693,7 @@ function JobDetail({ job, catalog, onApply }: { job: JobInfo; catalog: JobInfo[]
         <div className="job-similar">
           <div className="job-similar__head">
             <h2>Similar roles</h2>
-            <Link href={job.type === 'internship' ? '/jobs?tab=internships' : '/jobs'} className="job-similar__view-all">
+            <Link href={jobBasePath(job)} className="job-similar__view-all">
               View all <IconArrowUpRight />
             </Link>
           </div>
@@ -708,7 +712,10 @@ export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobIn
   // Only needed for "Similar roles" on the detail page — the listing itself
   // and the detail lookup below fetch just what they need from the server.
   const { jobs: catalog } = useJobs()
-  const slug = path.startsWith('/jobs/') ? decodeURIComponent(path.slice('/jobs/'.length).split('?')[0]) : null
+  const pathname = path.split('?')[0]
+  const isInternshipPath = pathname === '/internship' || pathname.startsWith('/internship/')
+  const basePath = isInternshipPath ? '/internship' : '/jobs'
+  const slug = pathname.startsWith(`${basePath}/`) ? decodeURIComponent(pathname.slice(basePath.length + 1)) : null
 
   const [job, setJob] = useState<JobInfo | null>(null)
   const [jobLoading, setJobLoading] = useState(false)
@@ -744,7 +751,7 @@ export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobIn
   if (slug && !jobLoading) {
     return (
       <section className="blog drives-page">
-        <Link href="/jobs" className="article__back">← All open roles</Link>
+        <Link href={basePath} className="article__back">← All open roles</Link>
         <div className="jobs-empty">
           <span className="jobs-empty__icon"><IconSpark /></span>
           <strong>Role not found</strong>
@@ -764,6 +771,6 @@ export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobIn
       </section>
     )
   }
-  const initialTab = path.includes('tab=internships') ? 'internship' : 'job'
+  const initialTab = isInternshipPath || path.includes('tab=internships') ? 'internship' : 'job'
   return <JobsList key={initialTab} initialTab={initialTab} />
 }

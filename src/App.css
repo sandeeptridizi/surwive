@@ -5556,6 +5556,35 @@ a.event-chip--link:hover {
   color: var(--ev-accent, var(--accent));
 }
 
+.event-spec-list {
+  display: flex;
+  flex-direction: column;
+}
+.event-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.event-spec-row:last-child { border-bottom: none; padding-bottom: 0; }
+.event-spec-row span:first-child { color: var(--text-muted); flex-shrink: 0; }
+.event-spec-row span:last-child { color: var(--text-h); font-weight: 600; text-align: right; }
+
+.event-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 22px;
+  background: color-mix(in srgb, #f5a623 14%, transparent);
+  border: 1px solid color-mix(in srgb, #f5a623 45%, transparent);
+  border-radius: var(--radius-lg);
+}
+.event-notice strong { color: var(--text-h); font-size: 14px; }
+.event-notice p { color: var(--text); font-size: 14.5px; line-height: 1.6; margin: 0; }
+
 .event-agenda {
   display: flex;
   flex-direction: column;
