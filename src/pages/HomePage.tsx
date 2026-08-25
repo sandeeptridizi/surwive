@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import appPic from '../assets/apppic.png'
 import { DriveCard } from '../components/DriveCard'
+import { WorkshopCard } from '../components/WorkshopCard'
 import { NewsletterForm } from '../components/NewsletterForm'
 import { SectionHead } from '../components/SectionHead'
 import { CompanyLogo } from '../components/CompanyLogo'
@@ -9,11 +10,13 @@ import { navigate } from '../lib/router'
 import type { JobInfo } from '../data/jobs'
 import type { DriveInfo } from '../data/drives'
 import type { EventInfo } from '../data/events'
+import type { WorkshopInfo } from '../data/workshops'
 import {
   IconApple,
   IconArrowUpRight,
   IconCheck,
   IconGear,
+  IconGrad,
   IconPin,
   IconPlayStore,
   IconSend,
@@ -23,6 +26,7 @@ import {
   IconTrophy,
 } from '../components/icons'
 import { useEvents } from '../hooks/useEvents'
+import { useWorkshops } from '../hooks/useWorkshops'
 import {
   CHAT_SCENARIOS,
   clarityCards,
@@ -391,7 +395,7 @@ function FeaturedRoles({ onApply }: { onApply: (job: JobInfo) => void }) {
   )
 }
 
-function WalkInDrives({ onApply }: { onApply: () => void }) {
+function WalkInDrives() {
   const { drives, loading } = useDrives()
 
   return (
@@ -410,7 +414,7 @@ function WalkInDrives({ onApply }: { onApply: () => void }) {
       {drives.length > 0 ? (
         <div className="drives-grid">
           {drives.map((item, i) => (
-            <DriveCard item={item} index={i} onApply={onApply} key={item.slug} />
+            <DriveCard item={item} index={i} basePath="/drives" key={item.slug} />
           ))}
         </div>
       ) : (
@@ -428,7 +432,7 @@ function WalkInDrives({ onApply }: { onApply: () => void }) {
   )
 }
 
-function EventsAndHackathons({ onApply }: { onApply: () => void }) {
+function EventsAndHackathons() {
   const [tab, setTab] = useState<'events' | 'hackathons'>('events')
   const { events, loading } = useEvents()
   const items = events.filter((item) =>
@@ -480,7 +484,7 @@ function EventsAndHackathons({ onApply }: { onApply: () => void }) {
       {items.length > 0 ? (
         <div className="drives-grid" key={tab}>
           {items.map((item, i) => (
-            <DriveCard item={item} index={i} onApply={onApply} key={item.title} />
+            <DriveCard item={item} index={i} basePath="/events" key={item.slug} />
           ))}
         </div>
       ) : (
@@ -498,16 +502,50 @@ function EventsAndHackathons({ onApply }: { onApply: () => void }) {
   )
 }
 
+function TrainingWorkshops({ onRegister }: { onRegister: (item: WorkshopInfo) => void }) {
+  const { workshops, loading } = useWorkshops()
+
+  return (
+    <section className="drives-section" id="training">
+      <SectionHead
+        align="split"
+        eyebrow="Level up"
+        title="Training & workshops"
+        sub="Hands-on training sessions and placement-focused workshops to sharpen your skills before you apply."
+      />
+      {workshops.length > 0 ? (
+        <div className="drives-grid">
+          {workshops.map((item, i) => (
+            <WorkshopCard item={item} index={i} onRegister={onRegister} key={item.slug} />
+          ))}
+        </div>
+      ) : (
+        <div className="jobs-empty">
+          <span className="jobs-empty__icon"><IconGrad /></span>
+          <strong>{loading ? 'Loading workshops…' : 'No workshops open right now'}</strong>
+          <p>
+            {loading
+              ? 'Fetching the latest training sessions from Surwive.'
+              : 'New training sessions and workshops are added here as soon as they open.'}
+          </p>
+        </div>
+      )}
+    </section>
+  )
+}
+
 export function HomePage({
   onSignupCandidate,
   onSignupEmployer,
   onCompanyPricing,
   onApplyJob,
+  onRegisterWorkshop,
 }: {
   onSignupCandidate: () => void
   onSignupEmployer: () => void
   onCompanyPricing: () => void
   onApplyJob: (job: JobInfo) => void
+  onRegisterWorkshop: (workshop: WorkshopInfo) => void
 }) {
   return (
     <>
@@ -581,8 +619,9 @@ export function HomePage({
 
       <FeaturedRoles onApply={onApplyJob} />
 
-      <WalkInDrives onApply={onSignupCandidate} />
-      <EventsAndHackathons onApply={onSignupCandidate} />
+      <WalkInDrives />
+      <EventsAndHackathons />
+      <TrainingWorkshops onRegister={onRegisterWorkshop} />
 
       <section className="why-section">
         <SectionHead

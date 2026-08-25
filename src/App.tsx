@@ -20,6 +20,7 @@ import { PricingPage } from './pages/PricingPage'
 import { RecruitersPage } from './pages/RecruitersPage'
 import type { PricingAudience } from './data/pricing'
 import type { JobInfo } from './data/jobs'
+import type { WorkshopInfo } from './data/workshops'
 
 const USER_PORTAL_URL = 'https://user.surwive.com'
 const EMPLOYER_PORTAL_URL = 'https://employer.surwive.com'
@@ -38,6 +39,11 @@ function App() {
   const applyToJob = (job: JobInfo) => {
     const screen = job.type === 'internship' ? 'internship-view' : 'job-view'
     goToPortal('candidate', `/${screen}/${encodeURIComponent(job.id)}`)
+  }
+
+  // Deep-links a workshop's "Register" straight to its view in the candidate portal.
+  const registerForWorkshop = (workshop: WorkshopInfo) => {
+    goToPortal('candidate', `/workshop-view/${encodeURIComponent(workshop.slug)}`)
   }
 
   // Layout effect (not a passive effect): runs synchronously right after the new
@@ -105,6 +111,7 @@ function App() {
             onSignupEmployer={() => goToPortal('employer')}
             onCompanyPricing={() => setPricingAudience('company')}
             onApplyJob={applyToJob}
+            onRegisterWorkshop={registerForWorkshop}
           />
         )}
       </main>

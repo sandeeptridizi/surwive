@@ -1,10 +1,26 @@
 import type { DriveEvent } from '../data/drives'
 import { IconArrowUpRight, IconClock, IconPin, IconSpark } from './icons'
 import { initials } from '../lib/utils'
+import { navigate } from '../lib/router'
 
-export function DriveCard({ item, index, onApply }: { item: DriveEvent; index: number; onApply: () => void }) {
+export function DriveCard({
+  item,
+  index,
+  basePath,
+}: {
+  item: DriveEvent & { slug: string }
+  index: number
+  /** Where this card's detail page lives, e.g. '/drives' or '/events'. */
+  basePath: string
+}) {
+  const href = `${basePath}/${item.slug}`
+
   return (
-    <article className="drive-card" style={{ animationDelay: `${index * 70}ms` }}>
+    <article
+      className="drive-card drive-card--link"
+      style={{ animationDelay: `${index * 70}ms` }}
+      onClick={() => navigate(href)}
+    >
       <div className="drive-card__head">
         <span className="drive-card__logo" aria-hidden="true">{initials(item.host)}</span>
         <div className="drive-card__host">
@@ -26,7 +42,11 @@ export function DriveCard({ item, index, onApply }: { item: DriveEvent; index: n
       </div>
       <div className="drive-card__foot">
         <span className="drive-card__perk"><IconSpark /> {item.perk}</span>
-        <button type="button" className="btn btn--solid btn--sm drive-card__cta" onClick={onApply}>
+        <button
+          type="button"
+          className="btn btn--solid btn--sm drive-card__cta"
+          onClick={(e) => { e.stopPropagation(); navigate(href) }}
+        >
           Register <IconArrowUpRight />
         </button>
       </div>
