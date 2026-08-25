@@ -28,7 +28,7 @@ import {
   cleanLocation,
   fetchPortalJobById,
   fetchPortalJobsPage,
-  idSuffixFromSlug,
+  idFromSlug,
   workMode,
 } from '../lib/portalJobs'
 
@@ -721,7 +721,7 @@ export function JobsPage({ path, onApply }: { path: string; onApply: (job: JobIn
     let cancelled = false
     setJob(null)
     setJobLoading(true)
-    fetchPortalJobById(idSuffixFromSlug(slug)).then((found) => {
+    fetchPortalJobById(idFromSlug(slug)).then((found) => {
       if (cancelled) return
       setJob(found)
       setJobLoading(false)

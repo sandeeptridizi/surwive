@@ -92,12 +92,12 @@ function relativeDate(iso: string): string {
   return `${months} month${months > 1 ? 's' : ''} ago`
 }
 
-/** Readable URL slug for a job, e.g. "7ea60d-aws-developer" — a short id prefix from
- * the job id plus the title, so postings with the same title never collide. */
+/** Readable URL slug for a job, e.g. "68f2a1c9e4b7d3f0a1c9e4b7/aws-developer" — the
+ * full job id plus the title as a second path segment, so postings with the same
+ * title never collide and the id alone is always enough to resolve the posting. */
 function jobSlug(job: PortalJob): string {
   const titleSlug = slugifyHeading(job.title)
-  const idSuffix = job.id.slice(-6)
-  return titleSlug ? `${idSuffix}-${titleSlug}` : job.id
+  return titleSlug ? `${job.id}/${titleSlug}` : job.id
 }
 
 /** Prefix `https://` onto a bare domain (e.g. "vertexcloudlabs.com") so the link is clickable as typed into the company profile form. Leaves an already-absolute URL untouched. */
@@ -220,11 +220,17 @@ export async function fetchPortalJobsPage(params: PortalJobsPageParams): Promise
   }
 }
 
-/** Last-6-hex-char id suffix a job slug carries (`jobSlug()`'s `idSuffix`), or the whole
- * slug when it's a bare 24-char Mongo id (the fallback `jobSlug` uses when the title
- * slugifies to nothing). Either form is accepted by `GET /api/portal/jobs/:id`. */
-export function idSuffixFromSlug(slug: string): string {
-  return /^[0-9a-fA-F]{24}$/.test(slug) ? slug : slug.slice(0, 6)
+/**
+ * Job id carried by a `jobSlug()` URL. Current slugs are `<24-char id>/<title-slug>`
+ * (or a bare id when the title slugifies to nothing) — the id is the segment before
+ * the first "/". Older shared links carried the legacy `<6-hex-char suffix>-<title-slug>`
+ * form instead; those fall back to just the 6-char suffix. Either form is accepted by
+ * `GET /api/portal/jobs/:id`.
+ */
+export function idFromSlug(slug: string): string {
+  const idPart = slug.split('/')[0] ?? slug
+  if (/^[0-9a-fA-F]{24}$/.test(idPart)) return idPart
+  return idPart.slice(0, 6)
 }
 
 /** GET /api/portal/jobs/:id — full detail for one posting, for the job-detail page. */
