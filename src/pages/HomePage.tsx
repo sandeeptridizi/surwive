@@ -553,8 +553,10 @@ export function HomePage({
         <div className="hero__copy">
           <a href="#copilot" className="hero__badge reveal">
             <span className="hero__badge-new">New</span>
-            Instant AI Job Matching Based on Your Skills
-            <IconArrowUpRight />
+            <span className="hero__badge-text">
+              Instant AI Job Matching Based on Your Skills
+              <IconArrowUpRight />
+            </span>
           </a>
 
           <h1 className="hero__title reveal" style={{ transitionDelay: '70ms' }}>

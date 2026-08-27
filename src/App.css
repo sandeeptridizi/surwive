@@ -740,6 +740,9 @@ section[id] { scroll-margin-top: 124px; }
   padding-bottom: 72px;
 }
 
+.hero__copy,
+.hero__panel { min-width: 0; }
+
 .hero::before {
   content: '';
   position: absolute;
@@ -770,6 +773,22 @@ section[id] { scroll-margin-top: 124px; }
 .hero__badge svg { width: 13px; height: 13px; color: var(--accent); transition: transform 0.25s var(--ease-out); }
 .hero__badge:hover { border-color: rgba(255, 197, 61, 0.55); color: var(--text-h); transform: translateY(-1px); }
 .hero__badge:hover svg { transform: translate(2px, -2px); }
+
+.hero__badge-text { display: inline-flex; align-items: center; gap: 8px; }
+
+@media (max-width: 640px) {
+  .hero__badge {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+  }
+  .hero__badge-text { flex-wrap: wrap; justify-content: center; }
+  .hero__badge-text svg { display: none; }
+}
 
 .hero__badge-new {
   background: var(--accent);
@@ -7105,6 +7124,15 @@ a.event-chip--link:hover {
   .job-hero__title-row { gap: 14px; }
   .job-hero__meta { gap: 10px; }
   .job-hero__logo { width: 54px; height: 54px; font-size: 19px; border-radius: 16px; }
+
+  .job-hero__actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .job-hero__actions-row:first-child { flex: 1; min-width: 0; }
+  .job-hero__actions-row:first-child .job-hero__apply { width: 100%; }
 }
 
 .job-perks {
