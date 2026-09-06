@@ -9,6 +9,7 @@ import {
   IconPin,
   IconShare,
   IconSpark,
+  IconUsers,
 } from '../components/icons'
 import { fetchPortalWorkshopBySlug, type PortalWorkshopDetail } from '../lib/portalWorkshops'
 
@@ -114,12 +115,20 @@ function WorkshopDetail({ workshop, onRegister }: { workshop: PortalWorkshopDeta
           <div className="event-hero__chips">
             <span className="event-chip event-chip--type">Workshop</span>
             <span className="event-chip event-chip--glass">{workshop.isFree ? 'Free' : `₹${workshop.price}`}</span>
+            <span className="event-chip event-chip--glass"><IconPin /> {workshop.location || 'TBA'}</span>
           </div>
         </div>
         <div className="event-hero__main">
           <div className="event-hero__title-row">
             <div className="event-hero__heading">
-              <h1>{workshop.title}</h1>
+              <div className="event-hero__title">
+                {workshop.logo && (
+                  <span className="event-hero__logo" aria-hidden="true">
+                    <img src={workshop.logo} alt="" />
+                  </span>
+                )}
+                <h1>{workshop.title}</h1>
+              </div>
             </div>
             <div className="event-hero__cta">
               <span className="event-hero__price">{workshop.isFree ? 'Free' : `₹${workshop.price}`}</span>
@@ -144,13 +153,6 @@ function WorkshopDetail({ workshop, onRegister }: { workshop: PortalWorkshopDeta
           </div>
           <div className="event-hero__glance">
             <div className="event-glance">
-              <span className="event-glance__icon"><IconPin /></span>
-              <span className="event-glance__body">
-                <span className="event-glance__label">Location</span>
-                <span className="event-glance__value">{workshop.location || 'TBA'}</span>
-              </span>
-            </div>
-            <div className="event-glance">
               <span className="event-glance__icon"><IconClock /></span>
               <span className="event-glance__body">
                 <span className="event-glance__label">Duration</span>
@@ -171,6 +173,15 @@ function WorkshopDetail({ workshop, onRegister }: { workshop: PortalWorkshopDeta
               <span className="event-glance__body">
                 <span className="event-glance__label">Registration closes</span>
                 <span className="event-glance__value">{formatDate(workshop.registrationEndDate)}</span>
+              </span>
+            </div>
+            <div className="event-glance">
+              <span className="event-glance__icon"><IconUsers /></span>
+              <span className="event-glance__body">
+                <span className="event-glance__label">Registered</span>
+                <span className="event-glance__value">
+                  {workshop.registeredCount}{workshop.maxCapacity ? ` / ${workshop.maxCapacity}` : ''}
+                </span>
               </span>
             </div>
           </div>

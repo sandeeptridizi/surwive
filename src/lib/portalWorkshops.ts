@@ -13,6 +13,7 @@ type PortalWorkshop = {
   registrationEndDate: string | null
   maxCapacity: number
   seatsLeft: number
+  registeredCount: number
   price: number
   isFree: boolean
 }
