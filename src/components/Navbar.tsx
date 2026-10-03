@@ -4,14 +4,14 @@ import { useNavScrollState } from '../hooks/useNavScrollState'
 import { IconClose, IconMenu } from './icons'
 import { Link } from './Link'
 
-export function Navbar({ onSignup }: { onSignup: () => void }) {
+export function Navbar(_props: { onSignup: () => void }) {
   const navScrolled = useNavScrollState()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
-  const handleSignup = () => {
-    setMobileNavOpen(false)
-    onSignup()
-  }
+  // const handleSignup = () => {
+  //   setMobileNavOpen(false)
+  //   onSignup()
+  // }
 
   return (
     <header className={`nav ${navScrolled ? 'nav--scrolled' : ''}`}>
@@ -25,21 +25,21 @@ export function Navbar({ onSignup }: { onSignup: () => void }) {
           <Link href="/drives" onClick={() => setMobileNavOpen(false)}>Walk In Drives</Link>
           <Link href="/events" onClick={() => setMobileNavOpen(false)}>Events & Hackathons</Link>
           <Link href="/for-recruiters" onClick={() => setMobileNavOpen(false)}>For Recruiters</Link>
-          <button type="button" className="btn btn--outline nav__links-login" onClick={handleSignup}>
+          {/* <button type="button" className="btn btn--outline nav__links-login" onClick={handleSignup}>
             Login
           </button>
           <button type="button" className="btn btn--solid nav__links-signup" onClick={handleSignup}>
             Sign up
-          </button>
+          </button> */}
         </nav>
-        <div className="nav__actions">
+        {/* <div className="nav__actions">
           <button type="button" className="nav__login" onClick={handleSignup}>
             Login
           </button>
           <button type="button" className="btn btn--solid nav__signup-desktop" onClick={handleSignup}>
             Sign up
           </button>
-        </div>
+        </div> */}
         <button
           type="button"
           className="nav__toggle"
